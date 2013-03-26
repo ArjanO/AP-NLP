@@ -32,5 +32,26 @@ grammar nlp;
 @header {
     package nl.ica.ap.nlp;
 }
-
-example : 'hello';
+tekst: zin+;
+zin:  (naamwoordgroep|zelfstandignaamwoord ) verbaleconstituent eindezin;
+naamwoordgroep: woord* bijwoord? (lidwoord|telwoord|bezittelijkvoornaamwoord|kwantor) (bijvoeglijknaamwoord)* zelfstandignaamwoord (voorzetsel|voegwoord)?;
+verbaleconstituent : woord* werkwoord (naamwoordgroep|zelfstandignaamwoord) naamwoordgroep* (verbaleconstituent*|werkwoord);
+eindezin: EINDEZIN;
+EINDEZIN: '.';
+zelfstandignaamwoord: WOORD;
+bijvoeglijknaamwoord: WOORD;
+voorzetsel: ('in'|'op');
+voegwoord: ('en'|'of');
+werkwoord: STERKWERKWOORD|ZWAKWERKWOORD;
+STERKWERKWOORD: ('is'|'heeft'|'zijn'|'hebben'|'zag'|'wordt'|'doet'|'vervoeren'|'kan'|'mag'|'verblijven');
+ZWAKWERKWOORD: ('ge'|'ver')? ('werk'|'bevat'|'plaats'|'neem'|'maak') ('en'|'t'|'te'|'de'|'ten'|'den')?;
+bezittelijkvoornaamwoord: ('zijn'|'haar'|'hun'|'mijn');
+telwoord: NUMMER;
+bijwoord: ('maximaal'|'minimaal'|'minstens');
+kwantor: ('elke' 'e'?) ;
+NUMMER: '0'..'9'+;
+lidwoord: LIDWOORD;
+LIDWOORD: ('de'|'het'|'een'|'De'|'Het'|'Een');
+woord: WOORD;
+WOORD: (('a'..'z')|('A'..'Z')|'ë'|'ï')+;
+WS  :  (' ' |'\n' |'\r' )+ -> skip ;
