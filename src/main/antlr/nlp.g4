@@ -27,7 +27,7 @@
  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  OTHER DEALINGS IN THE SOFTWARE.
 */
-grammar nlp;
+grammar Nlp;
 
 @header {
     package nl.ica.ap.nlp;
