@@ -71,7 +71,7 @@ public class App {
 		NlpParser parser = new NlpParser( tokens);
 		ParseTree tree = parser.tekst(); // begin parsing at init rule
 		ParseTreeWalker walker = new ParseTreeWalker();
-		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(parser);
+		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(parser,app);
 		walker.walk(listener, tree);
 		IExport export = new PowerDesignerExport();
 		System.out.println(export.export(app.classes));

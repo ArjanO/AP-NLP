@@ -8,13 +8,15 @@ import nl.ica.ap.nlp.NlpParser.ZelfstandignaamwoordContext;
 
 public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	NlpParser parser;
-	public ZelfstandignaamwoordListener(NlpParser parser) {
+	App app;
+	public ZelfstandignaamwoordListener(NlpParser parser, App app) {
 		this.parser = parser;
+		this.app = app;
 	}
 	
 	@Override
 	public void enterZelfstandignaamwoord(ZelfstandignaamwoordContext ctx) {
 		Class c = new Class(ctx.getText());
-		App.getInstance().classes.add(c);
+		app.classes.add(c);
 	}
 }
