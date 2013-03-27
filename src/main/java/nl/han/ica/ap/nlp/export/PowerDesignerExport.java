@@ -32,14 +32,13 @@ public class PowerDesignerExport implements IExport {
     	
     	// Create a new document.
 	    Document doc = null;
-	    
 		try {
 			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
 	    
-	    // Create and add a root element and an attribute.
+	    // Create and add a root element and add attributes.
 	    Element root = doc.createElement("uml:Model");
 	    root.setAttribute("name", "ObjectOrientedModel");	    
 	    root.setAttribute("xmi:version", "2.1");
@@ -47,8 +46,8 @@ public class PowerDesignerExport implements IExport {
 	    root.setAttribute("xmlns:uml", "http://www.eclipse.org/uml2/2.1.0/UML");
 	    doc.appendChild(root);
     	
+	    //Create classes
 	    Element packagedElement = null;
-	    
 	    for (Class element : classes) {
 		    packagedElement = doc.createElement("packagedElement");
 		    packagedElement.setAttribute("xmi:type", "uml:Class");
@@ -57,7 +56,7 @@ public class PowerDesignerExport implements IExport {
 		    root.appendChild(packagedElement);
 		}
 		
-		// Output the document.
+		// Output the document to string.
 	    DOMImplementation impl = doc.getImplementation();
 	    DOMImplementationLS implLS = (DOMImplementationLS) impl.getFeature("LS", "3.0");
         LSSerializer lsSerializer = implLS.createLSSerializer();
@@ -70,6 +69,7 @@ public class PowerDesignerExport implements IExport {
         
         String output = stringWriter.toString();
         
+        //Write file
         try {
             BufferedWriter out = new BufferedWriter(new FileWriter(filepath));
             out.write(output);
