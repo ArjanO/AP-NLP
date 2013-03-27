@@ -1,13 +1,16 @@
 package nl.han.ica.ap.nlp.export;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import nl.han.ica.ap.nlp.export.PowerDesignerExport;
 import nl.han.ica.ap.nlp.model.Class;
 
+import org.codehaus.plexus.util.IOUtil;
 import org.junit.Test;
 
-import static junit.framework.Assert.*;
 import junit.framework.TestCase;
 
 public class PowerDesignerExportTest extends TestCase{
@@ -22,10 +25,35 @@ public class PowerDesignerExportTest extends TestCase{
 		classes.add(vliegtuig);
 		classes.add(passagier);
 		
-		String output = exporter.export(classes);
+		String exportpath = exporter.export(classes);
 		
-		String expected_output = "<?xml version=\"1.0\" encoding=\"UTF-16\"?>\n"
-				+ "<uml:Model name=\"ObjectOrientedModel\" xmi:id=\"MODEL1\" xmi:version=\"2.1\" xmlns:uml=\"http://www.eclipse.org/uml2/2.1.0/UML\" xmlns:xmi=\"http://schema.omg.org/spec/XMI/2.1\"><packagedElement name=\"Vliegtuig\" xmi:id=\"VLIEGTUIG\" xmi:type=\"uml:Class\"/><packagedElement name=\"Passagier\" xmi:id=\"PASSAGIER\" xmi:type=\"uml:Class\"/></uml:Model>";
+		assertNotNull(exportpath);
+		
+		String output = null;
+		
+		FileInputStream inputStream = null;
+		try {
+			inputStream = new FileInputStream(exportpath);
+		} catch (FileNotFoundException e) {
+			fail("File was not found.");
+		}
+		
+	    try {
+	        output = IOUtil.toString(inputStream);
+	    } catch (IOException e) {
+	    	fail("Can't read file.");
+		} finally {
+	        try {
+				inputStream.close();
+			} catch (IOException e) {
+				fail("Can't close file.");
+			}
+	    }
+		
+		String expected_output = "<?xmlversion=\"1.0\"encoding=\"UTF-8\"?><uml:Modelname=\"ObjectOrientedModel\"xmi:version=\"2.1\"xmlns:uml=\"http://www.eclipse.org/uml2/2.1.0/UML\"xmlns:xmi=\"http://schema.omg.org/spec/XMI/2.1\"><packagedElementname=\"Vliegtuig\"xmi:id=\"VLIEGTUIG\"xmi:type=\"uml:Class\"/><packagedElementname=\"Passagier\"xmi:id=\"PASSAGIER\"xmi:type=\"uml:Class\"/></uml:Model>";
+		
+		output = output.replaceAll("\\s","");
+		expected_output = expected_output.replaceAll("\\s","");
 		
 		assertEquals(expected_output, output);
 	}
