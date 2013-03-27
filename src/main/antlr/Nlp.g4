@@ -30,7 +30,7 @@
 grammar Nlp;
 
 @header {
-    package nl.ica.ap.nlp;
+    package nl.han.ica.ap.nlp;
 }
 tekst: zin+;
 zin:  (naamwoordgroep|zelfstandignaamwoord ) verbaleconstituent eindezin;
