@@ -34,8 +34,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import nl.han.ica.ap.nlp.listeners.ZelfstandignaamwoordListener;
-import nl.ica.ap.nlp.NlpLexer;
-import nl.ica.ap.nlp.NlpParser;
+import nl.han.ica.ap.nlp.NlpLexer;
+import nl.han.ica.ap.nlp.NlpParser;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -71,7 +71,7 @@ public class App {
 		NlpParser parser = new NlpParser( tokens);
 		ParseTree tree = parser.tekst(); // begin parsing at init rule
 		ParseTreeWalker walker = new ParseTreeWalker();
-		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(parser);
+		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(parser,app);
 		walker.walk(listener, tree);
 		IExport export = new PowerDesignerExport();
 		System.out.println(export.export(app.classes));
