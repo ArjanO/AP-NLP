@@ -2,9 +2,9 @@ package nl.han.ica.ap.nlp.listeners;
 
 import nl.han.ica.ap.nlp.App;
 import nl.han.ica.ap.nlp.model.Class;
-import nl.ica.ap.nlp.NlpBaseListener;
-import nl.ica.ap.nlp.NlpParser;
-import nl.ica.ap.nlp.NlpParser.ZelfstandignaamwoordContext;
+import nl.han.ica.ap.nlp.NlpBaseListener;
+import nl.han.ica.ap.nlp.NlpParser;
+import nl.han.ica.ap.nlp.NlpParser.ZelfstandignaamwoordContext;
 
 public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	NlpParser parser;
