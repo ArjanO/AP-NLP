@@ -53,7 +53,7 @@
 				<version>4.0</version>
 				<configuration>
 					<sourceDirectory>src/main/antlr</sourceDirectory>
-					<outputDirectory>${project.build.directory}/generated-src/antlr/nl/ica/ap/nlp</outputDirectory>
+					<outputDirectory>${project.build.directory}/generated-src/antlr/nl/han/ica/ap/nlp</outputDirectory>
 					<listener>true</listener>
 					<visitor>true</visitor>
 				</configuration>
