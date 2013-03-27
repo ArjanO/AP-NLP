@@ -1,4 +1,4 @@
-package listeners;
+package nl.han.ica.ap.nlp.listeners;
 
 import nl.han.ica.ap.nlp.App;
 import nl.han.ica.ap.nlp.model.Class;

@@ -33,7 +33,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
-import listeners.ZelfstandignaamwoordListener;
+import nl.han.ica.ap.nlp.listeners.ZelfstandignaamwoordListener;
 import nl.ica.ap.nlp.NlpLexer;
 import nl.ica.ap.nlp.NlpParser;
 
