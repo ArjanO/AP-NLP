@@ -29,18 +29,29 @@
  */
 package nl.han.ica.ap.nlp.model;
 
+import java.util.ArrayList;
+
 /**
  * @author Joell
  *
  */
-public class Class {
+public class Class implements IClass, IAttribute{
 	private String name;
-
-	public String getName() {
-		return name;
-	}
+	private ArrayList<IAttribute> attributes = new ArrayList<IAttribute>();
 
 	public Class(String name) {
 		this.name = name;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public ArrayList<IAttribute> getAttributes(){
+		return attributes;
+	}
+	
+	public void setAttributes(ArrayList<IAttribute> attributes){
+		this.attributes = attributes;
 	}
 }
