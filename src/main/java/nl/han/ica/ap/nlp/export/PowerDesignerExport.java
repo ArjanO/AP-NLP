@@ -7,7 +7,8 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 
-import nl.han.ica.ap.nlp.model.Class;
+import nl.han.ica.ap.nlp.model.IAttribute;
+import nl.han.ica.ap.nlp.model.IClass;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -21,12 +22,12 @@ import org.w3c.dom.ls.LSSerializer;
 
 public class PowerDesignerExport implements IExport {
 	
-	public String export(ArrayList<Class> classes){
+	public String export(ArrayList<IClass> classes){
 		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()/1000) + ".xml";
 		return export(classes, filepath);
 	}
 	
-    public String export(ArrayList<Class> classes, String filepath){
+    public String export(ArrayList<IClass> classes, String filepath){
     	
     	// Create a new document.
 	    Document doc = null;
@@ -45,14 +46,10 @@ public class PowerDesignerExport implements IExport {
 	    doc.appendChild(root);
     	
 	    //Create classes
-	    Element packagedElement = null;
-	    for (Class element : classes) {
-		    packagedElement = doc.createElement("packagedElement");
-		    packagedElement.setAttribute("xmi:type", "uml:Class");
-		    packagedElement.setAttribute("xmi:id", element.getName().toUpperCase());
-		    packagedElement.setAttribute("name", element.getName());
-		    root.appendChild(packagedElement);
-		}
+	    createClasses(doc, root, classes);
+	    
+	    //Create Associations
+	    createAssociations(doc, root, classes);
 		
 		// Output the document to string.
 	    DOMImplementation impl = doc.getImplementation();
@@ -78,4 +75,106 @@ public class PowerDesignerExport implements IExport {
         
         return filepath;
 	}
+    
+    private void createClasses(Document doc, Element root, ArrayList<IClass> classes){
+    	if(classes.size() > 0){
+	    	for (IAttribute element_class : classes) {
+			    root.appendChild(createClass(doc, element_class));
+
+			    if(element_class instanceof IClass){
+			    	ArrayList<IClass> attribute_classes = new ArrayList<IClass>();
+			    	ArrayList<IAttribute> class_attributes = ((IClass)element_class).getAttributes();
+			    	for (IAttribute attribute : class_attributes) {
+						if(attribute instanceof IClass){
+							attribute_classes.add(((IClass)attribute));
+						}
+					}
+			    	createClasses(doc, root, attribute_classes);
+			    }
+			}
+    	}else{
+    		return;
+    	}
+    }
+    
+    private Element createClass(Document doc, IAttribute element_class){
+    	Element packagedElementClass = null;
+    	packagedElementClass = doc.createElement("packagedElement");
+    	packagedElementClass.setAttribute("xmi:type", "uml:Class");
+    	packagedElementClass.setAttribute("xmi:id", element_class.getName().toUpperCase());
+    	packagedElementClass.setAttribute("name", element_class.getName());
+    	return packagedElementClass;
+    }
+    
+    private void createAssociations(Document doc, Element root, ArrayList<IClass> classes){
+    	//foreach class
+    	for (int i = 0; i < classes.size(); i++) {
+			IClass element_class = classes.get(i);
+			
+			//foreach element
+			for (int j = 0; j < element_class.getAttributes().size(); j++) {
+				IAttribute element_attribute = element_class.getAttributes().get(j);
+				if(element_attribute instanceof IClass){
+					IClass element_attributeclass = (IClass)element_attribute;
+					root.appendChild(createAssociation(doc, element_class, element_attributeclass));
+				}
+			}
+		}
+    }
+    
+    private Element createAssociation(Document doc, IClass class1, IClass class2){
+    	Element packagedElementAssociation = null;
+	    packagedElementAssociation = doc.createElement("packagedElement");
+	    packagedElementAssociation.setAttribute("xmi:type", "uml:Association");
+	    packagedElementAssociation.setAttribute("xmi:id", "ASSOCIATION_" + "TEST");
+	    packagedElementAssociation.setAttribute("name", "Association_" + "TEST");
+	    packagedElementAssociation.setAttribute("memberEnd", "OWNEDEND_" + class1.getName().toUpperCase() + " " + "OWNEDEND_" + class2.getName().toUpperCase());
+	    packagedElementAssociation.setAttribute("navigableOwnedEnd", "OWNEDEND_" + class2.getName().toUpperCase());
+    	
+		    Element ownedEnd1 = null;
+	    	ownedEnd1 = doc.createElement("ownedEnd");
+	    	ownedEnd1.setAttribute("xmi:id", "OWNEDEND_" + class1.getName().toUpperCase());
+	    	ownedEnd1.setAttribute("name", "");
+	    	ownedEnd1.setAttribute("visibility", "public");
+	    	ownedEnd1.setAttribute("type", class1.getName().toUpperCase());
+	    	ownedEnd1.setAttribute("association", "ASSOCIATION_" + class1.getName().toUpperCase());
+	    	packagedElementAssociation.appendChild(ownedEnd1);
+	    	
+		    	Element upperValue1 = null;
+		    	upperValue1 = doc.createElement("upperValue");
+		    	upperValue1.setAttribute("xmi:id", "UPPERVALUE_" + class1.getName().toUpperCase());
+		    	upperValue1.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
+		    	upperValue1.setAttribute("value", "1");
+		    	ownedEnd1.appendChild(upperValue1);	
+		    	
+		    	Element lowerValue1 = null;
+		    	lowerValue1 = doc.createElement("lowerValue");
+		    	lowerValue1.setAttribute("xmi:id", "LOWERVALUE_" + class1.getName().toUpperCase());
+		    	lowerValue1.setAttribute("xmi:type", "LiteralInteger");
+		    	ownedEnd1.appendChild(lowerValue1);
+	    	
+	    	Element ownedEnd2 = null;
+	    	ownedEnd2 = doc.createElement("ownedEnd");
+	    	ownedEnd2.setAttribute("xmi:id", "OWNEDEND_" + class2.getName().toUpperCase());
+	    	ownedEnd2.setAttribute("name", "");
+	    	ownedEnd2.setAttribute("visibility", "public");
+	    	ownedEnd2.setAttribute("type", class2.getName().toUpperCase());
+	    	ownedEnd2.setAttribute("association", "ASSOCIATION_" + class2.getName().toUpperCase());
+	    	packagedElementAssociation.appendChild(ownedEnd2);	
+	    	
+		    	Element upperValue2 = null;
+		    	upperValue2 = doc.createElement("upperValue");
+		    	upperValue2.setAttribute("xmi:id", "UPPERVALUE_" + class2.getName().toUpperCase());
+		    	upperValue2.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
+		    	upperValue2.setAttribute("value", "1");
+		    	ownedEnd2.appendChild(upperValue2);
+		    	
+		    	Element lowerValue2 = null;
+		    	lowerValue2 = doc.createElement("lowerValue");
+		    	lowerValue2.setAttribute("xmi:id", "LOWERVALUE_" + class2.getName().toUpperCase());
+		    	lowerValue2.setAttribute("xmi:type", "LiteralInteger");
+		    	ownedEnd2.appendChild(lowerValue2);	
+    	
+	    return packagedElementAssociation;
+    }
 }
