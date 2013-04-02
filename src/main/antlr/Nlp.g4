@@ -33,7 +33,7 @@ grammar Nlp;
     package nl.han.ica.ap.nlp;
 }
 tekst: zin+;
-zin:  (naamwoordgroep|zelfstandignaamwoord ) verbaleconstituent eindezin;
+zin:  (bijwoord|naamwoordgroep|zelfstandignaamwoord ) verbaleconstituent eindezin;
 naamwoordgroep: woord* bijwoord? (lidwoord|telwoord|bezittelijkvoornaamwoord|kwantor) (bijvoeglijknaamwoord)* zelfstandignaamwoord (voorzetsel|voegwoord)?;
 verbaleconstituent : woord* werkwoord (naamwoordgroep|zelfstandignaamwoord) naamwoordgroep* (verbaleconstituent*|werkwoord);
 eindezin: EINDEZIN;
@@ -47,7 +47,7 @@ STERKWERKWOORD: ('is'|'heeft'|'zijn'|'hebben'|'zag'|'wordt'|'doet'|'vervoeren'|'
 ZWAKWERKWOORD: ('ge'|'ver')? ('werk'|'bevat'|'plaats'|'neem'|'maak') ('en'|'t'|'te'|'de'|'ten'|'den')?;
 bezittelijkvoornaamwoord: ('zijn'|'haar'|'hun'|'mijn');
 telwoord: NUMMER;
-bijwoord: ('maximaal'|'minimaal'|'minstens');
+bijwoord: ('maximaal'|'minimaal'|'minstens'|'Er'|'er');
 kwantor: ('elke' 'e'?) ;
 NUMMER: '0'..'9'+;
 lidwoord: LIDWOORD;

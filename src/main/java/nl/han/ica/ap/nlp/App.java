@@ -68,7 +68,7 @@ public class App {
 		ANTLRInputStream input = new ANTLRInputStream(System.in);
 		NlpLexer lexer = new NlpLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		NlpParser parser = new NlpParser( tokens);
+		NlpParser parser = new NlpParser(tokens);
 		ParseTree tree = parser.tekst(); // begin parsing at init rule
 		ParseTreeWalker walker = new ParseTreeWalker();
 		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(parser,app);
