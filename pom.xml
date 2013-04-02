@@ -52,6 +52,7 @@
 				<artifactId>antlr4-maven-plugin</artifactId>
 				<version>4.0</version>
 				<configuration>
+					<libDirectory>${basedir}/src/main/antlr/imports</libDirectory>
 					<sourceDirectory>src/main/antlr</sourceDirectory>
 					<outputDirectory>${project.build.directory}/generated-src/antlr/nl/han/ica/ap/nlp</outputDirectory>
 					<listener>true</listener>
