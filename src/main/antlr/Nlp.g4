@@ -43,7 +43,7 @@ bijvoeglijknaamwoord: WOORD;
 voorzetsel: ('in'|'op');
 voegwoord: ('en'|'of');
 werkwoord: STERKWERKWOORD|ZWAKWERKWOORD;
-STERKWERKWOORD: ('is'|'heeft'|'zijn'|'hebben'|'zag'|'wordt'|'doet'|'vervoeren'|'kan'|'mag'|'verblijven');
+STERKWERKWOORD: ('is'|'heeft'|'zijn'|'hebben'|'zag'|'wordt'|'doet'|'vervoeren'|'kan'|'mag'|'verblijven'|'bestaat');
 ZWAKWERKWOORD: ('ge'|'ver')? ('werk'|'bevat'|'plaats'|'neem'|'maak') ('en'|'t'|'te'|'de'|'ten'|'den')?;
 bezittelijkvoornaamwoord: ('zijn'|'haar'|'hun'|'mijn');
 telwoord: NUMMER;
