@@ -44,7 +44,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import nl.han.ica.ap.nlp.export.IExport;
 import nl.han.ica.ap.nlp.export.PowerDesignerExport;
-import nl.han.ica.ap.nlp.model.Class;
+import nl.han.ica.ap.nlp.model.IClass;
 
 
 /**
@@ -53,7 +53,7 @@ import nl.han.ica.ap.nlp.model.Class;
  */
 public class App {
 	
-	public ArrayList<Class> classes = new ArrayList<Class>();
+	public ArrayList<IClass> classes = new ArrayList<IClass>();
 	private static App app;
 	private App(){}
 	public static App getInstance() {
