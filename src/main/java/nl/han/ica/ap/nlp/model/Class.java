@@ -54,4 +54,9 @@ public class Class implements IClass, IAttribute{
 	public void setAttributes(ArrayList<IAttribute> attributes){
 		this.attributes = attributes;
 	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
 }

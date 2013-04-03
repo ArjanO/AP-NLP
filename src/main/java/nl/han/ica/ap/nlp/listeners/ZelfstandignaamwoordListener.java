@@ -30,6 +30,7 @@
 package nl.han.ica.ap.nlp.listeners;
 
 import nl.han.ica.ap.nlp.App;
+import nl.han.ica.ap.nlp.controller.TreeController;
 import nl.han.ica.ap.nlp.model.Class;
 import nl.han.ica.ap.nlp.NlpBaseListener;
 import nl.han.ica.ap.nlp.NlpParser;
@@ -37,15 +38,15 @@ import nl.han.ica.ap.nlp.NlpParser.ZelfstandignaamwoordContext;
 
 public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	NlpParser parser;
-	App app;
-	public ZelfstandignaamwoordListener(NlpParser parser, App app) {
+	TreeController controller;
+	public ZelfstandignaamwoordListener(TreeController controller, NlpParser parser) {
 		this.parser = parser;
-		this.app = app;
+		this.controller = controller;
 	}
 	
 	@Override
 	public void enterZelfstandignaamwoord(ZelfstandignaamwoordContext ctx) {
-		Class c = new Class(ctx.getText());
-		app.classes.add(c);
+		Class c = new Class(ctx.getText().substring(0, 1).toUpperCase()+ctx.getText().substring(1));
+		controller.addClass(c);
 	}
 }

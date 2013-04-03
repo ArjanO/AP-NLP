@@ -30,6 +30,7 @@
 package nl.han.ica.ap.nlp;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
@@ -42,6 +43,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import nl.han.ica.ap.nlp.controller.TreeController;
 import nl.han.ica.ap.nlp.export.IExport;
 import nl.han.ica.ap.nlp.export.PowerDesignerExport;
 import nl.han.ica.ap.nlp.model.IClass;
@@ -53,7 +55,6 @@ import nl.han.ica.ap.nlp.model.IClass;
  */
 public class App {
 	
-	public ArrayList<IClass> classes = new ArrayList<IClass>();
 	private static App app;
 	private App(){}
 	public static App getInstance() {
@@ -62,18 +63,25 @@ public class App {
 		}
 		return app;
 	}
-		
-	public static void main(String[] args) throws Exception {
-		App app = App.getInstance();
-		ANTLRInputStream input = new ANTLRInputStream(System.in);
+	
+	public void start() {
+		ANTLRInputStream input = null;
+		try {
+			input = new ANTLRInputStream(System.in);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		NlpLexer lexer = new NlpLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		NlpParser parser = new NlpParser(tokens);
 		ParseTree tree = parser.tekst(); // begin parsing at init rule
-		ParseTreeWalker walker = new ParseTreeWalker();
-		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(parser,app);
-		walker.walk(listener, tree);
-		IExport export = new PowerDesignerExport();
-		System.out.println(export.export(app.classes));
+		TreeController controller = new TreeController();
+		controller.walkTree(tree, parser);
+	}
+		
+	public static void main(String[] args) throws Exception {
+		App app = App.getInstance();
+		app.start();
 	}
 }
