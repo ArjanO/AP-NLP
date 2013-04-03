@@ -44,22 +44,19 @@ import nl.han.ica.ap.nlp.util.CSVtoG4;
 
 public class CSVRowListener extends CSVtoG4BaseListener {
 	CSVtoG4Parser parser;
-	CSVtoG4 csvtog4;
 
-	ArrayList<String> conjugations = new ArrayList<String>();
+	private ArrayList<String> conjugations = new ArrayList<String>();
 	
-	public CSVRowListener(CSVtoG4Parser parser, CSVtoG4 csvtog4) {
+	public CSVRowListener(CSVtoG4Parser parser) {
 		this.parser = parser;
-		this.csvtog4 = csvtog4;
-	}
-
-	@Override
-	public void exitCsv(CsvContext ctx) {
-		csvtog4.conjugations = conjugations;
 	}
 	
 	@Override
 	public void enterConjugation(ConjugationContext ctx) {
 		conjugations.add(ctx.getText());
+	}
+	
+	public ArrayList<String> getConjugations(){
+		return conjugations;
 	}
 }
