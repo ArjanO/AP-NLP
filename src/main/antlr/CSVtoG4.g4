@@ -27,33 +27,18 @@
  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  OTHER DEALINGS IN THE SOFTWARE.
 */
-grammar Nlp;
-
-import NlpGlobal;
-
+grammar CSVtoG4;
 @header {
     package nl.han.ica.ap.nlp;
 }
-tekst: zin+;
-zin:  (bijwoord|naamwoordgroep|zelfstandignaamwoord ) verbaleconstituent eindezin;
-naamwoordgroep: woord* bijwoord? (lidwoord|telwoord|bezittelijkvoornaamwoord|kwantor) (bijvoeglijknaamwoord)* zelfstandignaamwoord (voorzetsel|voegwoord)?;
-verbaleconstituent : woord* werkwoord (naamwoordgroep|zelfstandignaamwoord) naamwoordgroep* (verbaleconstituent*|werkwoord);
-eindezin: EINDEZIN;
-EINDEZIN: '.';
-zelfstandignaamwoord: WOORD;
-bijvoeglijknaamwoord: WOORD;
-voorzetsel: ('in'|'op');
-voegwoord: ('en'|'of');
-werkwoord: STERKWERKWOORD|ZWAKWERKWOORD;
-STERKWERKWOORD: ('is'|'heeft'|'zijn'|'hebben'|'zag'|'wordt'|'doet'|'vervoeren'|'kan'|'mag'|'verblijven'|'bestaat');
-ZWAKWERKWOORD: ('ge'|'ver')? ('werk'|'bevat'|'plaats'|'neem'|'maak') ('en'|'t'|'te'|'de'|'ten'|'den')?;
-bezittelijkvoornaamwoord: ('zijn'|'haar'|'hun'|'mijn');
-telwoord: NUMMER;
-bijwoord: ('maximaal'|'minimaal'|'minstens'|'Er'|'er');
-kwantor: ('elke' 'e'?) ;
-NUMMER: '0'..'9'+;
-lidwoord: LIDWOORD;
-LIDWOORD: ('de'|'het'|'een'|'De'|'Het'|'Een');
-woord: WOORD;
-WOORD: (('a'..'z')|('A'..'Z')|'ë'|'ï'|'\'')+;
-WS  :  (' ' |'\n' |'\r' )+ -> skip ;
+csv: row+;
+row: name seperator direction seperator conjugations (EOF | NEWLINE);
+conjugations: (conjugation seperator?)+;
+conjugation: (WOORD); 
+seperator: SEMICOLON | COMMA;
+name: WOORD;
+direction: WOORD;
+WOORD: (('a'..'z')|('A'..'Z'))+ ;
+SEMICOLON: ';' ;
+COMMA: ',' ;
+NEWLINE: ('\n' | '\r')+;

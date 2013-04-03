@@ -27,36 +27,39 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package nl.han.ica.ap.nlp.model;
+package nl.han.ica.ap.nlp.listeners;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-/**
- * @author Joell
- *
- */
-public class Class implements IClass, IAttribute{
-	private String name;
-	private ArrayList<IAttribute> attributes = new ArrayList<IAttribute>();
+import nl.han.ica.ap.nlp.CSVtoG4BaseListener;
+import nl.han.ica.ap.nlp.CSVtoG4Parser;
+import nl.han.ica.ap.nlp.CSVtoG4Parser.ConjugationContext;
+import nl.han.ica.ap.nlp.CSVtoG4Parser.CsvContext;
+import nl.han.ica.ap.nlp.CSVtoG4Parser.DirectionContext;
+import nl.han.ica.ap.nlp.CSVtoG4Parser.NameContext;
+import nl.han.ica.ap.nlp.CSVtoG4Parser.RowContext;
+import nl.han.ica.ap.nlp.util.CSVtoG4;
 
-	public Class(String name) {
-		this.name = name;
-	}
+public class CSVRowListener extends CSVtoG4BaseListener {
+	CSVtoG4Parser parser;
+	CSVtoG4 csvtog4;
+
+	ArrayList<String> conjugations = new ArrayList<String>();
 	
-	public String getName() {
-		return name;
-	}
-	
-	public ArrayList<IAttribute> getAttributes(){
-		return attributes;
-	}
-	
-	public void setAttributes(ArrayList<IAttribute> attributes){
-		this.attributes = attributes;
+	public CSVRowListener(CSVtoG4Parser parser, CSVtoG4 csvtog4) {
+		this.parser = parser;
+		this.csvtog4 = csvtog4;
 	}
 
 	@Override
-	public void setName(String name) {
-		this.name = name;
+	public void exitCsv(CsvContext ctx) {
+		csvtog4.conjugations = conjugations;
+	}
+	
+	@Override
+	public void enterConjugation(ConjugationContext ctx) {
+		conjugations.add(ctx.getText());
 	}
 }
