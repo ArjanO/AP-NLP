@@ -66,17 +66,24 @@ public class TreeController {
 	public void addClass(Class c) {
 		if(notExist(c)) {
 			classes.add(c);
-		}
-		
+		}		
 	}	
 	
 	private boolean notExist(Class c) {
 		for(IClass cInList : classes) {
-			if(cInList.getName().equalsIgnoreCase(c.getName())) {
+			if(cInList.getName().equalsIgnoreCase(c.getName()) || pluralExists(c.getName(),cInList)) {
 				return false;
 			}
 		}
 		return true;
 	}
 
+	private boolean pluralExists(String name, IClass cInList) {
+		if(name.equalsIgnoreCase(cInList.getName() + "s")) {
+			return true;
+		} else if(cInList.getName().equalsIgnoreCase(name + "s")) {
+			cInList.setName(name);
+		}
+		return false;
+	}
 }
