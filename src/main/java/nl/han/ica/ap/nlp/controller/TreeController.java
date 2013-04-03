@@ -27,26 +27,39 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package nl.han.ica.ap.nlp.listeners;
+package nl.han.ica.ap.nlp.controller;
+
+import java.util.ArrayList;
+
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
+
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import nl.han.ica.ap.nlp.App;
-import nl.han.ica.ap.nlp.controller.TreeController;
-import nl.han.ica.ap.nlp.model.Class;
-import nl.han.ica.ap.nlp.NlpBaseListener;
 import nl.han.ica.ap.nlp.NlpParser;
-import nl.han.ica.ap.nlp.NlpParser.ZelfstandignaamwoordContext;
+import nl.han.ica.ap.nlp.export.IExport;
+import nl.han.ica.ap.nlp.export.PowerDesignerExport;
+import nl.han.ica.ap.nlp.listeners.ZelfstandignaamwoordListener;
+import nl.han.ica.ap.nlp.model.IClass;
 
-public class ZelfstandignaamwoordListener extends NlpBaseListener {
-	NlpParser parser;
-	TreeController controller;
-	public ZelfstandignaamwoordListener(TreeController controller, NlpParser parser) {
-		this.parser = parser;
-		this.controller = controller;
+/**
+ * @author Joell
+ *
+ */
+public class TreeController {
+	public ArrayList<IClass> classes = new ArrayList<IClass>();
+	
+	public TreeController() {
+		
 	}
 	
-	@Override
-	public void enterZelfstandignaamwoord(ZelfstandignaamwoordContext ctx) {
-		Class c = new Class(ctx.getText());
-		controller.classes.add(c);
+	public void walkTree(ParseTree tree,NlpParser parser) {
+		ParseTreeWalker walker = new ParseTreeWalker();
+		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(this,parser);
+		walker.walk(listener, tree);
+		IExport export = new PowerDesignerExport();
+		export.export(classes);
 	}
+
 }
