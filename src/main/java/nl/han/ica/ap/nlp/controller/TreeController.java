@@ -83,6 +83,14 @@ public class TreeController {
 			return true;
 		} else if(cInList.getName().equalsIgnoreCase(name + "s")) {
 			cInList.setName(name);
+		} else if(name.equalsIgnoreCase(cInList.getName() + "'s")) {
+			return true;
+		} else if(cInList.getName().equalsIgnoreCase(name + "'s")) {
+			cInList.setName(name);
+		} else if(name.equalsIgnoreCase(cInList.getName() + "en")) {
+			return true;
+		} else if(cInList.getName().equalsIgnoreCase(name + "en")) {
+			cInList.setName(name);
 		}
 		return false;
 	}
