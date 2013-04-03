@@ -30,6 +30,7 @@
 package nl.han.ica.ap.nlp.util;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.PrintStream;
@@ -46,29 +47,23 @@ import nl.han.ica.ap.nlp.listeners.CSVRowListener;
 
 public class CSVtoG4 {
 	
-	public static ArrayList<String> conjugations = new ArrayList<String>();
-	
-	private static CSVtoG4 csvtog4;
-	
-	private CSVtoG4(){}
-	public static CSVtoG4 getInstance() {
-		if(csvtog4 == null) {
-			csvtog4 = new CSVtoG4();
-		}
-		return csvtog4;
-	}
-	
 	public static void main(String[] args) throws Exception {
-		CSVtoG4 csvtog4 = CSVtoG4.getInstance();
+		
 		String csvfile = readFileAsString("res/werkwoorden.csv");
-		ANTLRInputStream input = new ANTLRInputStream(csvfile);
-		CSVtoG4Lexer lexer = new CSVtoG4Lexer(input);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		CSVtoG4Parser parser = new CSVtoG4Parser(tokens);
+		
+		ANTLRInputStream 	input 	= new ANTLRInputStream(csvfile);
+		CSVtoG4Lexer 		lexer 	= new CSVtoG4Lexer(input);
+		CommonTokenStream 	tokens 	= new CommonTokenStream(lexer);
+		CSVtoG4Parser 		parser 	= new CSVtoG4Parser(tokens);
+		ParseTreeWalker 	walker 	= new ParseTreeWalker();
+		
 		ParseTree tree = parser.csv();
-		ParseTreeWalker walker = new ParseTreeWalker();
-		CSVRowListener listener = new CSVRowListener(parser, csvtog4);
+		
+		CSVRowListener listener = new CSVRowListener(parser);
+		
 		walker.walk(listener, tree);
+		
+		ArrayList<String> conjugations = listener.getConjugations();
 		
 		String werkwoorden = "lexer grammar NlpWerkwoorden;\n\nWERKWOORD : (";
 		for(int i=0; i<conjugations.size(); i++){
@@ -77,17 +72,34 @@ public class CSVtoG4 {
 		werkwoorden = werkwoorden.substring(0, werkwoorden.length()-1);
 		werkwoorden += ");";
 		
+		writeStringtoFile("src/main/antlr/imports/NlpWerkwoorden.g4", werkwoorden);
+		
+		System.out.println("Finished exporting werkwoorden to NlpWerkwoorden.g4");
+	}
+	
+	/**
+	 * Write a string to a file. 
+	 * @param filePath
+	 * @param content
+	 * @throws FileNotFoundException
+	 */
+	private static void writeStringtoFile(String filePath, String content) throws FileNotFoundException{
 		PrintStream out = null;
 		try {
-		    out = new PrintStream(new FileOutputStream("src/main/antlr/imports/NlpWerkwoorden.g4"));
-		    out.print(werkwoorden);
+		    out = new PrintStream(new FileOutputStream(filePath));
+		    out.print(content);
 		}
 		finally {
 		    if (out != null) out.close();
 		}
-		System.out.println("Finished exporting werkwoorden to NlpWerkwoorden.g4");
 	}
 	
+	/**
+	 * Read a file as a string.
+	 * @param filePath
+	 * @return
+	 * @throws java.io.IOException
+	 */
     private static String readFileAsString(String filePath) throws java.io.IOException{
     	StringBuffer fileData = new StringBuffer(1000);
     	BufferedReader reader = new BufferedReader(new FileReader(filePath));
