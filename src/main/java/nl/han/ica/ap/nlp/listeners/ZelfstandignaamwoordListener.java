@@ -32,6 +32,7 @@ package nl.han.ica.ap.nlp.listeners;
 import java.util.ArrayList;
 
 import nl.han.ica.ap.nlp.App;
+import nl.han.ica.ap.nlp.controller.TreeController;
 import nl.han.ica.ap.nlp.model.Class;
 import nl.han.ica.ap.nlp.NlpBaseListener;
 import nl.han.ica.ap.nlp.NlpParser;
@@ -40,18 +41,19 @@ import nl.han.ica.ap.nlp.NlpParser.ZelfstandignaamwoordContext;
 public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	NlpParser parser;
 	App app;
-	
+	TreeController controller;
 	String direction;
 	boolean direct; 		//Krijgt de waarde van de LR column uit het csv bestand
 	
-	public ZelfstandignaamwoordListener(NlpParser parser, App app) {
+	public ZelfstandignaamwoordListener(TreeController controller, NlpParser parser) {
 		this.parser = parser;
-		this.app = app;
+		this.controller = controller;
 	}
 	
 	@Override
 	public void enterZelfstandignaamwoord(ZelfstandignaamwoordContext ctx) {
-		Class c = new Class(ctx.getText());
+		Class c = new Class(ctx.getText().substring(0, 1).toUpperCase()+ctx.getText().substring(1));
+		controller.addClass(c);
 		ArrayList<String> znwlijst= new ArrayList<String>();
 		znwlijst.add(ctx.getText());
 	
@@ -62,7 +64,5 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		}else{
 			direction= "";
 		}
-		
-		app.classes.add(c);
 	}
 }
