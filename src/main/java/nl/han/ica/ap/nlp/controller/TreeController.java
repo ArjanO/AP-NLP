@@ -41,6 +41,7 @@ import nl.han.ica.ap.nlp.NlpParser;
 import nl.han.ica.ap.nlp.export.IExport;
 import nl.han.ica.ap.nlp.export.PowerDesignerExport;
 import nl.han.ica.ap.nlp.listeners.ZelfstandignaamwoordListener;
+import nl.han.ica.ap.nlp.model.Class;
 import nl.han.ica.ap.nlp.model.IClass;
 
 /**
@@ -58,8 +59,24 @@ public class TreeController {
 		ParseTreeWalker walker = new ParseTreeWalker();
 		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(this,parser);
 		walker.walk(listener, tree);
-		IExport export = new PowerDesignerExport();
-		export.export(classes);
+		IExport export = new PowerDesignerExport();		
+		System.out.println(export.export(classes));
+	}
+
+	public void addClass(Class c) {
+		if(notExist(c)) {
+			classes.add(c);
+		}
+		
+	}	
+	
+	private boolean notExist(Class c) {
+		for(IClass cInList : classes) {
+			if(cInList.getName().equalsIgnoreCase(c.getName())) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

@@ -46,7 +46,7 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	
 	@Override
 	public void enterZelfstandignaamwoord(ZelfstandignaamwoordContext ctx) {
-		Class c = new Class(ctx.getText());
-		controller.classes.add(c);
+		Class c = new Class(ctx.getText().substring(0, 1).toUpperCase()+ctx.getText().substring(1));
+		controller.addClass(c);
 	}
 }
