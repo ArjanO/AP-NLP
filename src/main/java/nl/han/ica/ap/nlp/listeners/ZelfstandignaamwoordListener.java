@@ -33,16 +33,22 @@ import java.util.ArrayList;
 
 import nl.han.ica.ap.nlp.App;
 import nl.han.ica.ap.nlp.controller.TreeController;
+import nl.han.ica.ap.nlp.controller.VerbDirectionController;
 import nl.han.ica.ap.nlp.model.Class;
+import nl.han.ica.ap.nlp.model.IAttribute;
 import nl.han.ica.ap.nlp.NlpBaseListener;
 import nl.han.ica.ap.nlp.NlpParser;
 import nl.han.ica.ap.nlp.NlpParser.BijwoordContext;
+import nl.han.ica.ap.nlp.NlpParser.WerkwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.ZelfstandignaamwoordContext;
 
 public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	NlpParser parser;
 	App app;
 	TreeController controller;	
+	ZelfstandignaamwoordContext znw;
+	boolean direction;
+	boolean start = false;
 	
 	public ZelfstandignaamwoordListener(TreeController controller, NlpParser parser) {
 		this.parser = parser;
@@ -51,10 +57,31 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	
 	@Override
 	public void enterZelfstandignaamwoord(ZelfstandignaamwoordContext ctx) {
-		Class c = new Class(ctx.getText().substring(0, 1).toUpperCase()+ctx.getText().substring(1));
-		controller.addClass(c);
-		ArrayList<String> znwlijst= new ArrayList<String>();
-		znwlijst.add(ctx.getText());
+		if(start) {
+			if(!direction) {
+				Class c = new Class(znw.getText());
+				IAttribute a = new Class(ctx.getText());
+				c.addAttribute(a);
+				controller.addClass(c);
+			} else {
+				Class c = new Class(ctx.getText());
+				IAttribute a = new Class(znw.getText());
+				c.addAttribute(a);
+				controller.addClass(c);
+			}
+			start = false;
+		} else {
+			znw = ctx;
+			start = true;
+		}		
+		
+	}
+	
+	@Override
+	public void enterWerkwoord(WerkwoordContext ctx) {
+		VerbDirectionController vc = new VerbDirectionController();
+		direction = vc.getDirection(ctx.getText());		
 	}
 	
 }
+
