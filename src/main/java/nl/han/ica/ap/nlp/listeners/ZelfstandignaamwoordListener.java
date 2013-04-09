@@ -64,6 +64,11 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 				IAttribute a = new Class(ctx.getText());
 				c.addAttribute(a);
 				controller.addClass(c);
+			} else {
+				Class c = new Class(ctx.getText());
+				IAttribute a = new Class(znw.getText());
+				c.addAttribute(a);
+				controller.addClass(c);
 			}
 			start = false;
 		} else {
