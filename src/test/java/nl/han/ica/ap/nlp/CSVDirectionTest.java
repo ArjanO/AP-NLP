@@ -27,30 +27,24 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package nl.han.ica.ap.nlp.listeners;
+package nl.han.ica.ap.nlp;
 
-import nl.han.ica.ap.nlp.App;
-import nl.han.ica.ap.nlp.controller.TreeController;
-import nl.han.ica.ap.nlp.model.Class;
-import nl.han.ica.ap.nlp.NlpBaseListener;
-import nl.han.ica.ap.nlp.NlpParser;
-import nl.han.ica.ap.nlp.NlpParser.BijwoordContext;
-import nl.han.ica.ap.nlp.NlpParser.ZelfstandignaamwoordContext;
+import static org.junit.Assert.*;
 
-public class ZelfstandignaamwoordListener extends NlpBaseListener {
-	NlpParser parser;
-	TreeController controller;
-	
-	
-	public ZelfstandignaamwoordListener(TreeController controller, NlpParser parser) {
-		this.parser = parser;
-		this.controller = controller;
+import nl.han.ica.ap.nlp.controller.VerbDirectionController;
+
+import org.junit.Test;
+
+/**
+ * @author Joell
+ *
+ */
+public class CSVDirectionTest {
+
+	@Test
+	public void test() {
+		VerbDirectionController vbc = new VerbDirectionController();
+		assertFalse(vbc.getDirection("heeft"));
 	}
-	
-	@Override
-	public void enterZelfstandignaamwoord(ZelfstandignaamwoordContext ctx) {
-		Class c = new Class(ctx.getText().substring(0, 1).toUpperCase()+ctx.getText().substring(1));
-		controller.addClass(c);
-	}
-	
+
 }

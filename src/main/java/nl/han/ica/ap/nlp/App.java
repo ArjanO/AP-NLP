@@ -29,7 +29,6 @@
  */
 package nl.han.ica.ap.nlp;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -69,7 +68,6 @@ public class App {
 		try {
 			input = new ANTLRInputStream(System.in);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		NlpLexer lexer = new NlpLexer(input);
