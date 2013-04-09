@@ -44,16 +44,33 @@ import nl.han.ica.ap.nlp.util.CSVtoG4;
 
 public class CSVRowListener extends CSVtoG4BaseListener {
 	CSVtoG4Parser parser;
+	private HashMap<String, Boolean> verbForms;
+	private boolean direction;
 
 	private ArrayList<String> conjugations = new ArrayList<String>();
 	
 	public CSVRowListener(CSVtoG4Parser parser) {
 		this.parser = parser;
+		verbForms =  new HashMap<String, Boolean>();
 	}
 	
 	@Override
 	public void enterConjugation(ConjugationContext ctx) {
 		conjugations.add(ctx.getText());
+		verbForms.put(ctx.getText(), direction);
+	}
+	
+	@Override
+	public void enterDirection(CSVtoG4Parser.DirectionContext ctx) {
+		if(ctx.getText().equals("LR")) {
+			direction = false;
+		} else {
+			direction = true;
+		}
+	}
+	
+	public boolean getDirection(String name) {		
+		return verbForms.get(name);
 	}
 	
 	public ArrayList<String> getConjugations(){
