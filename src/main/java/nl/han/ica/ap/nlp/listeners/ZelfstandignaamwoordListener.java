@@ -49,7 +49,6 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	ZelfstandignaamwoordContext znw;
 	boolean direction;
 	boolean start = false;
-
 	
 	public ZelfstandignaamwoordListener(TreeController controller, NlpParser parser) {
 		this.parser = parser;
@@ -76,7 +75,8 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	@Override
 	public void enterWerkwoord(WerkwoordContext ctx) {
 		VerbDirectionController vc = new VerbDirectionController();
-		direction = vc.getDirection(ctx.getText());
+		direction = vc.getDirection(ctx.getText());		
 	}
 	
 }
+
