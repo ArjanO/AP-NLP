@@ -47,6 +47,10 @@ public class Class implements IClass, IAttribute{
 		return name;
 	}
 	
+	public void addAttribute(IAttribute a) {
+		attributes.add(a);
+	}
+	
 	public ArrayList<IAttribute> getAttributes(){
 		return attributes;
 	}

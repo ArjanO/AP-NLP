@@ -29,7 +29,7 @@
 */
 grammar Nlp;
 
-import NlpGlobal;
+import NlpGlobal;    
 
 @header {
     package nl.han.ica.ap.nlp;
