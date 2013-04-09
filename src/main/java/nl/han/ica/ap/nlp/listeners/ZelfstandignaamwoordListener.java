@@ -42,9 +42,10 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	NlpParser parser;
 	App app;
 	TreeController controller;
-	boolean direct; 		//Krijgt de waarde van de LR column uit het csv bestand
+	ZelfstandignaamwoordContext znw;
+	boolean direction; 		
 	
-	ArrayList<String> znw= new ArrayList<String>();
+	
 	
 	public ZelfstandignaamwoordListener(TreeController controller, NlpParser parser) {
 		this.parser = parser;
@@ -57,8 +58,5 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		controller.addClass(c);
 	}
 	
-	public ArrayList<String> getZelfstandignaamwoorden(){
-		return znw;
-	}
 }
 
