@@ -29,5 +29,11 @@
 */
 lexer grammar NlpGlobal;
 
-STERKWERKWOORD: ('is'|'heeft'|'zijn'|'hebben'|'zag'|'wordt'|'doet'|'vervoeren'|'kan'|'mag'|'verblijven'|'bestaat');
-ZWAKWERKWOORD: ('ge'|'ver')? ('werk'|'bevat'|'plaats'|'neem'|'maak') ('en'|'t'|'te'|'de'|'ten'|'den')?;
+LIDWOORD: ('de'|'het'|'een'|'De'|'Het'|'Een');
+
+NUMMER: '0'..'9'+;
+
+EINDEZIN: '.';
+
+WOORD: (('a'..'z')|('A'..'Z')|'ë'|'ï'|'\'')+;
+WS  :  (' ' |'\n' |'\r' )+ -> skip ;
