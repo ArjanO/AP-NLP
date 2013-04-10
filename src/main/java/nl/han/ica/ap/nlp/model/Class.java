@@ -63,4 +63,12 @@ public class Class implements IClass, IAttribute{
 	public void setName(String name) {
 		this.name = name;
 	}
+
+	@Override
+	public void addAttributes(ArrayList<IAttribute> attributes) {
+		for(IAttribute _attributes : attributes) {
+			this.attributes.add(_attributes);
+		}
+		
+	}
 }

@@ -36,6 +36,7 @@ import nl.han.ica.ap.nlp.controller.TreeController;
 import nl.han.ica.ap.nlp.controller.VerbDirectionController;
 import nl.han.ica.ap.nlp.model.Class;
 import nl.han.ica.ap.nlp.model.IAttribute;
+import nl.han.ica.ap.nlp.model.IClass;
 import nl.han.ica.ap.nlp.NlpBaseListener;
 import nl.han.ica.ap.nlp.NlpParser;
 import nl.han.ica.ap.nlp.NlpParser.BijwoordContext;

@@ -49,7 +49,7 @@ import nl.han.ica.ap.nlp.model.IClass;
 
 
 /**
- * Hello world!
+ * @author Joell
  * 
  */
 public class App {
