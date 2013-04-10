@@ -35,4 +35,6 @@ public interface IClass extends IAttribute{
 	public String getName();
 	public void setName(String name);
 	public ArrayList<IAttribute> getAttributes();
+	public void addAttribute(IAttribute a);
+	public void addAttributes(ArrayList<IAttribute> attributes);
 }

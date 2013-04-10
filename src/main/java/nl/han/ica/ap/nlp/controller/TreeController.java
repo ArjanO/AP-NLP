@@ -30,11 +30,14 @@
 package nl.han.ica.ap.nlp.controller;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 
 import org.antlr.v4.runtime.tree.ParseTree;
+import org.junit.rules.ExternalResource;
 
 import nl.han.ica.ap.nlp.App;
 import nl.han.ica.ap.nlp.NlpParser;
@@ -42,6 +45,7 @@ import nl.han.ica.ap.nlp.export.IExport;
 import nl.han.ica.ap.nlp.export.PowerDesignerExport;
 import nl.han.ica.ap.nlp.listeners.ZelfstandignaamwoordListener;
 import nl.han.ica.ap.nlp.model.Class;
+import nl.han.ica.ap.nlp.model.IAttribute;
 import nl.han.ica.ap.nlp.model.IClass;
 
 /**
@@ -64,18 +68,33 @@ public class TreeController {
 	}
 
 	public void addClass(Class c) {
-		if(notExist(c)) {
-			classes.add(c);
-		}		
+		IClass existing = getClass(c, classes);
+		if(existing == null){
+			classes.add(c);			
+		} else {
+			existing.addAttributes(c.getAttributes());
+		}
 	}	
 	
-	private boolean notExist(Class c) {
-		for(IClass cInList : classes) {
+	private IClass getClass(Class c,ArrayList<IClass> classlist) {
+		for(IClass cInList : classlist) {
 			if(cInList.getName().equalsIgnoreCase(c.getName()) || pluralExists(c.getName(),cInList)) {
-				return false;
+				return cInList;
+			} else if(cInList.getAttributes().size() > 0){
+				return getClass(c,transformToIClassList(cInList.getAttributes()));
 			}
 		}
-		return true;
+		return null;
+	}
+	
+	private ArrayList<IClass> transformToIClassList(ArrayList<IAttribute> attributes) {
+		ArrayList<IClass> _classes = new ArrayList<IClass>();
+		for(IAttribute attribute : attributes) {
+			if(attribute instanceof IClass) {
+				_classes.add((IClass) attribute);
+			}
+		}
+		return _classes;
 	}
 
 	private boolean pluralExists(String name, IClass cInList) {
@@ -83,14 +102,17 @@ public class TreeController {
 			return true;
 		} else if(cInList.getName().equalsIgnoreCase(name + "s")) {
 			cInList.setName(name);
+			return true;
 		} else if(name.equalsIgnoreCase(cInList.getName() + "'s")) {
 			return true;
 		} else if(cInList.getName().equalsIgnoreCase(name + "'s")) {
 			cInList.setName(name);
+			return true;
 		} else if(name.equalsIgnoreCase(cInList.getName() + "en")) {
 			return true;
 		} else if(cInList.getName().equalsIgnoreCase(name + "en")) {
 			cInList.setName(name);
+			return true;
 		}
 		return false;
 	}
