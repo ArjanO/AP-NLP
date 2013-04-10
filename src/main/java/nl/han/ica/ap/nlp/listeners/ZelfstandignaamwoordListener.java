@@ -76,7 +76,7 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 			start = true;
 		}		
 	}
-	
+
 	@Override
 	public void enterWerkwoord(WerkwoordContext ctx) {
 		VerbDirectionController vc = new VerbDirectionController();
