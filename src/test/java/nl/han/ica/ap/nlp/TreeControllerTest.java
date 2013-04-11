@@ -35,4 +35,24 @@ public class TreeControllerTest {
 		Class actual = (Class) a2.getAttributes().get(0);
 		assertEquals(paspoort, actual);
 	}
+	
+	@Test
+	public void testClassBecomesAttribute() {
+		TreeController controller = new TreeController();
+		Class vliegtuig = new Class("Vliegtuig");
+		Class passagier = new Class("Passagier");
+		vliegtuig.addAttribute(passagier);
+		controller.addClass(vliegtuig);
+		Class vliegtuigmaatschappij = new Class("Vliegtuigmaatschappij");
+		Class vliegtuig2 = new Class("vliegtuig");
+		vliegtuigmaatschappij.addAttribute(vliegtuig2);
+		controller.addClass(vliegtuigmaatschappij);
+		assertEquals(1, controller.classes.size());		
+		assertEquals(vliegtuigmaatschappij,controller.classes.get(0));		
+		assertEquals(vliegtuig,controller.classes.get(0).getAttributes().get(0));
+		IClass actualclass = (IClass) controller.classes.get(0).getAttributes().get(0);
+		assertEquals(passagier,actualclass.getAttributes().get(0));
+	}
+	
+	
 }

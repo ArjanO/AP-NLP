@@ -68,15 +68,22 @@ public class TreeController {
 	}
 
 	public void addClass(Class c) {
-		IClass existing = getClass(c, classes);
-		if(existing == null){
-			classes.add(c);			
-		} else {
-			existing.addAttributes(c.getAttributes());
+		for(IClass attribute : transformToIClassList(c.getAttributes())) {
+			IClass existingClass = getClass(c, classes);
+			IClass existingAttribute = getClass(attribute,classes);
+			if(existingClass == null && existingAttribute == null){
+				classes.add(c);			
+			} else if(existingClass != null && existingAttribute == null) {
+				existingClass.addAttributes(c.getAttributes());
+			} else if(existingClass == null && existingAttribute != null) {
+				c.getAttributes().set(c.getAttributes().indexOf(attribute), existingAttribute);
+				classes.remove(existingAttribute);
+				classes.add(c);
+			}
 		}
 	}	
 	
-	private IClass getClass(Class c,ArrayList<IClass> classlist) {
+	private IClass getClass(IClass c,ArrayList<IClass> classlist) {
 		for(IClass cInList : classlist) {
 			if(cInList.getName().equalsIgnoreCase(c.getName()) || pluralExists(c.getName(),cInList)) {
 				return cInList;
