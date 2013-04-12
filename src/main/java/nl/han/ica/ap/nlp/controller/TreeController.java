@@ -74,11 +74,13 @@ public class TreeController {
 			if(existingClass == null && existingAttribute == null){
 				classes.add(c);			
 			} else if(existingClass != null && existingAttribute == null) {
-				existingClass.addAttributes(c.getAttributes());
+				existingClass.addAttribute(attribute);
 			} else if(existingClass == null && existingAttribute != null) {
 				c.getAttributes().set(c.getAttributes().indexOf(attribute), existingAttribute);
 				classes.remove(existingAttribute);
 				classes.add(c);
+			} else {
+				existingClass.addAttribute(existingAttribute);
 			}
 		}
 	}	
@@ -88,7 +90,9 @@ public class TreeController {
 			if(cInList.getName().equalsIgnoreCase(c.getName()) || pluralExists(c.getName(),cInList)) {
 				return cInList;
 			} else if(cInList.getAttributes().size() > 0){
-				return getClass(c,transformToIClassList(cInList.getAttributes()));
+				IClass result = getClass(c,transformToIClassList(cInList.getAttributes()));
+				if(result != null) 
+				return result;
 			}
 		}
 		return null;
