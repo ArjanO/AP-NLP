@@ -32,6 +32,20 @@
 			<artifactId>antlr4-maven-plugin</artifactId>
 			<version>4.0</version>
 		</dependency>
+		<dependency>
+			<!-- EasyMock License: Apache License Version 2.0, January 2004 http://www.apache.org/licenses/ -->
+			<groupId>org.easymock</groupId>
+			<artifactId>easymock</artifactId>
+			<version>3.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<!-- EasyMock License: Apache License Version 2.0, January 2004 http://www.apache.org/licenses/ -->
+			<groupId>org.easymock</groupId>
+			<artifactId>easymockclassextension</artifactId>
+			<version>3.1</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
