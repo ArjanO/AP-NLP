@@ -45,7 +45,8 @@ import nl.han.ica.ap.nlp.NlpParser.ZelfstandignaamwoordContext;
 
 public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	NlpParser parser;
-	App app;
+	App app;	
+	
 	TreeController controller;	
 	ZelfstandignaamwoordContext znw;
 	boolean direction;
@@ -75,14 +76,12 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 			znw = ctx;
 			start = true;
 		}		
-		
 	}
-	
+
 	@Override
 	public void enterWerkwoord(WerkwoordContext ctx) {
 		VerbDirectionController vc = new VerbDirectionController();
 		direction = vc.getDirection(ctx.getText());		
 	}
-	
 }
 
