@@ -36,14 +36,14 @@ import NlpWerkwoorden, NlpLexer;
 }
 tekst: zin+;
 zin:  (bijwoord|naamwoordgroep|zelfstandignaamwoord ) verbaleconstituent eindezin;
-naamwoordgroep: woord* bijwoord? (lidwoord|telwoord|bezittelijkvoornaamwoord|kwantor) (bijvoeglijknaamwoord)* zelfstandignaamwoord (voorzetsel|voegwoord)?;
+naamwoordgroep: woord* voorzetsel? bijwoord? (lidwoord|telwoord|bezittelijkvoornaamwoord|kwantor) (bijvoeglijknaamwoord)* zelfstandignaamwoord (voorzetsel|voegwoord)?;
 verbaleconstituent : woord* werkwoord (naamwoordgroep|zelfstandignaamwoord) naamwoordgroep* (verbaleconstituent*|werkwoord);
 eindezin: EINDEZIN;
 zelfstandignaamwoord: WOORD;
 bijvoeglijknaamwoord: WOORD;
 voorzetsel: ('in'|'op');
 voegwoord: ('en'|'of');
-werkwoord: STERKWERKWOORD|ZWAKWERKWOORD;
+werkwoord: WERKWOORD;
 bezittelijkvoornaamwoord: ('zijn'|'haar'|'hun'|'mijn');
 telwoord: NUMMER;
 bijwoord: ('maximaal'|'minimaal'|'minstens'|'Er'|'er');
