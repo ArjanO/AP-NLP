@@ -134,6 +134,8 @@ public class PowerDesignerExport implements IExport {
 			    			Element association = createAssociation(doc, ((IClass)childClass), parentClass);
 			    			root.appendChild(association);
 			    			associationlist.add(tmprelation);
+			    		}else{
+			    			return;
 			    		}
 			    	}
 			    	
