@@ -61,7 +61,7 @@ public class TreeController {
 	
 	public void walkTree(ParseTree tree,NlpParser parser) {
 		ParseTreeWalker walker = new ParseTreeWalker();
-		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(this,parser);
+		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(this);
 		walker.walk(listener, tree);
 		IExport export = new PowerDesignerExport();		
 		System.out.println(export.export(classes));
@@ -81,6 +81,7 @@ public class TreeController {
 				classes.add(c);
 			} else {
 				existingClass.addAttribute(existingAttribute);
+				classes.remove(existingAttribute);
 			}
 		}
 	}	
