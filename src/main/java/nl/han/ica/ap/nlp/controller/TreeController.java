@@ -133,7 +133,6 @@ public class TreeController {
 
 	// Krijg de stam van het ingevoerde zelfstandignaamwoord.
 	private String getInputSingular(String name) {
-		
 		int inputLength= name.length();
 		
 		if(name.endsWith("en")) {
