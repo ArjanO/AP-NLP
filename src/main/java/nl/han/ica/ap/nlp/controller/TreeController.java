@@ -119,12 +119,56 @@ public class TreeController {
 		} else if(cInList.getName().equalsIgnoreCase(name + "'s")) {
 			cInList.setName(name);
 			return true;
-		} else if(name.equalsIgnoreCase(cInList.getName() + "en")) {
-			return true;
-		} else if(cInList.getName().equalsIgnoreCase(name + "en")) {
+		} else if(name.equalsIgnoreCase(getClassSingular(cInList.getName()))){
 			cInList.setName(name);
 			return true;
+		} else if(cInList.getName().equalsIgnoreCase(getInputSingular(name))){
+			
+			return true;
+		} else {
+			return false;
 		}
-		return false;
+	}
+
+	// Krijg de stam van het ingevoerde zelfstandignaamwoord.
+	private String getInputSingular(String name) {
+		
+		int inputLength= name.length();
+		
+		if(name.endsWith("en")) {
+			if(name.charAt(inputLength-3) == name.charAt(inputLength-4)) {
+				name= name.substring(0, inputLength-3);
+			} else {
+				name= name.substring(0, inputLength-2);
+				inputLength= name.length()-1;
+				if(name.charAt(inputLength-2) == 'a' || name.charAt(inputLength-2) == 'e' || name.charAt(inputLength-2) == 'o' || name.charAt(inputLength-2) == 'i' || name.charAt(inputLength-2) == 'u') {
+					return name;
+				} else {
+					name= name.replace(name.substring(inputLength), name.substring(inputLength-1));
+				}	
+			}
+		}
+		return name;
+	}
+
+	// Krijg de stam van het het bestaande zelfstandignaamwoord.
+	private String getClassSingular(String cInList) {
+		int cInListLength= cInList.length();
+		
+		if(cInList.endsWith("en")) {
+			if(cInList.charAt(cInListLength-3) == cInList.charAt(cInListLength-4)) {
+				cInList= cInList.substring(0, cInListLength-3);
+			} else {
+				cInList= cInList.substring(0, cInListLength-2);
+				cInListLength= cInList.length();
+				if(cInList.charAt(cInListLength-2) == 'a' || cInList.charAt(cInListLength-2) == 'e' || cInList.charAt(cInListLength-2) == 'o' || cInList.charAt(cInListLength-2) == 'i' || cInList.charAt(cInListLength-2) == 'u') {
+					return cInList;
+				} else {
+					cInList= cInList.replace(cInList.substring(cInListLength), cInList.substring(cInListLength-1));
+				}
+			}
+		}
+		return cInList;
 	}
 }
+
