@@ -81,7 +81,9 @@ public class TreeController {
 				classes.add(c);
 			} else {
 				existingClass.addAttribute(existingAttribute);
-				classes.remove(existingAttribute);
+				if(classes.size() > 1) {
+					classes.remove(existingAttribute);
+				}
 			}
 		}
 	}	
