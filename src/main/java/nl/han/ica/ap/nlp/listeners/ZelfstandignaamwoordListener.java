@@ -44,16 +44,12 @@ import nl.han.ica.ap.nlp.NlpParser.WerkwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.ZelfstandignaamwoordContext;
 
 public class ZelfstandignaamwoordListener extends NlpBaseListener {
-	NlpParser parser;
-	App app;	
-	
 	TreeController controller;	
 	ZelfstandignaamwoordContext znw;
 	boolean direction;
 	boolean start = false;
 	
-	public ZelfstandignaamwoordListener(TreeController controller, NlpParser parser) {
-		this.parser = parser;
+	public ZelfstandignaamwoordListener(TreeController controller) {
 		this.controller = controller;
 	}
 	
