@@ -29,15 +29,14 @@
  */
 package nl.han.ica.ap.nlp.export;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 
 import nl.han.ica.ap.nlp.model.IAttribute;
 import nl.han.ica.ap.nlp.model.IClass;
+import nl.han.ica.ap.nlp.util.File;
+import nl.han.ica.ap.nlp.util.IFile;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -50,9 +49,22 @@ import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
 
 public class PowerDesignerExport implements IExport {
+	private IFile file;
+	
+	public int associationid = 0;
+	
+	public PowerDesignerExport() {
+		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
+		
+		file = new File(filepath);
+	}
+	
+	public void setFile(IFile file) {
+		this.file = file;
+	}
 	
 	public String export(ArrayList<IClass> classes){
-		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()/1000) + ".xml";
+		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
 		return export(classes, filepath);
 	}
 	
@@ -68,17 +80,14 @@ public class PowerDesignerExport implements IExport {
 	    
 	    // Create and add a root element and add attributes.
 	    Element root = doc.createElement("uml:Model");
-	    root.setAttribute("name", "ObjectOrientedModel");	    
+	    root.setAttribute("name", "ObjectOrientedModel");
 	    root.setAttribute("xmi:version", "2.1");
 	    root.setAttribute("xmlns:xmi", "http://schema.omg.org/spec/XMI/2.1");
 	    root.setAttribute("xmlns:uml", "http://www.eclipse.org/uml2/2.1.0/UML");
 	    doc.appendChild(root);
     	
 	    //Create classes
-	    createClasses(doc, root, classes);
-	    
-	    //Create Associations
-	    createAssociations(doc, root, classes);
+	    createClasses(doc, root, classes, null);
 		
 		// Output the document to string.
 	    DOMImplementation impl = doc.getImplementation();
@@ -93,32 +102,35 @@ public class PowerDesignerExport implements IExport {
         
         String output = stringWriter.toString();
         
-        //Write file
-        try {
-            BufferedWriter out = new BufferedWriter(new FileWriter(filepath));
-            out.write(output);
-            out.close();
-        }catch (IOException e){ 
-           System.out.println("Can't write file.");
-        }
+        //Write to file
+        file.setContent(output);
+        file.write();
         
         return filepath;
 	}
     
-    private void createClasses(Document doc, Element root, ArrayList<IClass> classes){
+    private void createClasses(Document doc, Element root, ArrayList<IClass> classes, IClass parentClass){
     	if(classes.size() > 0){
-	    	for (IAttribute element_class : classes) {
-			    root.appendChild(createClass(doc, element_class));
+	    	for (IAttribute childClass : classes) {
 
-			    if(element_class instanceof IClass){
+	    		Element childClassElement = createClass(doc, childClass);
+			    root.appendChild(childClassElement);
+
+			    if(childClass instanceof IClass){
+			    	
+			    	if(parentClass != null){
+				    	Element association = createAssociation(doc, ((IClass)childClass), parentClass);
+				    	root.appendChild(association);
+			    	}
+			    	
 			    	ArrayList<IClass> attribute_classes = new ArrayList<IClass>();
-			    	ArrayList<IAttribute> class_attributes = ((IClass)element_class).getAttributes();
+			    	ArrayList<IAttribute> class_attributes = ((IClass)childClass).getAttributes();
 			    	for (IAttribute attribute : class_attributes) {
 						if(attribute instanceof IClass){
 							attribute_classes.add(((IClass)attribute));
 						}
 					}
-			    	createClasses(doc, root, attribute_classes);
+			    	createClasses(doc, root, attribute_classes, ((IClass)childClass));
 			    }
 			}
     	}else{
@@ -135,75 +147,57 @@ public class PowerDesignerExport implements IExport {
     	return packagedElementClass;
     }
     
-    private void createAssociations(Document doc, Element root, ArrayList<IClass> classes){
-    	//foreach class
-    	for (int i = 0; i < classes.size(); i++) {
-			IClass element_class = classes.get(i);
-			
-			//foreach element
-			for (int j = 0; j < element_class.getAttributes().size(); j++) {
-				IAttribute element_attribute = element_class.getAttributes().get(j);
-				if(element_attribute instanceof IClass){
-					IClass element_attributeclass = (IClass)element_attribute;
-					root.appendChild(createAssociation(doc, element_class, element_attributeclass));
-				}
-			}
-		}
-    }
-    
     private Element createAssociation(Document doc, IClass class1, IClass class2){
     	Element packagedElementAssociation = null;
 	    packagedElementAssociation = doc.createElement("packagedElement");
 	    packagedElementAssociation.setAttribute("xmi:type", "uml:Association");
-	    packagedElementAssociation.setAttribute("xmi:id", "ASSOCIATION_" + "TEST");
-	    packagedElementAssociation.setAttribute("name", "Association_" + "TEST");
-	    packagedElementAssociation.setAttribute("memberEnd", "OWNEDEND_" + class1.getName().toUpperCase() + " " + "OWNEDEND_" + class2.getName().toUpperCase());
-	    packagedElementAssociation.setAttribute("navigableOwnedEnd", "OWNEDEND_" + class2.getName().toUpperCase());
+	    packagedElementAssociation.setAttribute("xmi:id", "ASSOCIATION_" + associationid);
+	    packagedElementAssociation.setAttribute("memberEnd", "ASSOCIATION_" + associationid + "OWNEDEND_1" + " " + "ASSOCIATION_" + associationid + "OWNEDEND_2");
+	    packagedElementAssociation.setAttribute("navigableOwnedEnd", "ASSOCIATION_" + associationid + "OWNEDEND_2");
     	
 		    Element ownedEnd1 = null;
 	    	ownedEnd1 = doc.createElement("ownedEnd");
-	    	ownedEnd1.setAttribute("xmi:id", "OWNEDEND_" + class1.getName().toUpperCase());
-	    	ownedEnd1.setAttribute("name", "");
+	    	ownedEnd1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "OWNEDEND_1");
 	    	ownedEnd1.setAttribute("visibility", "public");
 	    	ownedEnd1.setAttribute("type", class1.getName().toUpperCase());
-	    	ownedEnd1.setAttribute("association", "ASSOCIATION_" + class1.getName().toUpperCase());
+	    	ownedEnd1.setAttribute("association", "ASSOCIATION_" + associationid);
 	    	packagedElementAssociation.appendChild(ownedEnd1);
 	    	
 		    	Element upperValue1 = null;
 		    	upperValue1 = doc.createElement("upperValue");
-		    	upperValue1.setAttribute("xmi:id", "UPPERVALUE_" + class1.getName().toUpperCase());
+		    	upperValue1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "UPPERVALUE_1");
 		    	upperValue1.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
 		    	upperValue1.setAttribute("value", "1");
 		    	ownedEnd1.appendChild(upperValue1);	
 		    	
 		    	Element lowerValue1 = null;
 		    	lowerValue1 = doc.createElement("lowerValue");
-		    	lowerValue1.setAttribute("xmi:id", "LOWERVALUE_" + class1.getName().toUpperCase());
+		    	lowerValue1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "LOWERVALUE_1");
 		    	lowerValue1.setAttribute("xmi:type", "LiteralInteger");
 		    	ownedEnd1.appendChild(lowerValue1);
 	    	
 	    	Element ownedEnd2 = null;
 	    	ownedEnd2 = doc.createElement("ownedEnd");
-	    	ownedEnd2.setAttribute("xmi:id", "OWNEDEND_" + class2.getName().toUpperCase());
-	    	ownedEnd2.setAttribute("name", "");
+	    	ownedEnd2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "OWNEDEND_2");
 	    	ownedEnd2.setAttribute("visibility", "public");
 	    	ownedEnd2.setAttribute("type", class2.getName().toUpperCase());
-	    	ownedEnd2.setAttribute("association", "ASSOCIATION_" + class2.getName().toUpperCase());
-	    	packagedElementAssociation.appendChild(ownedEnd2);	
+	    	ownedEnd2.setAttribute("association", "ASSOCIATION_" + associationid);
+	    	packagedElementAssociation.appendChild(ownedEnd2);
 	    	
 		    	Element upperValue2 = null;
 		    	upperValue2 = doc.createElement("upperValue");
-		    	upperValue2.setAttribute("xmi:id", "UPPERVALUE_" + class2.getName().toUpperCase());
+		    	upperValue2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "UPPERVALUE_2");
 		    	upperValue2.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
 		    	upperValue2.setAttribute("value", "1");
 		    	ownedEnd2.appendChild(upperValue2);
 		    	
 		    	Element lowerValue2 = null;
 		    	lowerValue2 = doc.createElement("lowerValue");
-		    	lowerValue2.setAttribute("xmi:id", "LOWERVALUE_" + class2.getName().toUpperCase());
+		    	lowerValue2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "LOWERVALUE_2");
 		    	lowerValue2.setAttribute("xmi:type", "LiteralInteger");
 		    	ownedEnd2.appendChild(lowerValue2);	
     	
+		associationid++;
 	    return packagedElementAssociation;
     }
 }

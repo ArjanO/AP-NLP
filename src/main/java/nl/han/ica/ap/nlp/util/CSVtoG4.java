@@ -29,11 +29,6 @@
  */
 package nl.han.ica.ap.nlp.util;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.PrintStream;
 import java.util.ArrayList;
 
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -49,7 +44,8 @@ public class CSVtoG4 {
 	
 	public static void main(String[] args) throws Exception {
 		
-		String csvfile = readFileAsString("res/werkwoorden.csv");
+		File werkwoordenCSV = new File("res/werkwoorden.csv");
+		String csvfile = werkwoordenCSV.getContent();
 		
 		ANTLRInputStream 	input 	= new ANTLRInputStream(csvfile);
 		CSVtoG4Lexer 		lexer 	= new CSVtoG4Lexer(input);
@@ -72,45 +68,12 @@ public class CSVtoG4 {
 		werkwoorden = werkwoorden.substring(0, werkwoorden.length()-1);
 		werkwoorden += ");";
 		
-		writeStringtoFile("src/main/antlr/imports/NlpWerkwoorden.g4", werkwoorden);
-		
-		System.out.println("Finished exporting werkwoorden to NlpWerkwoorden.g4");
-	}
-	
-	/**
-	 * Write a string to a file. 
-	 * @param filePath
-	 * @param content
-	 * @throws FileNotFoundException
-	 */
-	private static void writeStringtoFile(String filePath, String content) throws FileNotFoundException{
-		PrintStream out = null;
-		try {
-		    out = new PrintStream(new FileOutputStream(filePath));
-		    out.print(content);
-		}
-		finally {
-		    if (out != null) out.close();
+		File werkwoordenFile = new File("src/main/antlr/imports/NlpWerkwoorden.g4");
+		werkwoordenFile.setContent(werkwoorden);
+		if(werkwoordenFile.write()){
+			System.out.println("Finished exporting werkwoorden to NlpWerkwoorden.g4");
+		}else{
+			System.out.println("Error while exporting werkwoorden to NlpWerkwoorden.g4");
 		}
 	}
-	
-	/**
-	 * Read a file as a string.
-	 * @param filePath
-	 * @return
-	 * @throws java.io.IOException
-	 */
-    private static String readFileAsString(String filePath) throws java.io.IOException{
-    	StringBuffer fileData = new StringBuffer(1000);
-    	BufferedReader reader = new BufferedReader(new FileReader(filePath));
-    	char[] buf = new char[1024];
-    	int numRead=0;
-    	while((numRead=reader.read(buf)) != -1){
-    		String readData = String.valueOf(buf, 0, numRead);
-    		fileData.append(readData);
-    		buf = new char[1024];
-    	}
-    	reader.close();
-    	return fileData.toString();
-    }
 }
