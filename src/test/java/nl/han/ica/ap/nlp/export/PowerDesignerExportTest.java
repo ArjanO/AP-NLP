@@ -226,9 +226,9 @@ public class PowerDesignerExportTest {
 		IClass passagier = new Class("Passagier");
 		IClass paspoort = new Class("Paspoort");
 		
+		passagier.getAttributes().add(paspoort);
 		vliegtuigmaatschappij.getAttributes().add(vliegtuig);
 		vliegtuig.getAttributes().add(passagier);
-		passagier.getAttributes().add(paspoort);
 		
 		classes.add(vliegtuigmaatschappij);
 		
@@ -237,6 +237,7 @@ public class PowerDesignerExportTest {
 		assertNotNull(exportpath);
 		
 		String output = content.getValue();
+		System.out.println(output);
 		
 		String expected_output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><uml:Model name=\"ObjectOrientedModel\" xmi:version=\"2.1\" xmlns:uml=\"http://www.eclipse.org/uml2/2.1.0/UML\" xmlns:xmi=\"http://schema.omg.org/spec/XMI/2.1\"><packagedElement name=\"Vliegtuigmaatschappij\" xmi:id=\"VLIEGTUIGMAATSCHAPPIJ\" xmi:type=\"uml:Class\"/><packagedElement name=\"Vliegtuig\" xmi:id=\"VLIEGTUIG\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_0OWNEDEND_1 ASSOCIATION_0OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_0OWNEDEND_2\" xmi:id=\"ASSOCIATION_0\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_0\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_0UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_0LOWERVALUE_1\" xmi:type=\"LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_0\" type=\"VLIEGTUIGMAATSCHAPPIJ\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_2\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_0UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_0LOWERVALUE_2\" xmi:type=\"LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Passagier\" xmi:id=\"PASSAGIER\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_1OWNEDEND_1 ASSOCIATION_1OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_1OWNEDEND_2\" xmi:id=\"ASSOCIATION_1\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_1\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_1UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_1LOWERVALUE_1\" xmi:type=\"LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_1\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_2\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_1UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_1LOWERVALUE_2\" xmi:type=\"LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Paspoort\" xmi:id=\"PASPOORT\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_2OWNEDEND_1 ASSOCIATION_2OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_2OWNEDEND_2\" xmi:id=\"ASSOCIATION_2\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_2\" type=\"PASPOORT\" visibility=\"public\" xmi:id=\"ASSOCIATION_2OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_2UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_2LOWERVALUE_1\" xmi:type=\"LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_2\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_2OWNEDEND_2\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_2UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_2LOWERVALUE_2\" xmi:type=\"LiteralInteger\"/></ownedEnd></packagedElement></uml:Model>";
 		

@@ -32,6 +32,11 @@ package nl.han.ica.ap.nlp.export;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import nl.han.ica.ap.nlp.model.IAttribute;
 import nl.han.ica.ap.nlp.model.IClass;
@@ -49,9 +54,11 @@ import org.w3c.dom.ls.LSOutput;
 import org.w3c.dom.ls.LSSerializer;
 
 public class PowerDesignerExport implements IExport {
-	private IFile file;
 	
+	private IFile file;
 	public int associationid = 0;
+	private ArrayList<String> classlist = new ArrayList<String>();
+	private TreeSet<ClassRelation> associationlist = new TreeSet<ClassRelation>();
 	
 	public PowerDesignerExport() {
 		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
@@ -112,15 +119,22 @@ public class PowerDesignerExport implements IExport {
     private void createClasses(Document doc, Element root, ArrayList<IClass> classes, IClass parentClass){
     	if(classes.size() > 0){
 	    	for (IAttribute childClass : classes) {
-
-	    		Element childClassElement = createClass(doc, childClass);
-			    root.appendChild(childClassElement);
+	    		
+	    		if(!classlist.contains(childClass.getName())){
+	    			Element childClassElement = createClass(doc, childClass);
+	    			root.appendChild(childClassElement);
+	    			classlist.add(childClass.getName());
+	    		}
 
 			    if(childClass instanceof IClass){
 			    	
 			    	if(parentClass != null){
-				    	Element association = createAssociation(doc, ((IClass)childClass), parentClass);
-				    	root.appendChild(association);
+			    		ClassRelation tmprelation = new ClassRelation(((IClass)childClass).getName(), parentClass.getName());
+			    		if(!associationlist.contains(tmprelation)){
+			    			Element association = createAssociation(doc, ((IClass)childClass), parentClass);
+			    			root.appendChild(association);
+			    			associationlist.add(tmprelation);
+			    		}
 			    	}
 			    	
 			    	ArrayList<IClass> attribute_classes = new ArrayList<IClass>();
@@ -199,5 +213,50 @@ public class PowerDesignerExport implements IExport {
     	
 		associationid++;
 	    return packagedElementAssociation;
+    }
+    
+    class ClassRelation implements Comparable<ClassRelation>{
+    	private String class1;
+    	private String class2;
+    	
+    	public ClassRelation(String class1, String class2){
+    		this.class1 = class1;
+    		this.class2 = class2;
+    	}
+
+    	@Override
+    	public boolean equals(Object obj) {
+    		if (!(obj instanceof ClassRelation))
+    			return super.equals(obj);
+    		
+    		ClassRelation other = (ClassRelation)obj;
+    		
+    		if (!class1.equals(other.class1))
+    			return false;
+    		
+    		if (!class2.equals(other.class2))
+    			return false;
+    		
+    		return true;
+    	}
+    	
+    	@Override
+    	public int hashCode() {
+    		int hash = 1;
+    		hash = hash * 31 + class1.hashCode();
+    		hash = hash * 31 + class2.hashCode();
+    		return hash;
+    	}
+
+		@Override
+		public int compareTo(ClassRelation o) {
+			int i = this.class1.compareTo(o.class1);
+			
+			if (i == 0) {
+				i = this.class2.compareTo(o.class2);
+			}
+			
+			return i;
+		}
     }
 }
