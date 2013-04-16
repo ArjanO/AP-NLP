@@ -29,7 +29,7 @@
  */
 package nl.han.ica.ap.nlp.model;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * @author Joell
@@ -37,7 +37,7 @@ import java.util.ArrayList;
  */
 public class Class implements IClass, IAttribute, Comparable<Class>{
 	private String name;
-	private ArrayList<IAttribute> attributes = new ArrayList<IAttribute>();
+	private HashMap<IAttribute,Multiplicity[]> attributes = new HashMap<IAttribute,Multiplicity[]>();
 
 	public Class(String name) {
 		this.name = name;
@@ -47,15 +47,15 @@ public class Class implements IClass, IAttribute, Comparable<Class>{
 		return name;
 	}
 	
-	public void addAttribute(IAttribute a) {
-		attributes.add(a);
+	public void addAttribute(IAttribute a,Multiplicity[] multiplicities) {
+		attributes.put(a,multiplicities);
 	}
 	
-	public ArrayList<IAttribute> getAttributes(){
+	public HashMap<IAttribute,Multiplicity[]> getAttributes(){
 		return attributes;
 	}
 	
-	public void setAttributes(ArrayList<IAttribute> attributes){
+	public void setAttributes(HashMap<IAttribute, Multiplicity[]> attributes){
 		this.attributes = attributes;
 	}
 
@@ -63,14 +63,7 @@ public class Class implements IClass, IAttribute, Comparable<Class>{
 	public void setName(String name) {
 		this.name = name;
 	}
-
-	@Override
-	public void addAttributes(ArrayList<IAttribute> attributes) {
-		for(IAttribute _attributes : attributes) {
-			this.attributes.add(_attributes);
-		}
-		
-	}
+	
 
 	@Override
 	public int compareTo(Class o) {
