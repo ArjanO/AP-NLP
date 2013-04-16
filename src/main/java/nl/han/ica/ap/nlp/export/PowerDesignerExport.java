@@ -32,10 +32,13 @@ package nl.han.ica.ap.nlp.export;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.TreeSet;
 
 import nl.han.ica.ap.nlp.model.IAttribute;
 import nl.han.ica.ap.nlp.model.IClass;
+import nl.han.ica.ap.nlp.model.Multiplicity;
 import nl.han.ica.ap.nlp.util.File;
 import nl.han.ica.ap.nlp.util.IFile;
 
@@ -66,12 +69,12 @@ public class PowerDesignerExport implements IExport {
 		this.file = file;
 	}
 	
-	public String export(ArrayList<IClass> classes) {
+	public String export(HashMap<IClass, Multiplicity[]> classes) {
 		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
 		return export(classes, filepath);
 	}
 	
-    public String export(ArrayList<IClass> classes, String filepath) {
+    public String export(HashMap<IClass, Multiplicity[]> classes, String filepath) {
     	
     	// Create a new document.
 	    Document doc = null;
@@ -112,41 +115,47 @@ public class PowerDesignerExport implements IExport {
         return filepath;
 	}
     
-    private void createClasses(Document doc, Element root, ArrayList<IClass> classes, IClass parentClass) {
+    private void createClasses(Document doc, Element root, HashMap<IClass, Multiplicity[]> classes, IClass parentClass) {
     	if (classes.size() > 0) {
-	    	for (IAttribute childClass : classes) {
+	    	for (Entry<IClass, Multiplicity[]> entry : classes.entrySet()) {
+	    		IClass child = (IClass) entry.getKey();
 	    		
-	    		if (!classlist.contains(childClass.getName())) {
-	    			Element childClassElement = createClass(doc, childClass);
-	    			root.appendChild(childClassElement);
-	    			classlist.add(childClass.getName());
-	    		}
-
-			    if (childClass instanceof IClass) {
+	    		//If child is a Class.
+			    if (child instanceof IClass) {
 			    	
+			    	//Create classes if not already created.
+		    		if (!classlist.contains(child.getName())) {
+		    			Element childClassElement = createClass(doc, child);
+		    			root.appendChild(childClassElement);
+		    			classlist.add(child.getName());
+		    		}
+			    	
+		    		//If there is a parent, current class has a relation with it so create a association.
 			    	if (parentClass != null) {
-			    		ClassRelation tmprelation = new ClassRelation(((IClass)childClass).getName(), parentClass.getName());
+			    		//Check if association is already created, if it hasn't create it.
+			    		ClassRelation tmprelation = new ClassRelation(((IClass)child).getName(), parentClass.getName());
 			    		if (!associationlist.contains(tmprelation)) {
-			    			Element association = createAssociation(doc, ((IClass)childClass), parentClass);
+			    			Element association = createAssociation(doc, ((IClass)child), parentClass);
 			    			root.appendChild(association);
 			    			associationlist.add(tmprelation);
 			    		} else {
-			    			return;
+			    			//We already have this association, so stop?
+			    			break;
 			    		}
 			    	}
 			    	
-			    	ArrayList<IClass> attribute_classes = new ArrayList<IClass>();
-			    	ArrayList<IAttribute> class_attributes = ((IClass)childClass).getAttributes();
-			    	for (IAttribute attribute : class_attributes) {
-						if (attribute instanceof IClass) {
-							attribute_classes.add(((IClass)attribute));
+			    	//Get attributes from childclass, and recurse it.
+			    	HashMap<IClass, Multiplicity[]> attribute_classes = new HashMap<IClass, Multiplicity[]>();
+			    	HashMap<IAttribute, Multiplicity[]> class_attributes = ((IClass)child).getAttributes();
+			    	
+			    	for (Entry<IAttribute, Multiplicity[]> attribute : class_attributes.entrySet()) {
+						if (attribute.getKey() instanceof IClass) {
+							attribute_classes.put(((IClass)attribute.getKey()), attribute.getValue());
 						}
 					}
-			    	createClasses(doc, root, attribute_classes, ((IClass)childClass));
+			    	createClasses(doc, root, attribute_classes, ((IClass)child));
 			    }
 			}
-    	} else {
-    		return;
     	}
     }
     
