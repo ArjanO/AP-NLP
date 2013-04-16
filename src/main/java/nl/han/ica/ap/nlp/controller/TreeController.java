@@ -133,17 +133,18 @@ public class TreeController {
 		}
 	}
 
-	// Krijg de stam van het ingevoerde zelfstandignaamwoord.
+	// Get the word stem of the input noun.
 	private String getInputSingular(String name) {
 		int inputLength= name.length();
 		
 		if(name.endsWith("en")) {
 			if(name.charAt(inputLength-3) == name.charAt(inputLength-4)) {
-				name= name.substring(0, inputLength-3);
+				name= name.substring(0, inputLength-3);	// Get stem of noun (- "nen" or "pen" etc).
 			} else {
-				name= name.substring(0, inputLength-2);
+				name= name.substring(0, inputLength-2);	// Get stem of noun (- "en").
 				inputLength= name.length()-1;
-				if(name.charAt(inputLength-2) == 'a' || name.charAt(inputLength-2) == 'e' || name.charAt(inputLength-2) == 'o' || name.charAt(inputLength-2) == 'i' || name.charAt(inputLength-2) == 'u') {
+				// Check if letter before the second to last is a vowel. 
+				if(name.charAt(inputLength-2) == 'a' || name.charAt(inputLength-2) == 'e' || name.charAt(inputLength-2) == 'o' || name.charAt(inputLength-2) == 'i' || name.charAt(inputLength-2) == 'u' || name.charAt(inputLength-2) == 'y') {
 					return name;
 				} else {
 					name= name.replace(name.substring(inputLength), name.substring(inputLength-1));
@@ -153,16 +154,17 @@ public class TreeController {
 		return name;
 	}
 
-	// Krijg de stam van het het bestaande zelfstandignaamwoord.
+	// Get the word stem of the existing noun.
 	private String getClassSingular(String cInList) {
 		int cInListLength= cInList.length();
 		
 		if(cInList.endsWith("en")) {
 			if(cInList.charAt(cInListLength-3) == cInList.charAt(cInListLength-4)) {
-				cInList= cInList.substring(0, cInListLength-3);
+				cInList= cInList.substring(0, cInListLength-3); // Get stem of noun (- "nen" or "pen" etc). 
 			} else {
-				cInList= cInList.substring(0, cInListLength-2);
+				cInList= cInList.substring(0, cInListLength-2); // Get stem of noun (- "en").
 				cInListLength= cInList.length();
+				// Check if letter before the second to last is a vowel.
 				if(cInList.charAt(cInListLength-2) == 'a' || cInList.charAt(cInListLength-2) == 'e' || cInList.charAt(cInListLength-2) == 'o' || cInList.charAt(cInListLength-2) == 'i' || cInList.charAt(cInListLength-2) == 'u') {
 					return cInList;
 				} else {
