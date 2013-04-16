@@ -32,6 +32,7 @@ package nl.han.ica.ap.nlp.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
@@ -69,8 +70,8 @@ public class TreeController {
 
 	public void addClass(Class c) {
 		for(IClass attribute : transformToIClassList(c.getAttributes())) {
-			IClass existingClass = getClass(c, classes);
-			IClass existingAttribute = getClass(attribute,classes);
+			IClass existingClass = getClass(c, classes,null);
+			IClass existingAttribute = getClass(attribute,classes,null);
 			if(existingClass == null && existingAttribute == null){
 				classes.add(c);			
 			} else if(existingClass != null && existingAttribute == null) {
@@ -88,15 +89,18 @@ public class TreeController {
 		}
 	}	
 	
-	private IClass getClass(IClass c,ArrayList<IClass> classlist) {
+	private IClass getClass(IClass c,ArrayList<IClass> classlist,TreeSet<IClass> checkedClasses) {
+		if(checkedClasses == null) 
+			checkedClasses = new TreeSet<IClass>();
 		for(IClass cInList : classlist) {
 			if(cInList.getName().equalsIgnoreCase(c.getName()) || pluralExists(c.getName(),cInList)) {
 				System.out.println(cInList.getName()+ " IS GELIJK AAN " + c.getName());
 				return cInList;
-			} else if(cInList.getAttributes().size() > 0){
-				IClass result = getClass(c,transformToIClassList(cInList.getAttributes()));
+			} else if(cInList.getAttributes().size() > 0 && !checkedClasses.contains(cInList)){		
+				checkedClasses.add(cInList);
+				IClass result = getClass(c,transformToIClassList(cInList.getAttributes()),checkedClasses);
 				if(result != null) 
-				return result;
+					return result;
 			}
 		}
 		return null;

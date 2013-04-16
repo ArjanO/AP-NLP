@@ -112,4 +112,24 @@ public class TreeControllerTest {
 		ArrayList<IClass> classes = controller.classes;
 		assertSame(paspoort,approvedPassagier.getAttributes().get(0));
 	}
+	
+	@Test
+	public void testClassAttributeLoop() {
+		TreeController controller = new TreeController();
+		Class ouder1 = new Class("ouder");
+		Class kind1 = new Class("kind");
+		ouder1.addAttribute(kind1);
+		controller.addClass(ouder1);
+		Class kind2 = new Class("kind");
+		Class ouder2 = new Class("ouder");
+		kind2.addAttribute(ouder2);
+		controller.addClass(kind2);
+		Class kind3 = new Class("kind");
+		Class voorouder1 = new Class("voorouder");
+		kind3.addAttribute(voorouder1);
+		controller.addClass(kind3);
+		
+	}
+	
+	
 }
