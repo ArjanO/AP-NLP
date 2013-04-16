@@ -51,7 +51,7 @@ public class Class implements IClass, IAttribute, Comparable<Class>{
 		attributes.put(a,multiplicities);
 	}
 	
-	public TreeMap<IAttribute,Multiplicity[]> getAttributes(){
+	public TreeMap<IAttribute, Multiplicity[]> getAttributes(){
 		return attributes;
 	}
 	
