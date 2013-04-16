@@ -91,6 +91,7 @@ public class TreeController {
 	private IClass getClass(IClass c,ArrayList<IClass> classlist) {
 		for(IClass cInList : classlist) {
 			if(cInList.getName().equalsIgnoreCase(c.getName()) || pluralExists(c.getName(),cInList)) {
+				System.out.println(cInList.getName()+ " IS GELIJK AAN " + c.getName());
 				return cInList;
 			} else if(cInList.getAttributes().size() > 0){
 				IClass result = getClass(c,transformToIClassList(cInList.getAttributes()));
@@ -147,7 +148,8 @@ public class TreeController {
 				if(name.charAt(inputLength-2) == 'a' || name.charAt(inputLength-2) == 'e' || name.charAt(inputLength-2) == 'o' || name.charAt(inputLength-2) == 'i' || name.charAt(inputLength-2) == 'u' || name.charAt(inputLength-2) == 'y') {
 					return name;
 				} else {
-					name= name.replace(name.substring(inputLength), name.substring(inputLength-1));
+					char charToAdd= name.charAt(inputLength-1);
+					name= name.substring(0, inputLength) + charToAdd + name.substring(inputLength);
 				}	
 			}
 		}
@@ -163,12 +165,13 @@ public class TreeController {
 				cInList= cInList.substring(0, cInListLength-3); // Get stem of noun (- "nen" or "pen" etc). 
 			} else {
 				cInList= cInList.substring(0, cInListLength-2); // Get stem of noun (- "en").
-				cInListLength= cInList.length();
+				cInListLength= cInList.length()-1;
 				// Check if letter before the second to last is a vowel.
-				if(cInList.charAt(cInListLength-2) == 'a' || cInList.charAt(cInListLength-2) == 'e' || cInList.charAt(cInListLength-2) == 'o' || cInList.charAt(cInListLength-2) == 'i' || cInList.charAt(cInListLength-2) == 'u') {
+				if(cInList.charAt(cInListLength-2) == 'a' || cInList.charAt(cInListLength-2) == 'e' || cInList.charAt(cInListLength-2) == 'o' || cInList.charAt(cInListLength-2) == 'i' || cInList.charAt(cInListLength-2) == 'u'  || cInList.charAt(cInListLength-2) == 'y') {
 					return cInList;
 				} else {
-					cInList= cInList.replace(cInList.substring(cInListLength), cInList.substring(cInListLength-1));
+					char charToAdd= cInList.charAt(cInListLength-1);
+					cInList= cInList.substring(0, cInListLength) + charToAdd + cInList.substring(cInListLength);
 				}
 			}
 		}
