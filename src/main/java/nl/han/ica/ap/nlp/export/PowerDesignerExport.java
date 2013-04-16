@@ -34,6 +34,7 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import nl.han.ica.ap.nlp.model.IAttribute;
@@ -69,12 +70,12 @@ public class PowerDesignerExport implements IExport {
 		this.file = file;
 	}
 	
-	public String export(HashMap<IClass, Multiplicity[]> classes) {
+	public String export(TreeMap<IClass, Multiplicity[]> classes) {
 		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
 		return export(classes, filepath);
 	}
 	
-    public String export(HashMap<IClass, Multiplicity[]> classes, String filepath) {
+    public String export(TreeMap<IClass, Multiplicity[]> classes, String filepath) {
     	
     	// Create a new document.
 	    Document doc = null;
@@ -115,7 +116,7 @@ public class PowerDesignerExport implements IExport {
         return filepath;
 	}
     
-    private void createClasses(Document doc, Element root, HashMap<IClass, Multiplicity[]> classes, IClass parentClass) {
+    private void createClasses(Document doc, Element root, TreeMap<IClass, Multiplicity[]> classes, IClass parentClass) {
     	if (classes.size() > 0) {
 	    	for (Entry<IClass, Multiplicity[]> entry : classes.entrySet()) {
 	    		IClass child = (IClass) entry.getKey();
@@ -145,8 +146,8 @@ public class PowerDesignerExport implements IExport {
 			    	}
 			    	
 			    	//Get attributes from childclass, and recurse it.
-			    	HashMap<IClass, Multiplicity[]> attribute_classes = new HashMap<IClass, Multiplicity[]>();
-			    	HashMap<IAttribute, Multiplicity[]> class_attributes = ((IClass)child).getAttributes();
+			    	TreeMap<IClass, Multiplicity[]> attribute_classes = new TreeMap<IClass, Multiplicity[]>();
+			    	TreeMap<IAttribute, Multiplicity[]> class_attributes = ((IClass)child).getAttributes();
 			    	
 			    	for (Entry<IAttribute, Multiplicity[]> attribute : class_attributes.entrySet()) {
 						if (attribute.getKey() instanceof IClass) {

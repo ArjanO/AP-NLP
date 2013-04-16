@@ -29,7 +29,7 @@
  */
 package nl.han.ica.ap.nlp.export;
 
-import java.util.HashMap;
+import java.util.TreeMap;
 
 import nl.han.ica.ap.nlp.model.IClass;
 import nl.han.ica.ap.nlp.model.Multiplicity;
@@ -41,5 +41,5 @@ public interface IExport {
 	 * @param classes List of classes.
 	 * @return path of exported file or empty string if error.
 	 */
-	String export(HashMap<IClass, Multiplicity[]> classes);
+	String export(TreeMap<IClass, Multiplicity[]> classes);
 }
