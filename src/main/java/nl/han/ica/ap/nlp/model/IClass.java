@@ -29,12 +29,11 @@
  */
 package nl.han.ica.ap.nlp.model;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 
 public interface IClass extends IAttribute{	
 	public String getName();
 	public void setName(String name);
-	public ArrayList<IAttribute> getAttributes();
-	public void addAttribute(IAttribute a);
-	public void addAttributes(ArrayList<IAttribute> attributes);
+	public HashMap<IAttribute, Multiplicity[]> getAttributes();
+	public void addAttribute(IAttribute a, Multiplicity[] m);
 }
