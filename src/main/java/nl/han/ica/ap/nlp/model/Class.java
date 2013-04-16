@@ -35,7 +35,7 @@ import java.util.ArrayList;
  * @author Joell
  *
  */
-public class Class implements IClass, IAttribute{
+public class Class implements IClass, IAttribute, Comparable<Class>{
 	private String name;
 	private ArrayList<IAttribute> attributes = new ArrayList<IAttribute>();
 
@@ -70,5 +70,14 @@ public class Class implements IClass, IAttribute{
 			this.attributes.add(_attributes);
 		}
 		
+	}
+
+	@Override
+	public int compareTo(Class o) {
+		if(this.equals(o)) {
+			return 0;
+		} else {
+			return -1;
+		}
 	}
 }

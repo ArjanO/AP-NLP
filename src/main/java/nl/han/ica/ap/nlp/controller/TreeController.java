@@ -32,6 +32,7 @@ package nl.han.ica.ap.nlp.controller;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeSet;
 
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
@@ -88,9 +89,9 @@ public class TreeController {
 		}
 	}	
 	
-	private IClass getClass(IClass c,ArrayList<IClass> classlist,ArrayList<IClass> checkedClasses) {
+	private IClass getClass(IClass c,ArrayList<IClass> classlist,TreeSet<IClass> checkedClasses) {
 		if(checkedClasses == null) 
-			checkedClasses = new ArrayList<IClass>();
+			checkedClasses = new TreeSet<IClass>();
 		for(IClass cInList : classlist) {
 			if(cInList.getName().equalsIgnoreCase(c.getName()) || pluralExists(c.getName(),cInList)) {
 				return cInList;
