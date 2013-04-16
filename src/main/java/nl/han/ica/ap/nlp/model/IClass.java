@@ -30,10 +30,11 @@
 package nl.han.ica.ap.nlp.model;
 
 import java.util.HashMap;
+import java.util.TreeMap;
 
 public interface IClass extends IAttribute{	
 	public String getName();
 	public void setName(String name);
-	public HashMap<IAttribute, Multiplicity[]> getAttributes();
+	public TreeMap<IAttribute, Multiplicity[]> getAttributes();
 	public void addAttribute(IAttribute a, Multiplicity[] m);
 }

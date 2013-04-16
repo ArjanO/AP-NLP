@@ -29,7 +29,7 @@
  */
 package nl.han.ica.ap.nlp.model;
 
-import java.util.HashMap;
+import java.util.TreeMap;
 
 /**
  * @author Joell
@@ -37,7 +37,7 @@ import java.util.HashMap;
  */
 public class Class implements IClass, IAttribute, Comparable<Class>{
 	private String name;
-	private HashMap<IAttribute,Multiplicity[]> attributes = new HashMap<IAttribute,Multiplicity[]>();
+	private TreeMap<IAttribute,Multiplicity[]> attributes = new TreeMap<IAttribute,Multiplicity[]>();
 
 	public Class(String name) {
 		this.name = name;
@@ -51,11 +51,11 @@ public class Class implements IClass, IAttribute, Comparable<Class>{
 		attributes.put(a,multiplicities);
 	}
 	
-	public HashMap<IAttribute,Multiplicity[]> getAttributes(){
+	public TreeMap<IAttribute,Multiplicity[]> getAttributes(){
 		return attributes;
 	}
 	
-	public void setAttributes(HashMap<IAttribute, Multiplicity[]> attributes){
+	public void setAttributes(TreeMap<IAttribute, Multiplicity[]> attributes){
 		this.attributes = attributes;
 	}
 
