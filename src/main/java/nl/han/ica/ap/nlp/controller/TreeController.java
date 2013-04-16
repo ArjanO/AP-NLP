@@ -31,7 +31,9 @@ package nl.han.ica.ap.nlp.controller;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.TreeMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.TreeSet;
 
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -48,6 +50,7 @@ import nl.han.ica.ap.nlp.listeners.ZelfstandignaamwoordListener;
 import nl.han.ica.ap.nlp.model.Class;
 import nl.han.ica.ap.nlp.model.IAttribute;
 import nl.han.ica.ap.nlp.model.IClass;
+import nl.han.ica.ap.nlp.model.Multiplicity;
 
 /**
  * @author Joell
@@ -69,19 +72,21 @@ public class TreeController {
 	}
 
 	public void addClass(Class c) {
-		for(IClass attribute : transformToIClassList(c.getAttributes())) {
+		for(Entry<IClass,Multiplicity[]> entry : transformToIClass(c.getAttributes()).entrySet()) {
+			IClass attribute = entry.getKey();
 			IClass existingClass = getClass(c, classes,null);
 			IClass existingAttribute = getClass(attribute,classes,null);
 			if(existingClass == null && existingAttribute == null){
 				classes.add(c);			
 			} else if(existingClass != null && existingAttribute == null) {
-				existingClass.addAttribute(attribute);
+				existingClass.addAttribute(attribute,entry.getValue());
 			} else if(existingClass == null && existingAttribute != null) {
-				c.getAttributes().set(c.getAttributes().indexOf(attribute), existingAttribute);
+				c.getAttributes().put(existingAttribute, entry.getValue());
+				c.getAttributes().remove(attribute);
 				classes.remove(existingAttribute);
 				classes.add(c);
 			} else {
-				existingClass.addAttribute(existingAttribute);
+				existingClass.addAttribute(existingAttribute,entry.getValue());
 				if(classes.size() > 1) {
 					classes.remove(existingAttribute);
 				}
@@ -90,26 +95,38 @@ public class TreeController {
 	}	
 	
 	private IClass getClass(IClass c,ArrayList<IClass> classlist,TreeSet<IClass> checkedClasses) {
-		if(checkedClasses == null) 
+		if(checkedClasses == null) {
 			checkedClasses = new TreeSet<IClass>();
+		}
 		for(IClass cInList : classlist) {
 			if(cInList.getName().equalsIgnoreCase(c.getName()) || pluralExists(c.getName(),cInList)) {
 				return cInList;
 			} else if(cInList.getAttributes().size() > 0 && !checkedClasses.contains(cInList)){		
 				checkedClasses.add(cInList);
-				IClass result = getClass(c,transformToIClassList(cInList.getAttributes()),checkedClasses);
-				if(result != null) 
+				IClass result = getClass(c,transformToIClass(new ArrayList<IAttribute>(cInList.getAttributes().keySet())),checkedClasses);
+				if(result != null) {
 					return result;
+				}
 			}
 		}
 		return null;
 	}
 	
-	private ArrayList<IClass> transformToIClassList(ArrayList<IAttribute> attributes) {
+	private ArrayList<IClass> transformToIClass(ArrayList<IAttribute> attributes) {
 		ArrayList<IClass> _classes = new ArrayList<IClass>();
 		for(IAttribute attribute : attributes) {
 			if(attribute instanceof IClass) {
 				_classes.add((IClass) attribute);
+			}
+		}
+		return _classes;
+	}
+	
+	private TreeMap<IClass,Multiplicity[]> transformToIClass(TreeMap<IAttribute,Multiplicity[]> attributes) {
+		TreeMap<IClass,Multiplicity[]> _classes = new TreeMap<IClass,Multiplicity[]>();
+		for(Entry<IAttribute,Multiplicity[]> entry : attributes.entrySet()) {
+			if(entry.getKey() instanceof IClass) {
+				_classes.put((IClass) entry.getKey(),entry.getValue());
 			}
 		}
 		return _classes;
