@@ -62,7 +62,8 @@ public class CSVtoG4 {
 		ArrayList<String> conjugations = listener.getConjugations();
 		
 		String werkwoorden = "lexer grammar NlpWerkwoorden;\n\nWERKWOORD : (";
-		for(int i=0; i<conjugations.size(); i++){
+		
+		for (int i=0; i<conjugations.size(); i++) {
 			werkwoorden += "'"+conjugations.get(i)+"'|";
 		}
 		werkwoorden = werkwoorden.substring(0, werkwoorden.length()-1);
@@ -70,9 +71,10 @@ public class CSVtoG4 {
 		
 		File werkwoordenFile = new File("src/main/antlr/imports/NlpWerkwoorden.g4");
 		werkwoordenFile.setContent(werkwoorden);
-		if(werkwoordenFile.write()){
+		
+		if (werkwoordenFile.write()) {
 			System.out.println("Finished exporting werkwoorden to NlpWerkwoorden.g4");
-		}else{
+		} else {
 			System.out.println("Error while exporting werkwoorden to NlpWerkwoorden.g4");
 		}
 	}

@@ -32,10 +32,6 @@ package nl.han.ica.ap.nlp.export;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 
 import nl.han.ica.ap.nlp.model.IAttribute;
@@ -70,12 +66,12 @@ public class PowerDesignerExport implements IExport {
 		this.file = file;
 	}
 	
-	public String export(ArrayList<IClass> classes){
+	public String export(ArrayList<IClass> classes) {
 		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
 		return export(classes, filepath);
 	}
 	
-    public String export(ArrayList<IClass> classes, String filepath){
+    public String export(ArrayList<IClass> classes, String filepath) {
     	
     	// Create a new document.
 	    Document doc = null;
@@ -116,25 +112,25 @@ public class PowerDesignerExport implements IExport {
         return filepath;
 	}
     
-    private void createClasses(Document doc, Element root, ArrayList<IClass> classes, IClass parentClass){
-    	if(classes.size() > 0){
+    private void createClasses(Document doc, Element root, ArrayList<IClass> classes, IClass parentClass) {
+    	if (classes.size() > 0) {
 	    	for (IAttribute childClass : classes) {
 	    		
-	    		if(!classlist.contains(childClass.getName())){
+	    		if (!classlist.contains(childClass.getName())) {
 	    			Element childClassElement = createClass(doc, childClass);
 	    			root.appendChild(childClassElement);
 	    			classlist.add(childClass.getName());
 	    		}
 
-			    if(childClass instanceof IClass){
+			    if (childClass instanceof IClass) {
 			    	
-			    	if(parentClass != null){
+			    	if (parentClass != null) {
 			    		ClassRelation tmprelation = new ClassRelation(((IClass)childClass).getName(), parentClass.getName());
-			    		if(!associationlist.contains(tmprelation)){
+			    		if (!associationlist.contains(tmprelation)) {
 			    			Element association = createAssociation(doc, ((IClass)childClass), parentClass);
 			    			root.appendChild(association);
 			    			associationlist.add(tmprelation);
-			    		}else{
+			    		} else {
 			    			return;
 			    		}
 			    	}
@@ -142,19 +138,19 @@ public class PowerDesignerExport implements IExport {
 			    	ArrayList<IClass> attribute_classes = new ArrayList<IClass>();
 			    	ArrayList<IAttribute> class_attributes = ((IClass)childClass).getAttributes();
 			    	for (IAttribute attribute : class_attributes) {
-						if(attribute instanceof IClass){
+						if (attribute instanceof IClass) {
 							attribute_classes.add(((IClass)attribute));
 						}
 					}
 			    	createClasses(doc, root, attribute_classes, ((IClass)childClass));
 			    }
 			}
-    	}else{
+    	} else {
     		return;
     	}
     }
     
-    private Element createClass(Document doc, IAttribute element_class){
+    private Element createClass(Document doc, IAttribute element_class) {
     	Element packagedElementClass = null;
     	packagedElementClass = doc.createElement("packagedElement");
     	packagedElementClass.setAttribute("xmi:type", "uml:Class");
@@ -163,7 +159,7 @@ public class PowerDesignerExport implements IExport {
     	return packagedElementClass;
     }
     
-    private Element createAssociation(Document doc, IClass class1, IClass class2){
+    private Element createAssociation(Document doc, IClass class1, IClass class2) {
     	Element packagedElementAssociation = null;
 	    packagedElementAssociation = doc.createElement("packagedElement");
 	    packagedElementAssociation.setAttribute("xmi:type", "uml:Association");
@@ -214,30 +210,34 @@ public class PowerDesignerExport implements IExport {
 		    	ownedEnd2.appendChild(lowerValue2);	
     	
 		associationid++;
+		
 	    return packagedElementAssociation;
     }
     
-    class ClassRelation implements Comparable<ClassRelation>{
+    class ClassRelation implements Comparable<ClassRelation> {
     	private String class1;
     	private String class2;
     	
-    	public ClassRelation(String class1, String class2){
+    	public ClassRelation(String class1, String class2) {
     		this.class1 = class1;
     		this.class2 = class2;
     	}
 
     	@Override
     	public boolean equals(Object obj) {
-    		if (!(obj instanceof ClassRelation))
+    		if (!(obj instanceof ClassRelation)) {
     			return super.equals(obj);
+    		}
     		
     		ClassRelation other = (ClassRelation)obj;
     		
-    		if (!class1.equals(other.class1))
+    		if (!class1.equals(other.class1)) {
     			return false;
+    		}
     		
-    		if (!class2.equals(other.class2))
+    		if (!class2.equals(other.class2)) {
     			return false;
+    		}
     		
     		return true;
     	}
