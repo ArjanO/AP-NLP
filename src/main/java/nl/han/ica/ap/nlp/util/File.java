@@ -56,7 +56,7 @@ public class File implements IFile {
 	/**
 	 * Write content to path.
 	 */
-	public boolean write(){
+	public boolean write() {
 		PrintStream out = null;
 		try {
 		    out = new PrintStream(new FileOutputStream(this.path));
@@ -66,7 +66,7 @@ public class File implements IFile {
 			e.printStackTrace();
 		}
 		finally {
-		    if (out != null){
+		    if (out != null) {
 		    	out.close();
 		    	return true;
 		    }
@@ -77,14 +77,14 @@ public class File implements IFile {
 	/**
 	 * Append content to path. 
 	 */
-	public void append(String content){
+	public void append(String content) {
 		this.content.append(content);
 	}
 	
 	/**
 	 * Read a file as a string.
 	 */
-    public boolean read(){
+    public boolean read() {
     	StringBuffer fileData = new StringBuffer(1000);
     	BufferedReader reader = null;
 		try {
@@ -96,7 +96,7 @@ public class File implements IFile {
     	char[] buf = new char[1024];
     	int numRead=0;
     	try {
-			while((numRead = reader.read(buf)) != -1){
+			while ((numRead = reader.read(buf)) != -1) {
 				String readData = String.valueOf(buf, 0, numRead);
 				fileData.append(readData);
 				buf = new char[1024];
@@ -112,7 +112,7 @@ public class File implements IFile {
     	
     	this.content = fileData;
     	
-    	if(fileData.length() > 0){
+    	if (fileData.length() > 0) {
     		return true;
     	}else{
     		return false;
@@ -123,7 +123,7 @@ public class File implements IFile {
      * Set the content of this file.
      * @param content
      */
-    public void setContent(String content){
+    public void setContent(String content) {
     	this.content = new StringBuffer(content);
     }
     
@@ -131,7 +131,7 @@ public class File implements IFile {
      * Get the content of this class.
      * @return
      */
-    public String getContent(){
+    public String getContent() {
     	return this.content.toString();
     }
 }
