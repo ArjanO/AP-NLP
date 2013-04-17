@@ -67,7 +67,7 @@ public class Class implements IClass, IAttribute, Comparable<Class>{
 
 	@Override
 	public int compareTo(Class o) {
-		if(this.equals(o)) {
+		if(this == o) {
 			return 0;
 		} else {
 			return -1;
