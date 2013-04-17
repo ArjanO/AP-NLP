@@ -50,7 +50,7 @@ import nl.han.ica.ap.nlp.model.IAttribute;
 import nl.han.ica.ap.nlp.model.IClass;
 
 /**
- * @author Joell
+ * @author Joell & Boyd
  *
  */
 public class TreeController {
@@ -94,7 +94,6 @@ public class TreeController {
 			checkedClasses = new TreeSet<IClass>();
 		for(IClass cInList : classlist) {
 			if(cInList.getName().equalsIgnoreCase(c.getName()) || pluralExists(c.getName(),cInList)) {
-				System.out.println(cInList.getName()+ " IS GELIJK AAN " + c.getName());
 				return cInList;
 			} else if(cInList.getAttributes().size() > 0 && !checkedClasses.contains(cInList)){		
 				checkedClasses.add(cInList);
@@ -138,7 +137,10 @@ public class TreeController {
 		}
 	}
 
-	// Get the word stem of the input noun.
+	/**
+	 *  Get the word stem of the input noun.
+	 *
+	 */
 	private String getInputSingular(String name) {
 		int inputLength= name.length();
 		
@@ -160,7 +162,10 @@ public class TreeController {
 		return name;
 	}
 
-	// Get the word stem of the existing noun.
+	/**
+	 *  Get the word stem of the existing noun.
+	 *
+	 */
 	private String getClassSingular(String cInList) {
 		int cInListLength= cInList.length();
 		

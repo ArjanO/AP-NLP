@@ -37,7 +37,7 @@ import NlpWerkwoorden, NlpLexer;
 tekst: zin+;
 zin:  (bijwoord|naamwoordgroep|zelfstandignaamwoord ) verbaleconstituent eindezin;
 naamwoordgroep: woord* voorzetsel? bijwoord? (lidwoord|telwoord|bezittelijkvoornaamwoord|kwantor) (bijvoeglijknaamwoord)* zelfstandignaamwoord (voorzetsel|voegwoord)?;
-verbaleconstituent : woord* werkwoord (naamwoordgroep|zelfstandignaamwoord) naamwoordgroep* (verbaleconstituent*|werkwoord);
+verbaleconstituent : woord* werkwoord (naamwoordgroep|zelfstandignaamwoord) voegwoord? naamwoordgroep* (verbaleconstituent*|werkwoord);
 eindezin: EINDEZIN;
 zelfstandignaamwoord: WOORD;
 bijvoeglijknaamwoord: WOORD;
