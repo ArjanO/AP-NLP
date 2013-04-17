@@ -35,7 +35,7 @@ import java.util.TreeMap;
  * @author Joell
  *
  */
-public class Class implements IClass, IAttribute, Comparable<Class>{
+public class Class implements IClass, IAttribute{
 	private String name;
 	private TreeMap<IAttribute,Multiplicity[]> attributes = new TreeMap<IAttribute,Multiplicity[]>();
 
@@ -66,8 +66,8 @@ public class Class implements IClass, IAttribute, Comparable<Class>{
 	
 
 	@Override
-	public int compareTo(Class o) {
-		if(this.equals(o)) {
+	public int compareTo(IClass o) {
+		if(this == o) {
 			return 0;
 		} else {
 			return -1;
