@@ -17,6 +17,11 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 public class VerbDirectionController {
 
+	/**
+	 * Walks trough a csv file and compares a verb to the list.
+	 * @param name The verb conjugation to be compared.
+	 * @return false for a LR direction. true for a RL direction. null if the verb conjugation
+	 */
 	public boolean getDirection(String name) {
 		String csvfile = readFileAsString("res/werkwoorden.csv");	
 		ANTLRInputStream 	input 	= new ANTLRInputStream(csvfile);
@@ -30,6 +35,11 @@ public class VerbDirectionController {
 		return listener.getDirection(name);
 	}
 	
+	/**
+	 * Converts file to a string variable.
+	 * @param filePath
+	 * @return file as string
+	 */
 	private static String readFileAsString(String filePath){
     	StringBuffer fileData = new StringBuffer(1000);
     	BufferedReader reader;

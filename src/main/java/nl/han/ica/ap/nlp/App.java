@@ -63,6 +63,9 @@ public class App {
 		return app;
 	}
 	
+	/**
+	 * Starts parsing the input text to an uml diagram xml file.
+	 */
 	public void start() {
 		ANTLRInputStream input = null;
 		try {

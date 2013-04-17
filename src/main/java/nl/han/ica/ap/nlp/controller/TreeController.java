@@ -63,6 +63,11 @@ public class TreeController {
 		
 	}
 	
+	/**
+	 * Walks the tree with a ZelfstandignaamwoordListener
+	 * @param tree The tree of the input text
+	 * @param parser The parser which parses the input text
+	 */
 	public void walkTree(ParseTree tree,NlpParser parser) {
 		ParseTreeWalker walker = new ParseTreeWalker();
 		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(this);
@@ -71,8 +76,16 @@ public class TreeController {
 		System.out.println(export.export(classes));
 	}
 
+	/**
+	 * Adds a new class-attribute pair to the existing Classlist.
+	 * If the class of a class-attribute already exists the class-attribute pair will be added as a attribute.
+	 * If the attribute of a class-attribute already exists the class will be added to the classlist and the 
+	 * attribute will be replaced with the existing attribute.
+	 * If the class and the attribute of a class-attribute already exists, the existing attribute will be added to the existing class.
+	 * @param c The Class to be added.
+	 */
 	public void addClass(Class c) {
-		for(Entry<IClass,Multiplicity[]> entry : transformToIClass(c.getAttributes()).entrySet()) {
+		for(Entry<IClass,Multiplicity[]> entry : convertToIClass(c.getAttributes()).entrySet()) {
 			IClass attribute = entry.getKey();
 			IClass existingClass = getClass(c, classes,null);
 			IClass existingAttribute = getClass(attribute,classes,null);
@@ -93,7 +106,13 @@ public class TreeController {
 			}
 		}
 	}	
-	
+	/**
+	 * Finds the class in the classlist or in the attributes of a class.
+	 * @param c The class to be compared.
+	 * @param classlist The classlist which the class will be compared to.
+	 * @param checkedClasses The (attribute)classes of the classlist which already are checked.
+	 * @return The class that alreadt exists or null if the class doesn't exist.
+	 */
 	private IClass getClass(IClass c,ArrayList<IClass> classlist,TreeSet<IClass> checkedClasses) {
 		if(checkedClasses == null) {
 			checkedClasses = new TreeSet<IClass>();
@@ -104,7 +123,7 @@ public class TreeController {
 				return cInList;
 			} else if(cInList.getAttributes().size() > 0 && !checkedClasses.contains(cInList)){		
 				checkedClasses.add(cInList);
-				IClass result = getClass(c,transformToIClass(new ArrayList<IAttribute>(cInList.getAttributes().keySet())),checkedClasses);
+				IClass result = getClass(c,convertToIClass(new ArrayList<IAttribute>(cInList.getAttributes().keySet())),checkedClasses);
 				if(result != null) {
 					return result;
 				}
@@ -113,7 +132,12 @@ public class TreeController {
 		return null;
 	}
 	
-	private ArrayList<IClass> transformToIClass(ArrayList<IAttribute> attributes) {
+	/**
+	 * Converts an IAttribute arraylist to a IClass arraylist.
+	 * @param attributes The IAttribute arraylist to be converted.
+	 * @return The converted IClass list.
+	 */
+	private ArrayList<IClass> convertToIClass(ArrayList<IAttribute> attributes) {
 		ArrayList<IClass> _classes = new ArrayList<IClass>();
 		for(IAttribute attribute : attributes) {
 			if(attribute instanceof IClass) {
@@ -123,7 +147,12 @@ public class TreeController {
 		return _classes;
 	}
 	
-	private TreeMap<IClass,Multiplicity[]> transformToIClass(TreeMap<IAttribute,Multiplicity[]> attributes) {
+	/**
+	 * Converts an IAttribute TreeMap to a IClass TreeMap.
+	 * @param attributes The IAttribute TreeMap to be converted.
+	 * @return The converted IClass map.
+	 */
+	private TreeMap<IClass,Multiplicity[]> convertToIClass(TreeMap<IAttribute,Multiplicity[]> attributes) {
 		TreeMap<IClass,Multiplicity[]> _classes = new TreeMap<IClass,Multiplicity[]>();
 		for(Entry<IAttribute,Multiplicity[]> entry : attributes.entrySet()) {
 			if(entry.getKey() instanceof IClass) {
@@ -133,6 +162,12 @@ public class TreeController {
 		return _classes;
 	}
 
+	/**
+	 * Check if the name of a new class/attribute already exists as plural 
+	 * @param name The new name to be compared
+	 * @param cInList The classes to be compared with
+	 * @return True if the plural exists. False if the plural doesn't exists
+	 */
 	private boolean pluralExists(String name, IClass cInList) {
 		if(name.equalsIgnoreCase(cInList.getName() + "s")) {
 			return true;
