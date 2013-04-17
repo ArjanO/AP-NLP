@@ -113,9 +113,9 @@ public class TreeController {
 	 * @param checkedClasses The (attribute)classes of the classlist which already are checked.
 	 * @return The class that alreadt exists or null if the class doesn't exist.
 	 */
-	private IClass getClass(IClass c,ArrayList<IClass> classlist,TreeSet<IClass> checkedClasses) {
+	private IClass getClass(IClass c,ArrayList<IClass> classlist,ArrayList<IClass> checkedClasses) {
 		if(checkedClasses == null) {
-			checkedClasses = new TreeSet<IClass>();
+			checkedClasses = new ArrayList<IClass>();
 		}
 		for(IClass cInList : classlist) {
 			if(cInList.getName().equalsIgnoreCase(c.getName()) || pluralExists(c.getName(),cInList)) {
