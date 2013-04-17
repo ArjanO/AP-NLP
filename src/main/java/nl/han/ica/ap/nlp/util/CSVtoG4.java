@@ -45,6 +45,7 @@ public class CSVtoG4 {
 	public static void main(String[] args) throws Exception {
 		
 		File werkwoordenCSV = new File("res/werkwoorden.csv");
+		werkwoordenCSV.read();
 		String csvfile = werkwoordenCSV.getContent();
 		
 		ANTLRInputStream 	input 	= new ANTLRInputStream(csvfile);
