@@ -32,10 +32,8 @@ package nl.han.ica.ap.nlp.export;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import nl.han.ica.ap.nlp.model.IAttribute;
 import nl.han.ica.ap.nlp.model.IClass;
@@ -80,7 +78,7 @@ public class PowerDesignerExport implements IExport {
 		
 		TreeMap<IClass, Multiplicity[]> treemap_classes = new TreeMap<IClass, Multiplicity[]>();
 		for(IClass list_class : classes){
-			treemap_classes.put(list_class, null);
+			treemap_classes.put(list_class, new Multiplicity[]{new Multiplicity(), new Multiplicity()});
 		}
 		return export(treemap_classes, filepath);
 	}
@@ -126,7 +124,7 @@ public class PowerDesignerExport implements IExport {
         return filepath;
 	}
     
-    private void createClasses(Document doc, Element root, TreeMap<IClass, Multiplicity[]> classes, IClass parentClass) {
+    private void createClasses(Document doc, Element root, TreeMap<IClass, Multiplicity[]> classes, Entry<IClass, Multiplicity[]> parent) {
     	if (classes.size() > 0) {
 	    	for (Entry<IClass, Multiplicity[]> entry : classes.entrySet()) {
 	    		IClass child = (IClass) entry.getKey();
@@ -142,11 +140,11 @@ public class PowerDesignerExport implements IExport {
 		    		}
 			    	
 		    		//If there is a parent, current class has a relation with it so create a association.
-			    	if (parentClass != null) {
+			    	if (parent != null) {
 			    		//Check if association is already created, if it hasn't create it.
-			    		ClassRelation tmprelation = new ClassRelation((IClass)child, parentClass);
+			    		ClassRelation tmprelation = new ClassRelation((IClass)child, parent.getKey());
 			    		if (!associationlist.contains(tmprelation)) {
-			    			Element association = createAssociation(doc, ((IClass)child), parentClass);
+			    			Element association = createAssociation(doc, entry, parent);
 			    			root.appendChild(association);
 			    			associationlist.add(tmprelation);
 			    		} else {
@@ -164,7 +162,7 @@ public class PowerDesignerExport implements IExport {
 							attribute_classes.put(((IClass)attribute.getKey()), attribute.getValue());
 						}
 					}
-			    	createClasses(doc, root, attribute_classes, ((IClass)child));
+			    	createClasses(doc, root, attribute_classes, entry);
 			    }
 			}
     	}
@@ -179,7 +177,7 @@ public class PowerDesignerExport implements IExport {
     	return packagedElementClass;
     }
     
-    private Element createAssociation(Document doc, IClass class1, IClass class2) {
+    private Element createAssociation(Document doc, Entry<IClass,Multiplicity[]> class1, Entry<IClass,Multiplicity[]> class2) {
     	Element packagedElementAssociation = null;
 	    packagedElementAssociation = doc.createElement("packagedElement");
 	    packagedElementAssociation.setAttribute("xmi:type", "uml:Association");
@@ -191,7 +189,7 @@ public class PowerDesignerExport implements IExport {
 	    	ownedEnd1 = doc.createElement("ownedEnd");
 	    	ownedEnd1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "OWNEDEND_1");
 	    	ownedEnd1.setAttribute("visibility", "public");
-	    	ownedEnd1.setAttribute("type", class1.getName().toUpperCase());
+	    	ownedEnd1.setAttribute("type", class1.getKey().getName().toUpperCase());
 	    	ownedEnd1.setAttribute("association", "ASSOCIATION_" + associationid);
 	    	packagedElementAssociation.appendChild(ownedEnd1);
 	    	
@@ -199,20 +197,21 @@ public class PowerDesignerExport implements IExport {
 		    	upperValue1 = doc.createElement("upperValue");
 		    	upperValue1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "UPPERVALUE_1");
 		    	upperValue1.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
-		    	upperValue1.setAttribute("value", "1");
+		    	upperValue1.setAttribute("value", String.valueOf(class1.getValue()[0].upperBound));
 		    	ownedEnd1.appendChild(upperValue1);	
 		    	
 		    	Element lowerValue1 = null;
 		    	lowerValue1 = doc.createElement("lowerValue");
 		    	lowerValue1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "LOWERVALUE_1");
 		    	lowerValue1.setAttribute("xmi:type", "LiteralInteger");
+		    	lowerValue1.setAttribute("value", String.valueOf(class1.getValue()[0].lowerBound));
 		    	ownedEnd1.appendChild(lowerValue1);
 	    	
 	    	Element ownedEnd2 = null;
 	    	ownedEnd2 = doc.createElement("ownedEnd");
 	    	ownedEnd2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "OWNEDEND_2");
 	    	ownedEnd2.setAttribute("visibility", "public");
-	    	ownedEnd2.setAttribute("type", class2.getName().toUpperCase());
+	    	ownedEnd2.setAttribute("type", class2.getKey().getName().toUpperCase());
 	    	ownedEnd2.setAttribute("association", "ASSOCIATION_" + associationid);
 	    	packagedElementAssociation.appendChild(ownedEnd2);
 	    	
@@ -220,13 +219,14 @@ public class PowerDesignerExport implements IExport {
 		    	upperValue2 = doc.createElement("upperValue");
 		    	upperValue2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "UPPERVALUE_2");
 		    	upperValue2.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
-		    	upperValue2.setAttribute("value", "1");
+		    	upperValue2.setAttribute("value", String.valueOf(class2.getValue()[1].upperBound));
 		    	ownedEnd2.appendChild(upperValue2);
 		    	
 		    	Element lowerValue2 = null;
 		    	lowerValue2 = doc.createElement("lowerValue");
 		    	lowerValue2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "LOWERVALUE_2");
 		    	lowerValue2.setAttribute("xmi:type", "LiteralInteger");
+		    	lowerValue2.setAttribute("value", String.valueOf(class2.getValue()[1].lowerBound));
 		    	ownedEnd2.appendChild(lowerValue2);	
     	
 		associationid++;
