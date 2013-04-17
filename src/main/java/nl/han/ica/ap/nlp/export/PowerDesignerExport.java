@@ -57,8 +57,8 @@ public class PowerDesignerExport implements IExport {
 	
 	private IFile file;
 	public int associationid = 0;
-	private ArrayList<String> classlist = new ArrayList<String>();
-	private TreeSet<ClassRelation> associationlist = new TreeSet<ClassRelation>();
+	private ArrayList<IClass> classlist = new ArrayList<IClass>();
+	private ArrayList<ClassRelation> associationlist = new ArrayList<ClassRelation>();
 	
 	public PowerDesignerExport() {
 		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
@@ -73,6 +73,16 @@ public class PowerDesignerExport implements IExport {
 	public String export(TreeMap<IClass, Multiplicity[]> classes) {
 		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
 		return export(classes, filepath);
+	}
+	
+	public String export(ArrayList<IClass> classes){
+		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
+		
+		TreeMap<IClass, Multiplicity[]> treemap_classes = new TreeMap<IClass, Multiplicity[]>();
+		for(IClass list_class : classes){
+			treemap_classes.put(list_class, null);
+		}
+		return export(treemap_classes, filepath);
 	}
 	
     public String export(TreeMap<IClass, Multiplicity[]> classes, String filepath) {
@@ -125,22 +135,22 @@ public class PowerDesignerExport implements IExport {
 			    if (child instanceof IClass) {
 			    	
 			    	//Create classes if not already created.
-		    		if (!classlist.contains(child.getName())) {
+		    		if (!classlist.contains(child)) {
 		    			Element childClassElement = createClass(doc, child);
 		    			root.appendChild(childClassElement);
-		    			classlist.add(child.getName());
+		    			classlist.add(child);
 		    		}
 			    	
 		    		//If there is a parent, current class has a relation with it so create a association.
 			    	if (parentClass != null) {
 			    		//Check if association is already created, if it hasn't create it.
-			    		ClassRelation tmprelation = new ClassRelation(((IClass)child).getName(), parentClass.getName());
+			    		ClassRelation tmprelation = new ClassRelation((IClass)child, parentClass);
 			    		if (!associationlist.contains(tmprelation)) {
 			    			Element association = createAssociation(doc, ((IClass)child), parentClass);
 			    			root.appendChild(association);
 			    			associationlist.add(tmprelation);
 			    		} else {
-			    			//We already have this association, so stop?
+			    			//We already have this association, so stop
 			    			break;
 			    		}
 			    	}
@@ -225,10 +235,10 @@ public class PowerDesignerExport implements IExport {
     }
     
     class ClassRelation implements Comparable<ClassRelation> {
-    	private String class1;
-    	private String class2;
+    	private IClass class1;
+    	private IClass class2;
     	
-    	public ClassRelation(String class1, String class2) {
+    	public ClassRelation(IClass class1, IClass class2) {
     		this.class1 = class1;
     		this.class2 = class2;
     	}
@@ -241,11 +251,11 @@ public class PowerDesignerExport implements IExport {
     		
     		ClassRelation other = (ClassRelation)obj;
     		
-    		if (!class1.equals(other.class1)) {
+    		if (class1 != other.class1) {
     			return false;
     		}
     		
-    		if (!class2.equals(other.class2)) {
+    		if (class2 != other.class2) {
     			return false;
     		}
     		
@@ -263,11 +273,9 @@ public class PowerDesignerExport implements IExport {
 		@Override
 		public int compareTo(ClassRelation o) {
 			int i = this.class1.compareTo(o.class1);
-			
 			if (i == 0) {
 				i = this.class2.compareTo(o.class2);
 			}
-			
 			return i;
 		}
     }

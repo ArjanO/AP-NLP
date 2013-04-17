@@ -29,6 +29,7 @@
  */
 package nl.han.ica.ap.nlp.export;
 
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 import nl.han.ica.ap.nlp.export.PowerDesignerExport;
@@ -68,13 +69,13 @@ public class PowerDesignerExportTest {
 		PowerDesignerExport exporter = new PowerDesignerExport();
 		exporter.setFile(fileMock);
 		
-		TreeMap<IClass, Multiplicity[]> classes = new TreeMap<IClass, Multiplicity[]>();
+		ArrayList<IClass> classes = new ArrayList<IClass>();
 		IClass vliegtuig = new Class("Vliegtuig");
 		IClass passagier = new Class("Passagier");
 		
 		vliegtuig.getAttributes().put(passagier, null);
 		
-		classes.put(vliegtuig, null);
+		classes.add(vliegtuig);
 		
 		String exportpath = exporter.export(classes);
 		
@@ -98,7 +99,7 @@ public class PowerDesignerExportTest {
 		PowerDesignerExport exporter = new PowerDesignerExport();
 		exporter.setFile(fileMock);
 		
-		TreeMap<IClass, Multiplicity[]> classes = new TreeMap<IClass, Multiplicity[]>();
+		ArrayList<IClass> classes = new ArrayList<IClass>();
 		IClass vliegtuig = new Class("Vliegtuig");
 		IClass passagier = new Class("Passagier");
 		IClass bus = new Class("Bus");
@@ -106,15 +107,14 @@ public class PowerDesignerExportTest {
 		vliegtuig.getAttributes().put(passagier, null);
 		bus.getAttributes().put(passagier, null);
 		
-		classes.put(vliegtuig, null);
-		classes.put(bus, null);
+		classes.add(vliegtuig);
+		classes.add(bus);
 		
 		String exportpath = exporter.export(classes);
 		
 		assertNotNull(exportpath);
 		
 		String output = content.getValue();
-		System.out.println(output);
 		
 		String expected_output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><uml:Model name=\"ObjectOrientedModel\" xmi:version=\"2.1\" xmlns:uml=\"http://www.eclipse.org/uml2/2.1.0/UML\" xmlns:xmi=\"http://schema.omg.org/spec/XMI/2.1\"><packagedElement name=\"Bus\" xmi:id=\"BUS\" xmi:type=\"uml:Class\"/><packagedElement name=\"Passagier\" xmi:id=\"PASSAGIER\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_0OWNEDEND_1 ASSOCIATION_0OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_0OWNEDEND_2\" xmi:id=\"ASSOCIATION_0\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_0\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_0UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_0LOWERVALUE_1\" xmi:type=\"LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_0\" type=\"BUS\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_2\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_0UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_0LOWERVALUE_2\" xmi:type=\"LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Vliegtuig\" xmi:id=\"VLIEGTUIG\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_1OWNEDEND_1 ASSOCIATION_1OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_1OWNEDEND_2\" xmi:id=\"ASSOCIATION_1\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_1\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_1UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_1LOWERVALUE_1\" xmi:type=\"LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_1\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_2\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_1UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_1LOWERVALUE_2\" xmi:type=\"LiteralInteger\"/></ownedEnd></packagedElement></uml:Model>";
 		
@@ -132,7 +132,7 @@ public class PowerDesignerExportTest {
 		PowerDesignerExport exporter = new PowerDesignerExport();
 		exporter.setFile(fileMock);
 		
-		TreeMap<IClass, Multiplicity[]> classes = new TreeMap<IClass, Multiplicity[]>();
+		ArrayList<IClass> classes = new ArrayList<IClass>();
 		IClass vliegtuig = new Class("Vliegtuig");
 		IClass vliegtuigmaatschappij = new Class("Vliegtuigmaatschappij");
 		IClass passagier = new Class("Passagier");
@@ -140,7 +140,7 @@ public class PowerDesignerExportTest {
 		vliegtuig.getAttributes().put(passagier, null);
 		vliegtuigmaatschappij.getAttributes().put(vliegtuig, null);
 		
-		classes.put(vliegtuigmaatschappij, null);
+		classes.add(vliegtuigmaatschappij);
 		
 		String exportpath = exporter.export(classes);
 		
@@ -164,7 +164,7 @@ public class PowerDesignerExportTest {
 		PowerDesignerExport exporter = new PowerDesignerExport();
 		exporter.setFile(fileMock);
 		
-		TreeMap<IClass, Multiplicity[]> classes = new TreeMap<IClass, Multiplicity[]>();
+		ArrayList<IClass> classes = new ArrayList<IClass>();
 		IClass vliegtuig = new Class("Vliegtuig");
 		IClass passagier = new Class("Passagier");
 		IClass passpoort = new Class("Passpoort");
@@ -172,7 +172,7 @@ public class PowerDesignerExportTest {
 		vliegtuig.getAttributes().put(passagier, null);
 		passagier.getAttributes().put(passpoort, null);
 		
-		classes.put(vliegtuig, null);
+		classes.add(vliegtuig);
 		
 		String exportpath = exporter.export(classes);
 		
@@ -196,7 +196,7 @@ public class PowerDesignerExportTest {
 		PowerDesignerExport exporter = new PowerDesignerExport();
 		exporter.setFile(fileMock);
 		
-		TreeMap<IClass, Multiplicity[]> classes = new TreeMap<IClass, Multiplicity[]>();
+		ArrayList<IClass> classes = new ArrayList<IClass>();
 		IClass vliegtuig = new Class("Vliegtuig");
 		IClass passagier = new Class("Passagier");
 		IClass piloot = new Class("Piloot");
@@ -204,7 +204,7 @@ public class PowerDesignerExportTest {
 		vliegtuig.getAttributes().put(passagier, null);
 		vliegtuig.getAttributes().put(piloot, null);
 		
-		classes.put(vliegtuig, null);
+		classes.add(vliegtuig);
 		
 		String exportpath = exporter.export(classes);
 		
@@ -228,7 +228,7 @@ public class PowerDesignerExportTest {
 		PowerDesignerExport exporter = new PowerDesignerExport();
 		exporter.setFile(fileMock);
 		
-		TreeMap<IClass, Multiplicity[]> classes = new TreeMap<IClass, Multiplicity[]>();
+		ArrayList<IClass> classes = new ArrayList<IClass>();
 		IClass vliegtuig = new Class("Vliegtuig");
 		IClass vliegtuigmaatschappij = new Class("Vliegtuigmaatschappij");
 		IClass passagier = new Class("Passagier");
@@ -238,7 +238,7 @@ public class PowerDesignerExportTest {
 		vliegtuigmaatschappij.getAttributes().put(vliegtuig, null);
 		vliegtuig.getAttributes().put(passagier, null);
 		
-		classes.put(vliegtuigmaatschappij, null);
+		classes.add(vliegtuigmaatschappij);
 		
 		String exportpath = exporter.export(classes);
 		
@@ -262,7 +262,7 @@ public class PowerDesignerExportTest {
 		PowerDesignerExport exporter = new PowerDesignerExport();
 		exporter.setFile(fileMock);
 		
-		TreeMap<IClass, Multiplicity[]> classes = new TreeMap<IClass, Multiplicity[]>();
+		ArrayList<IClass> classes = new ArrayList<IClass>();
 		IClass vliegtuig = new Class("Vliegtuig");
 		IClass passagier = new Class("Passagier");
 		IClass paspoort = new Class("Paspoort");
@@ -271,13 +271,14 @@ public class PowerDesignerExportTest {
 		passagier.getAttributes().put(paspoort, null);
 		paspoort.getAttributes().put(vliegtuig, null);
 		
-		classes.put(vliegtuig, null);
+		classes.add(vliegtuig);
 		
 		String exportpath = exporter.export(classes);
 		
 		assertNotNull(exportpath);
 		
 		String output = content.getValue();
+		System.out.println(output);
 		
 		String expected_output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><uml:Model name=\"ObjectOrientedModel\" xmi:version=\"2.1\" xmlns:uml=\"http://www.eclipse.org/uml2/2.1.0/UML\" xmlns:xmi=\"http://schema.omg.org/spec/XMI/2.1\"><packagedElement name=\"Vliegtuig\" xmi:id=\"VLIEGTUIG\" xmi:type=\"uml:Class\"/><packagedElement name=\"Passagier\" xmi:id=\"PASSAGIER\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_0OWNEDEND_1 ASSOCIATION_0OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_0OWNEDEND_2\" xmi:id=\"ASSOCIATION_0\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_0\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_0UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_0LOWERVALUE_1\" xmi:type=\"LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_0\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_2\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_0UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_0LOWERVALUE_2\" xmi:type=\"LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Paspoort\" xmi:id=\"PASPOORT\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_1OWNEDEND_1 ASSOCIATION_1OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_1OWNEDEND_2\" xmi:id=\"ASSOCIATION_1\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_1\" type=\"PASPOORT\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_1UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_1LOWERVALUE_1\" xmi:type=\"LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_1\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_2\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_1UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_1LOWERVALUE_2\" xmi:type=\"LiteralInteger\"/></ownedEnd></packagedElement><packagedElement memberEnd=\"ASSOCIATION_2OWNEDEND_1 ASSOCIATION_2OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_2OWNEDEND_2\" xmi:id=\"ASSOCIATION_2\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_2\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_2OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_2UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_2LOWERVALUE_1\" xmi:type=\"LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_2\" type=\"PASPOORT\" visibility=\"public\" xmi:id=\"ASSOCIATION_2OWNEDEND_2\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_2UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue xmi:id=\"ASSOCIATION_2LOWERVALUE_2\" xmi:type=\"LiteralInteger\"/></ownedEnd></packagedElement></uml:Model>";
 		

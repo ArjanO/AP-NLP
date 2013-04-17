@@ -29,10 +29,9 @@
  */
 package nl.han.ica.ap.nlp.model;
 
-import java.util.HashMap;
 import java.util.TreeMap;
 
-public interface IClass extends IAttribute{	
+public interface IClass extends IAttribute, Comparable<IClass>{	
 	public String getName();
 	public void setName(String name);
 	public TreeMap<IAttribute, Multiplicity[]> getAttributes();
