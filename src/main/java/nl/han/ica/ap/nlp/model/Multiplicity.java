@@ -29,11 +29,19 @@
  */
 package nl.han.ica.ap.nlp.model;
 
-import java.util.TreeMap;
 
-public interface IClass extends IAttribute, Comparable<IClass>{	
-	public String getName();
-	public void setName(String name);
-	public TreeMap<IAttribute, Multiplicity[]> getAttributes();
-	public void addAttribute(IAttribute a, Multiplicity[] m);
+public class Multiplicity {
+	public char lowerBound;
+	public char upperBound;
+	
+	public Multiplicity() {
+		lowerBound = '0';
+		upperBound = '*';
+	}
+	
+	public Multiplicity(char lowerBound, char upperBound) {
+		this.lowerBound = lowerBound;
+		this.upperBound = upperBound;		
+	}	
+	
 }

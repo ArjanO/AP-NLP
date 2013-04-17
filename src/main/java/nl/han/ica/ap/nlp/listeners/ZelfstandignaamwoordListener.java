@@ -37,6 +37,7 @@ import nl.han.ica.ap.nlp.controller.VerbDirectionController;
 import nl.han.ica.ap.nlp.model.Class;
 import nl.han.ica.ap.nlp.model.IAttribute;
 import nl.han.ica.ap.nlp.model.IClass;
+import nl.han.ica.ap.nlp.model.Multiplicity;
 import nl.han.ica.ap.nlp.NlpBaseListener;
 import nl.han.ica.ap.nlp.NlpParser;
 import nl.han.ica.ap.nlp.NlpParser.BijwoordContext;
@@ -59,12 +60,18 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 			if(!direction) {
 				Class c = new Class(znw.getText());
 				IAttribute a = new Class(ctx.getText());
-				c.addAttribute(a);
+				Multiplicity[] m = new Multiplicity[2];
+				m[0] = new Multiplicity();
+				m[1] = new Multiplicity();
+				c.addAttribute(a,m);
 				controller.addClass(c);
 			} else {
 				Class c = new Class(ctx.getText());
 				IAttribute a = new Class(znw.getText());
-				c.addAttribute(a);
+				Multiplicity[] m = new Multiplicity[2];
+				m[0] = new Multiplicity();
+				m[1] = new Multiplicity();
+				c.addAttribute(a,m);
 				controller.addClass(c);
 			}
 			start = false;

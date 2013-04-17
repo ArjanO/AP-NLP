@@ -32,10 +32,14 @@ package nl.han.ica.ap.nlp.export;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import nl.han.ica.ap.nlp.model.IAttribute;
 import nl.han.ica.ap.nlp.model.IClass;
+import nl.han.ica.ap.nlp.model.Multiplicity;
 import nl.han.ica.ap.nlp.util.File;
 import nl.han.ica.ap.nlp.util.IFile;
 
@@ -53,8 +57,8 @@ public class PowerDesignerExport implements IExport {
 	
 	private IFile file;
 	public int associationid = 0;
-	private ArrayList<String> classlist = new ArrayList<String>();
-	private TreeSet<ClassRelation> associationlist = new TreeSet<ClassRelation>();
+	private ArrayList<IClass> classlist = new ArrayList<IClass>();
+	private ArrayList<ClassRelation> associationlist = new ArrayList<ClassRelation>();
 	
 	public PowerDesignerExport() {
 		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
@@ -66,12 +70,22 @@ public class PowerDesignerExport implements IExport {
 		this.file = file;
 	}
 	
-	public String export(ArrayList<IClass> classes) {
+	public String export(TreeMap<IClass, Multiplicity[]> classes) {
 		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
 		return export(classes, filepath);
 	}
 	
-    public String export(ArrayList<IClass> classes, String filepath) {
+	public String export(ArrayList<IClass> classes){
+		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
+		
+		TreeMap<IClass, Multiplicity[]> treemap_classes = new TreeMap<IClass, Multiplicity[]>();
+		for(IClass list_class : classes){
+			treemap_classes.put(list_class, null);
+		}
+		return export(treemap_classes, filepath);
+	}
+	
+    public String export(TreeMap<IClass, Multiplicity[]> classes, String filepath) {
     	
     	// Create a new document.
 	    Document doc = null;
@@ -112,41 +126,47 @@ public class PowerDesignerExport implements IExport {
         return filepath;
 	}
     
-    private void createClasses(Document doc, Element root, ArrayList<IClass> classes, IClass parentClass) {
+    private void createClasses(Document doc, Element root, TreeMap<IClass, Multiplicity[]> classes, IClass parentClass) {
     	if (classes.size() > 0) {
-	    	for (IAttribute childClass : classes) {
+	    	for (Entry<IClass, Multiplicity[]> entry : classes.entrySet()) {
+	    		IClass child = (IClass) entry.getKey();
 	    		
-	    		if (!classlist.contains(childClass.getName())) {
-	    			Element childClassElement = createClass(doc, childClass);
-	    			root.appendChild(childClassElement);
-	    			classlist.add(childClass.getName());
-	    		}
-
-			    if (childClass instanceof IClass) {
+	    		//If child is a Class.
+			    if (child instanceof IClass) {
 			    	
+			    	//Create classes if not already created.
+		    		if (!classlist.contains(child)) {
+		    			Element childClassElement = createClass(doc, child);
+		    			root.appendChild(childClassElement);
+		    			classlist.add(child);
+		    		}
+			    	
+		    		//If there is a parent, current class has a relation with it so create a association.
 			    	if (parentClass != null) {
-			    		ClassRelation tmprelation = new ClassRelation(((IClass)childClass).getName(), parentClass.getName());
+			    		//Check if association is already created, if it hasn't create it.
+			    		ClassRelation tmprelation = new ClassRelation((IClass)child, parentClass);
 			    		if (!associationlist.contains(tmprelation)) {
-			    			Element association = createAssociation(doc, ((IClass)childClass), parentClass);
+			    			Element association = createAssociation(doc, ((IClass)child), parentClass);
 			    			root.appendChild(association);
 			    			associationlist.add(tmprelation);
 			    		} else {
-			    			return;
+			    			//We already have this association, so stop
+			    			break;
 			    		}
 			    	}
 			    	
-			    	ArrayList<IClass> attribute_classes = new ArrayList<IClass>();
-			    	ArrayList<IAttribute> class_attributes = ((IClass)childClass).getAttributes();
-			    	for (IAttribute attribute : class_attributes) {
-						if (attribute instanceof IClass) {
-							attribute_classes.add(((IClass)attribute));
+			    	//Get attributes from childclass, and recurse it.
+			    	TreeMap<IClass, Multiplicity[]> attribute_classes = new TreeMap<IClass, Multiplicity[]>();
+			    	TreeMap<IAttribute, Multiplicity[]> class_attributes = ((IClass)child).getAttributes();
+			    	
+			    	for (Entry<IAttribute, Multiplicity[]> attribute : class_attributes.entrySet()) {
+						if (attribute.getKey() instanceof IClass) {
+							attribute_classes.put(((IClass)attribute.getKey()), attribute.getValue());
 						}
 					}
-			    	createClasses(doc, root, attribute_classes, ((IClass)childClass));
+			    	createClasses(doc, root, attribute_classes, ((IClass)child));
 			    }
 			}
-    	} else {
-    		return;
     	}
     }
     
@@ -215,10 +235,10 @@ public class PowerDesignerExport implements IExport {
     }
     
     class ClassRelation implements Comparable<ClassRelation> {
-    	private String class1;
-    	private String class2;
+    	private IClass class1;
+    	private IClass class2;
     	
-    	public ClassRelation(String class1, String class2) {
+    	public ClassRelation(IClass class1, IClass class2) {
     		this.class1 = class1;
     		this.class2 = class2;
     	}
@@ -231,11 +251,11 @@ public class PowerDesignerExport implements IExport {
     		
     		ClassRelation other = (ClassRelation)obj;
     		
-    		if (!class1.equals(other.class1)) {
+    		if (class1 != other.class1) {
     			return false;
     		}
     		
-    		if (!class2.equals(other.class2)) {
+    		if (class2 != other.class2) {
     			return false;
     		}
     		
@@ -253,11 +273,9 @@ public class PowerDesignerExport implements IExport {
 		@Override
 		public int compareTo(ClassRelation o) {
 			int i = this.class1.compareTo(o.class1);
-			
 			if (i == 0) {
 				i = this.class2.compareTo(o.class2);
 			}
-			
 			return i;
 		}
     }

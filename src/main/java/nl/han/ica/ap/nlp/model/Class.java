@@ -29,15 +29,15 @@
  */
 package nl.han.ica.ap.nlp.model;
 
-import java.util.ArrayList;
+import java.util.TreeMap;
 
 /**
  * @author Joell
  *
  */
-public class Class implements IClass, IAttribute, Comparable<Class>{
+public class Class implements IClass, IAttribute{
 	private String name;
-	private ArrayList<IAttribute> attributes = new ArrayList<IAttribute>();
+	private TreeMap<IAttribute,Multiplicity[]> attributes = new TreeMap<IAttribute,Multiplicity[]>();
 
 	public Class(String name) {
 		this.name = name;
@@ -47,15 +47,15 @@ public class Class implements IClass, IAttribute, Comparable<Class>{
 		return name;
 	}
 	
-	public void addAttribute(IAttribute a) {
-		attributes.add(a);
+	public void addAttribute(IAttribute a,Multiplicity[] multiplicities) {
+		attributes.put(a,multiplicities);
 	}
 	
-	public ArrayList<IAttribute> getAttributes(){
+	public TreeMap<IAttribute, Multiplicity[]> getAttributes(){
 		return attributes;
 	}
 	
-	public void setAttributes(ArrayList<IAttribute> attributes){
+	public void setAttributes(TreeMap<IAttribute, Multiplicity[]> attributes){
 		this.attributes = attributes;
 	}
 
@@ -63,18 +63,11 @@ public class Class implements IClass, IAttribute, Comparable<Class>{
 	public void setName(String name) {
 		this.name = name;
 	}
+	
 
 	@Override
-	public void addAttributes(ArrayList<IAttribute> attributes) {
-		for(IAttribute _attributes : attributes) {
-			this.attributes.add(_attributes);
-		}
-		
-	}
-
-	@Override
-	public int compareTo(Class o) {
-		if(this.equals(o)) {
+	public int compareTo(IClass o) {
+		if(this == o) {
 			return 0;
 		} else {
 			return -1;
