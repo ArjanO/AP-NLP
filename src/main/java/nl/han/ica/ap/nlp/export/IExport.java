@@ -30,10 +30,8 @@
 package nl.han.ica.ap.nlp.export;
 
 import java.util.ArrayList;
-import java.util.TreeMap;
 
 import nl.han.ica.ap.nlp.model.IClass;
-import nl.han.ica.ap.nlp.model.Multiplicity;
 
 public interface IExport {
 	

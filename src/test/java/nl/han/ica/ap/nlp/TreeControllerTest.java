@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import nl.han.ica.ap.nlp.model.*;
 import nl.han.ica.ap.nlp.model.Class;
@@ -13,7 +12,6 @@ import nl.han.ica.ap.nlp.controller.TreeController;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.omg.PortableInterceptor.SUCCESSFUL;
 
 public class TreeControllerTest {
 	static Multiplicity[] m = new Multiplicity[2];

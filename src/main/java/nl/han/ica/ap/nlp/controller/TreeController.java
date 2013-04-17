@@ -30,19 +30,12 @@
 package nl.han.ica.ap.nlp.controller;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.TreeMap;
-import java.util.List;
 import java.util.Map.Entry;
-import java.util.TreeSet;
 
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-
-
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.junit.rules.ExternalResource;
 
-import nl.han.ica.ap.nlp.App;
 import nl.han.ica.ap.nlp.NlpParser;
 import nl.han.ica.ap.nlp.export.IExport;
 import nl.han.ica.ap.nlp.export.PowerDesignerExport;

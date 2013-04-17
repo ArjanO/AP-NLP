@@ -31,16 +31,10 @@ package nl.han.ica.ap.nlp.listeners;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 import nl.han.ica.ap.nlp.CSVtoG4BaseListener;
 import nl.han.ica.ap.nlp.CSVtoG4Parser;
 import nl.han.ica.ap.nlp.CSVtoG4Parser.ConjugationContext;
-import nl.han.ica.ap.nlp.CSVtoG4Parser.CsvContext;
-import nl.han.ica.ap.nlp.CSVtoG4Parser.DirectionContext;
-import nl.han.ica.ap.nlp.CSVtoG4Parser.NameContext;
-import nl.han.ica.ap.nlp.CSVtoG4Parser.RowContext;
-import nl.han.ica.ap.nlp.util.CSVtoG4;
 
 public class CSVRowListener extends CSVtoG4BaseListener {
 	CSVtoG4Parser parser;

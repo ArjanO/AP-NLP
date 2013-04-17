@@ -30,22 +30,14 @@
 package nl.han.ica.ap.nlp;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-
-import nl.han.ica.ap.nlp.listeners.ZelfstandignaamwoordListener;
 import nl.han.ica.ap.nlp.NlpLexer;
 import nl.han.ica.ap.nlp.NlpParser;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import nl.han.ica.ap.nlp.controller.TreeController;
-import nl.han.ica.ap.nlp.export.IExport;
-import nl.han.ica.ap.nlp.export.PowerDesignerExport;
-import nl.han.ica.ap.nlp.model.IClass;
 
 
 /**
