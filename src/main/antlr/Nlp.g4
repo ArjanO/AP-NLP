@@ -38,7 +38,7 @@ tekst: zin+;
 zin:  (bijwoord|naamwoordgroep|zelfstandignaamwoord ) verbaleconstituent eindezin;
 samengesteld: voegwoord (naamwoordgroep|zelfstandignaamwoord);
 naamwoordgroep: voorzetsel? bijwoord? (lidwoord|telwoord|kwantor) zelfstandignaamwoord (voorzetsel)?;
-verbaleconstituent : woord* werkwoord (naamwoordgroep|zelfstandignaamwoord) voegwoord? samengesteld+ (verbaleconstituent*|werkwoord);
+verbaleconstituent : woord* werkwoord (naamwoordgroep|zelfstandignaamwoord) voegwoord? samengesteld* (verbaleconstituent*|werkwoord);
 eindezin: EINDEZIN;
 zelfstandignaamwoord: WOORD;
 voorzetsel: ('in'|'op');

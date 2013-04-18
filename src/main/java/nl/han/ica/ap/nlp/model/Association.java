@@ -27,56 +27,43 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package nl.han.ica.ap.nlp;
 
-import java.io.IOException;
-import nl.han.ica.ap.nlp.NlpLexer;
-import nl.han.ica.ap.nlp.NlpParser;
-
-import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.tree.ParseTree;
-
-import nl.han.ica.ap.nlp.controller.TreeController;
-
-
-
+package nl.han.ica.ap.nlp.model;
 
 /**
  * @author Joell
- * 
+ *
  */
-public class App {
+public class Association {
+	private String name;
+	private Class childClass;
+	private IMultiplicity parentMultiplicity;
+	private IMultiplicity childMultiplicity;
 	
-	private static App app;
-	private App(){}
-	public static App getInstance() {
-		if(app == null) {
-			app = new App();
-		}
-		return app;
+	public Association(Class child,String name) {
+		this.name = name;
+		this.childClass = child;	
+		childMultiplicity = new ChildMultiplicity();
+		parentMultiplicity = new ParentMultiplicity();
 	}
 	
-	/**
-	 * Starts parsing the input text to an uml diagram xml file.
-	 */
-	public void start() {
-		ANTLRInputStream input = null;
-		try {
-			input = new ANTLRInputStream(System.in);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		NlpLexer lexer = new NlpLexer(input);
-		CommonTokenStream tokens = new CommonTokenStream(lexer);
-		NlpParser parser = new NlpParser(tokens);
-		ParseTree tree = parser.tekst(); // begin parsing at init rule
-		TreeController controller = new TreeController();
-		controller.walkTree(tree, parser);
+	public IMultiplicity getChildMultiplicity() {
+		return childMultiplicity;
 	}
-		
-	public static void main(String[] args) throws Exception {
-		App app = App.getInstance();
-		app.start();
+	
+	public IMultiplicity getParentMultiplicity() {
+		return parentMultiplicity;
+	}		
+	
+	public Class getChildClass() {
+		return childClass;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
 	}
 }

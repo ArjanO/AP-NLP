@@ -32,18 +32,12 @@ package nl.han.ica.ap.nlp.export;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import nl.han.ica.ap.nlp.model.IAttribute;
-import nl.han.ica.ap.nlp.model.IClass;
-import nl.han.ica.ap.nlp.model.Multiplicity;
+import nl.han.ica.ap.nlp.model.Association;
+import nl.han.ica.ap.nlp.model.Class;
 import nl.han.ica.ap.nlp.util.File;
 import nl.han.ica.ap.nlp.util.IFile;
-
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -55,7 +49,7 @@ public class PowerDesignerExport implements IExport {
 	
 	private IFile file;
 	public int associationid = 0;
-	private ArrayList<IClass> classlist = new ArrayList<IClass>();
+	private ArrayList<Class> classlist = new ArrayList<Class>();
 	private ArrayList<ClassRelation> associationlist = new ArrayList<ClassRelation>();
 	
 	public PowerDesignerExport() {
@@ -67,28 +61,12 @@ public class PowerDesignerExport implements IExport {
 		this.file = file;
 	}
 	
-	public String export(TreeMap<IClass, Multiplicity[]> classes) {
+	public String export(ArrayList<Class> classes){
 		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
 		return export(classes, filepath);
 	}
 	
-	public String export(ArrayList<IClass> classes){
-		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
-		
-		TreeMap<IClass, Multiplicity[]> treemap_classes = new TreeMap<IClass, Multiplicity[]>();
-		for(IClass list_class : classes){
-			treemap_classes.put(list_class, new Multiplicity[]{new Multiplicity(), new Multiplicity()});
-		}
-		return export(treemap_classes, filepath);
-	}
-	
-	/**
-	 * Export the Classes to an xml file.
-	 * @param classes
-	 * @param filepath
-	 * @return
-	 */
-    public String export(TreeMap<IClass, Multiplicity[]> classes, String filepath) {
+    public String export(ArrayList<Class> classes, String filepath) {
     	
     	// Create a new document.
 	    Document doc = null;
@@ -107,7 +85,7 @@ public class PowerDesignerExport implements IExport {
 	    doc.appendChild(root);
     	
 	    //Create classes
-	    createClasses(doc, root, classes, null);
+	    createClasses(doc, root, classes);
 		
 		// Output the document to string.
 	    DOMImplementation impl = doc.getImplementation();
@@ -129,64 +107,39 @@ public class PowerDesignerExport implements IExport {
         return filepath;
 	}
     
-    /**
-     * Recursive function to walk all classes and attributes of classes and create the xml-file.
-     * @param doc
-     * @param root
-     * @param classes
-     * @param parent
-     */
-    private void createClasses(Document doc, Element root, TreeMap<IClass, Multiplicity[]> classes, Entry<IClass, Multiplicity[]> parent) {
+    private void createClasses(Document doc, Element root, ArrayList<Class> classes) {
     	if (classes.size() > 0) {
-	    	for (Entry<IClass, Multiplicity[]> entry : classes.entrySet()) {
-	    		IClass child = (IClass) entry.getKey();
+    		for(Class child : classes){
+
+    			//Create classes if not already created.
+	    		if (!classlist.contains(child)) {
+	    			Element childClassElement = createClass(doc, child);
+	    			root.appendChild(childClassElement);
+	    			classlist.add(child);
+	    		}
 	    		
-	    		//If child is a Class.
-			    if (child instanceof IClass) {
-			    	
-			    	//Create classes if not already created.
-		    		if (!classlist.contains(child)) {
-		    			Element childClassElement = createClass(doc, child);
-		    			root.appendChild(childClassElement);
-		    			classlist.add(child);
+	    		//Create associations
+	    		ArrayList<Class> association_classes = new ArrayList<Class>();
+    			for(Association asso : child.getAssociations()){
+    				association_classes.add(asso.getChildClass());
+    				
+		    		//Check if association is already created, if it hasn't create it.
+		    		ClassRelation tmprelation = new ClassRelation(asso.getChildClass(), child);
+		    		if (!associationlist.contains(tmprelation)) {
+		    			Element association = createAssociation(doc, child, asso.getChildClass(), asso);
+		    			root.appendChild(association);
+		    			associationlist.add(tmprelation);
+		    		} else {
+		    			//We already have this association, so stop
+		    			return;
 		    		}
-			    	
-		    		//If there is a parent, current class has a relation with it so create a association.
-			    	if (parent != null) {
-			    		//Check if association is already created, if it hasn't create it.
-			    		ClassRelation tmprelation = new ClassRelation((IClass)child, parent.getKey());
-			    		if (!associationlist.contains(tmprelation)) {
-			    			Element association = createAssociation(doc, entry, parent);
-			    			root.appendChild(association);
-			    			associationlist.add(tmprelation);
-			    		} else {
-			    			//We already have this association, so stop
-			    			break;
-			    		}
-			    	}
-			    	
-			    	//Get attributes from childclass, and recurse it.
-			    	TreeMap<IClass, Multiplicity[]> attribute_classes = new TreeMap<IClass, Multiplicity[]>();
-			    	TreeMap<IAttribute, Multiplicity[]> class_attributes = ((IClass)child).getAttributes();
-			    	
-			    	for (Entry<IAttribute, Multiplicity[]> attribute : class_attributes.entrySet()) {
-						if (attribute.getKey() instanceof IClass) {
-							attribute_classes.put(((IClass)attribute.getKey()), attribute.getValue());
-						}
-					}
-			    	createClasses(doc, root, attribute_classes, entry);
-			    }
-			}
+    			}		    	
+		    	createClasses(doc, root, association_classes);
+		    }
     	}
     }
     
-    /**
-     * Create a xml class from an IClass
-     * @param doc
-     * @param element_class
-     * @return XML Class
-     */
-	private Element createClass(Document doc, IClass element_class) {
+    private Element createClass(Document doc, Class element_class) {
     	Element packagedElementClass = null;
     	packagedElementClass = doc.createElement("packagedElement");
     	packagedElementClass.setAttribute("xmi:type", "uml:Class");
@@ -195,79 +148,69 @@ public class PowerDesignerExport implements IExport {
     	return packagedElementClass;
     }
     
-	/**
-	 * Create a xml association between two classes.
-	 * @param doc
-	 * @param class1
-	 * @param class2
-	 * @return XML Association
-	 */
-    private Element createAssociation(Document doc, Entry<IClass,Multiplicity[]> class1, Entry<IClass,Multiplicity[]> class2) {
+    private Element createAssociation(Document doc, Class class1, Class class2, Association asso) {
     	Element packagedElementAssociation = null;
 	    packagedElementAssociation = doc.createElement("packagedElement");
 	    packagedElementAssociation.setAttribute("xmi:type", "uml:Association");
 	    packagedElementAssociation.setAttribute("xmi:id", "ASSOCIATION_" + associationid);
 	    packagedElementAssociation.setAttribute("memberEnd", "ASSOCIATION_" + associationid + "OWNEDEND_1" + " " + "ASSOCIATION_" + associationid + "OWNEDEND_2");
 	    packagedElementAssociation.setAttribute("navigableOwnedEnd", "ASSOCIATION_" + associationid + "OWNEDEND_2");
-    	
-		    Element ownedEnd1 = null;
-	    	ownedEnd1 = doc.createElement("ownedEnd");
-	    	ownedEnd1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "OWNEDEND_1");
-	    	ownedEnd1.setAttribute("visibility", "public");
-	    	ownedEnd1.setAttribute("type", class1.getKey().getName().toUpperCase());
-	    	ownedEnd1.setAttribute("association", "ASSOCIATION_" + associationid);
-	    	packagedElementAssociation.appendChild(ownedEnd1);
-	    	
-		    	Element upperValue1 = null;
-		    	upperValue1 = doc.createElement("upperValue");
-		    	upperValue1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "UPPERVALUE_1");
-		    	upperValue1.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
-		    	upperValue1.setAttribute("value", String.valueOf(class1.getValue()[0].upperBound));
-		    	ownedEnd1.appendChild(upperValue1);	
-		    	
-		    	Element lowerValue1 = null;
-		    	lowerValue1 = doc.createElement("lowerValue");
-		    	lowerValue1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "LOWERVALUE_1");
-		    	lowerValue1.setAttribute("xmi:type", "LiteralInteger");
-		    	lowerValue1.setAttribute("value", String.valueOf(class1.getValue()[0].lowerBound));
-		    	ownedEnd1.appendChild(lowerValue1);
-	    	
-	    	Element ownedEnd2 = null;
-	    	ownedEnd2 = doc.createElement("ownedEnd");
-	    	ownedEnd2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "OWNEDEND_2");
-	    	ownedEnd2.setAttribute("visibility", "public");
-	    	ownedEnd2.setAttribute("type", class2.getKey().getName().toUpperCase());
-	    	ownedEnd2.setAttribute("association", "ASSOCIATION_" + associationid);
-	    	packagedElementAssociation.appendChild(ownedEnd2);
-	    	
-		    	Element upperValue2 = null;
-		    	upperValue2 = doc.createElement("upperValue");
-		    	upperValue2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "UPPERVALUE_2");
-		    	upperValue2.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
-		    	upperValue2.setAttribute("value", String.valueOf(class2.getValue()[1].upperBound));
-		    	ownedEnd2.appendChild(upperValue2);
-		    	
-		    	Element lowerValue2 = null;
-		    	lowerValue2 = doc.createElement("lowerValue");
-		    	lowerValue2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "LOWERVALUE_2");
-		    	lowerValue2.setAttribute("xmi:type", "LiteralInteger");
-		    	lowerValue2.setAttribute("value", String.valueOf(class2.getValue()[1].lowerBound));
-		    	ownedEnd2.appendChild(lowerValue2);	
-    	
+	
+	    Element ownedEnd1 = null;
+		ownedEnd1 = doc.createElement("ownedEnd");
+		ownedEnd1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "OWNEDEND_1");
+		ownedEnd1.setAttribute("visibility", "public");
+		ownedEnd1.setAttribute("type", class1.getName().toUpperCase());
+		ownedEnd1.setAttribute("association", "ASSOCIATION_" + associationid);
+		packagedElementAssociation.appendChild(ownedEnd1);
+		
+		Element upperValue1 = null;
+		upperValue1 = doc.createElement("upperValue");
+		upperValue1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "UPPERVALUE_1");
+		upperValue1.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
+		upperValue1.setAttribute("value", asso.getParentMultiplicity().getUpperBound().getValue());
+		ownedEnd1.appendChild(upperValue1);	
+		
+		Element lowerValue1 = null;
+		lowerValue1 = doc.createElement("lowerValue");
+		lowerValue1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "LOWERVALUE_1");
+		lowerValue1.setAttribute("xmi:type", "uml:LiteralInteger");
+		lowerValue1.setAttribute("value", asso.getParentMultiplicity().getLowerBound().getValue());
+		
+		ownedEnd1.appendChild(lowerValue1);
+		
+		Element ownedEnd2 = null;
+		ownedEnd2 = doc.createElement("ownedEnd");
+		ownedEnd2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "OWNEDEND_2");
+		ownedEnd2.setAttribute("visibility", "public");
+		ownedEnd2.setAttribute("type", class2.getName().toUpperCase());
+		ownedEnd2.setAttribute("association", "ASSOCIATION_" + associationid);
+		packagedElementAssociation.appendChild(ownedEnd2);
+		
+		Element upperValue2 = null;
+		upperValue2 = doc.createElement("upperValue");
+		upperValue2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "UPPERVALUE_2");
+		upperValue2.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
+		upperValue2.setAttribute("value", asso.getChildMultiplicity().getUpperBound().getValue());
+		ownedEnd2.appendChild(upperValue2);
+		
+		Element lowerValue2 = null;
+		lowerValue2 = doc.createElement("lowerValue");
+		lowerValue2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "LOWERVALUE_2");
+		lowerValue2.setAttribute("xmi:type", "uml:LiteralInteger");
+		lowerValue2.setAttribute("value", asso.getChildMultiplicity().getLowerBound().getValue());
+		ownedEnd2.appendChild(lowerValue2);	
+
 		associationid++;
 		
 	    return packagedElementAssociation;
     }
     
-    /**
-     * Relation between two classes.
-     *
-     */
-    class ClassRelation implements Comparable<ClassRelation> {
-    	private IClass class1;
-    	private IClass class2;
+    class ClassRelation {
+    	private Class class1;
+    	private Class class2;
     	
-    	public ClassRelation(IClass class1, IClass class2) {
+    	public ClassRelation(Class class1, Class class2) {
     		this.class1 = class1;
     		this.class2 = class2;
     	}
@@ -298,14 +241,5 @@ public class PowerDesignerExport implements IExport {
     		hash = hash * 31 + class2.hashCode();
     		return hash;
     	}
-
-		@Override
-		public int compareTo(ClassRelation o) {
-			int i = this.class1.compareTo(o.class1);
-			if (i == 0) {
-				i = this.class2.compareTo(o.class2);
-			}
-			return i;
-		}
     }
 }

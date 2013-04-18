@@ -32,8 +32,6 @@ package nl.han.ica.ap.nlp.listeners;
 import nl.han.ica.ap.nlp.controller.TreeController;
 import nl.han.ica.ap.nlp.controller.VerbDirectionController;
 import nl.han.ica.ap.nlp.model.Class;
-import nl.han.ica.ap.nlp.model.IAttribute;
-import nl.han.ica.ap.nlp.model.Multiplicity;
 import nl.han.ica.ap.nlp.NlpBaseListener;
 import nl.han.ica.ap.nlp.NlpParser.WerkwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.ZelfstandignaamwoordContext;
@@ -53,19 +51,11 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		if(start) {
 			if(!direction) {
 				Class c = new Class(znw.getText());
-				IAttribute a = new Class(ctx.getText());
-				Multiplicity[] m = new Multiplicity[2];
-				m[0] = new Multiplicity();
-				m[1] = new Multiplicity();
-				c.addAttribute(a,m);
+				c.addAssociation(new Class(ctx.getText()));					
 				controller.addClass(c);
 			} else {
 				Class c = new Class(ctx.getText());
-				IAttribute a = new Class(znw.getText());
-				Multiplicity[] m = new Multiplicity[2];
-				m[0] = new Multiplicity();
-				m[1] = new Multiplicity();
-				c.addAttribute(a,m);
+				c.addAssociation(new Class(znw.getText()));	
 				controller.addClass(c);
 			}
 			start = false;

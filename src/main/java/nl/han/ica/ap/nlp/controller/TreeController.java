@@ -32,25 +32,21 @@ package nl.han.ica.ap.nlp.controller;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.Map.Entry;
-
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.ParseTree;
-
 import nl.han.ica.ap.nlp.NlpParser;
 import nl.han.ica.ap.nlp.export.IExport;
 import nl.han.ica.ap.nlp.export.PowerDesignerExport;
 import nl.han.ica.ap.nlp.listeners.ZelfstandignaamwoordListener;
+import nl.han.ica.ap.nlp.model.Association;
 import nl.han.ica.ap.nlp.model.Class;
-import nl.han.ica.ap.nlp.model.IAttribute;
-import nl.han.ica.ap.nlp.model.IClass;
-import nl.han.ica.ap.nlp.model.Multiplicity;
 
 /**
  * @author Joell & Boyd
  *
  */
 public class TreeController {
-	public ArrayList<IClass> classes = new ArrayList<IClass>();
+	public ArrayList<Class> classes = new ArrayList<Class>();
 	
 	public TreeController() {
 		
@@ -78,23 +74,23 @@ public class TreeController {
 	 * @param c The Class to be added.
 	 */
 	public void addClass(Class c) {
-		for(Entry<IClass,Multiplicity[]> entry : convertToIClass(c.getAttributes()).entrySet()) {
-			IClass attribute = entry.getKey();
-			IClass existingClass = getClass(c, classes,null);
-			IClass existingAttribute = getClass(attribute,classes,null);
-			if(existingClass == null && existingAttribute == null){
+		for(Association association : c.getAssociations()) {
+			Class child = association.getChildClass();
+			Class existingParent = getClass(c, classes,null);
+			Class existingChild = getClass(child,classes,null);
+			if(existingParent == null && existingChild == null){
 				classes.add(c);			
-			} else if(existingClass != null && existingAttribute == null) {
-				existingClass.addAttribute(attribute,entry.getValue());
-			} else if(existingClass == null && existingAttribute != null) {
-				c.getAttributes().put(existingAttribute, entry.getValue());
-				c.getAttributes().remove(attribute);
-				classes.remove(existingAttribute);
+			} else if(existingParent != null && existingChild == null) {
+				existingParent.addAssociation(child);
+			} else if(existingParent == null && existingChild != null) {
+				c.addAssociation(existingChild);
+				c.getAssociations().remove(association);				
+				classes.remove(existingChild);
 				classes.add(c);
 			} else {
-				existingClass.addAttribute(existingAttribute,entry.getValue());
+				existingParent.addAssociation(existingChild);
 				if(classes.size() > 1) {
-					classes.remove(existingAttribute);
+					classes.remove(existingChild);
 				}
 			}
 		}
@@ -106,16 +102,16 @@ public class TreeController {
 	 * @param checkedClasses The (attribute)classes of the classlist which already are checked.
 	 * @return The class that alreadt exists or null if the class doesn't exist.
 	 */
-	private IClass getClass(IClass c,ArrayList<IClass> classlist,ArrayList<IClass> checkedClasses) {
+	private Class getClass(Class c,ArrayList<Class> classlist,ArrayList<Class> checkedClasses) {
 		if(checkedClasses == null) {
-			checkedClasses = new ArrayList<IClass>();
+			checkedClasses = new ArrayList<Class>();
 		}
-		for(IClass cInList : classlist) {
+		for(Class cInList : classlist) {
 			if(cInList.getName().equalsIgnoreCase(c.getName()) || pluralExists(c.getName(),cInList)) {
 				return cInList;
-			} else if(cInList.getAttributes().size() > 0 && !checkedClasses.contains(cInList)){		
+			} else if(cInList.getAssociations().size() > 0 && !checkedClasses.contains(cInList)){		
 				checkedClasses.add(cInList);
-				IClass result = getClass(c,convertToIClass(new ArrayList<IAttribute>(cInList.getAttributes().keySet())),checkedClasses);
+				Class result = getClass(c,extractChildClassFromAssociations(cInList.getAssociations()),checkedClasses);
 				if(result != null) {
 					return result;
 				}
@@ -125,42 +121,25 @@ public class TreeController {
 	}
 	
 	/**
-	 * Converts an IAttribute arraylist to a IClass arraylist.
-	 * @param attributes The IAttribute arraylist to be converted.
-	 * @return The converted IClass list.
+	 * Gets the child class from every association of a parent class and collect them in an arraylist.
+	 * @param associations All the associations of a parent class.
+	 * @return The child classes of the associations.
 	 */
-	private ArrayList<IClass> convertToIClass(ArrayList<IAttribute> attributes) {
-		ArrayList<IClass> _classes = new ArrayList<IClass>();
-		for(IAttribute attribute : attributes) {
-			if(attribute instanceof IClass) {
-				_classes.add((IClass) attribute);
-			}
+	public ArrayList<Class> extractChildClassFromAssociations(ArrayList<Association> associations) {
+		ArrayList<Class> childClasses = new ArrayList<Class>();
+		for(Association a : associations) {
+			childClasses.add(a.getChildClass());
 		}
-		return _classes;
+		return childClasses;
 	}
 	
-	/**
-	 * Converts an IAttribute TreeMap to a IClass TreeMap.
-	 * @param attributes The IAttribute TreeMap to be converted.
-	 * @return The converted IClass map.
-	 */
-	private TreeMap<IClass,Multiplicity[]> convertToIClass(TreeMap<IAttribute,Multiplicity[]> attributes) {
-		TreeMap<IClass,Multiplicity[]> _classes = new TreeMap<IClass,Multiplicity[]>();
-		for(Entry<IAttribute,Multiplicity[]> entry : attributes.entrySet()) {
-			if(entry.getKey() instanceof IClass) {
-				_classes.put((IClass) entry.getKey(),entry.getValue());
-			}
-		}
-		return _classes;
-	}
-
 	/**
 	 * Check if the name of a new class/attribute already exists as plural 
 	 * @param name The new name to be compared
 	 * @param cInList The classes to be compared with
 	 * @return True if the plural exists. False if the plural doesn't exists
 	 */
-	private boolean pluralExists(String name, IClass cInList) {
+	private boolean pluralExists(String name, Class cInList) {
 		if(name.equalsIgnoreCase(cInList.getName() + "s")) {
 			return true;
 		} else if(cInList.getName().equalsIgnoreCase(name + "s")) {
@@ -174,8 +153,7 @@ public class TreeController {
 		} else if(name.equalsIgnoreCase(getClassSingular(cInList.getName()))){
 			cInList.setName(name);
 			return true;
-		} else if(cInList.getName().equalsIgnoreCase(getInputSingular(name))){
-			
+		} else if(cInList.getName().equalsIgnoreCase(getInputSingular(name))){			
 			return true;
 		} else {
 			return false;

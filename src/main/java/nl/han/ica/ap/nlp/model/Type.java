@@ -27,8 +27,21 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package nl.han.ica.ap.nlp.model;
 
-public interface IAttribute {
-	public String getName();
+public class Type {
+	private String name;
+	
+	public Type(String name){
+		this.name = name;		
+	}
+	
+	public String setName(String name){
+		return name;
+	}
+	
+	public String getName(){
+		return name;
+	}		
 }

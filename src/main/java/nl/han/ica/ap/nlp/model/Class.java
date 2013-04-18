@@ -29,48 +29,49 @@
  */
 package nl.han.ica.ap.nlp.model;
 
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 /**
  * @author Joell
  *
  */
-public class Class implements IClass, IAttribute{
+public class Class{
 	private String name;
-	private TreeMap<IAttribute,Multiplicity[]> attributes = new TreeMap<IAttribute,Multiplicity[]>();
+	private ArrayList<Attribute> attributes;
+	private ArrayList<Association> associations;
 
 	public Class(String name) {
 		this.name = name;
+		this.attributes = new ArrayList<Attribute>();
+		this.associations = new ArrayList<Association>();
 	}
 	
 	public String getName() {
 		return name;
-	}
+	}	
 	
-	public void addAttribute(IAttribute a,Multiplicity[] multiplicities) {
-		attributes.put(a,multiplicities);
-	}
-	
-	public TreeMap<IAttribute, Multiplicity[]> getAttributes(){
-		return attributes;
-	}
-	
-	public void setAttributes(TreeMap<IAttribute, Multiplicity[]> attributes){
-		this.attributes = attributes;
-	}
-
-	@Override
 	public void setName(String name) {
 		this.name = name;
 	}
 	
-
-	@Override
-	public int compareTo(IClass o) {
-		if(this == o) {
-			return 0;
-		} else {
-			return -1;
-		}
+	public void addAttribute(Attribute attribute) {
+		attributes.add(attribute);
 	}
+	
+	public ArrayList<Attribute> getAttributes() {
+		return attributes;
+	}
+	
+	public void addAssociation(Class assocation) {
+		associations.add(new Association(assocation,null));
+	}
+	
+	public void addAssociation(String name, Class association) {
+		associations.add(new Association(association,name));
+	}
+	
+	public ArrayList<Association> getAssociations() {
+		return associations;
+	}	
 }
