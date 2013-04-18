@@ -43,6 +43,8 @@ public class Class{
 
 	public Class(String name) {
 		this.name = name;
+		this.attributes = new ArrayList<Attribute>();
+		this.associations = new ArrayList<Association>();
 	}
 	
 	public String getName() {
