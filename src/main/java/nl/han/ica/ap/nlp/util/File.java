@@ -134,4 +134,12 @@ public class File implements IFile {
     public String getContent() {
     	return this.content.toString();
     }
+
+	/* (non-Javadoc)
+	 * @see nl.han.ica.ap.nlp.util.IFile#getPath()
+	 */
+	@Override
+	public String getPath() {
+		return path;
+	}
 }

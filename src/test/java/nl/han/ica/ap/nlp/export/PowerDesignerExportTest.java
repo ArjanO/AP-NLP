@@ -54,7 +54,7 @@ public class PowerDesignerExportTest {
 		expect(testFile.getContent()).andReturn("").anyTimes();
 		testFile.setContent(capture(content));
 		expect(testFile.write()).andReturn(true).anyTimes();
-		
+		expect(testFile.getPath()).andReturn("").anyTimes();
 		replay(testFile);
 		
 		return testFile;

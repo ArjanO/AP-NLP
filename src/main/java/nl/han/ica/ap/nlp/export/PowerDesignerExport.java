@@ -61,12 +61,12 @@ public class PowerDesignerExport implements IExport {
 		this.file = file;
 	}
 	
-	public String export(ArrayList<Class> classes){
+	/*public String export(ArrayList<Class> classes){
 		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
 		return export(classes, filepath);
-	}
+	}*/
 	
-    public String export(ArrayList<Class> classes, String filepath) {
+    public String export(ArrayList<Class> classes) {
     	
     	// Create a new document.
 	    Document doc = null;
@@ -104,7 +104,7 @@ public class PowerDesignerExport implements IExport {
         file.setContent(output);
         file.write();
         
-        return filepath;
+        return file.getPath();
 	}
     
     private void createClasses(Document doc, Element root, ArrayList<Class> classes) {

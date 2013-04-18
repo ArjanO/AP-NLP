@@ -60,4 +60,10 @@ public interface IFile {
      * @return
      */
     String getContent();
+    
+    /**
+     * 
+     * @return The filepath.
+     */
+    String getPath();
 }
