@@ -30,7 +30,7 @@
 package nl.han.ica.ap.nlp.model;
 
 import java.util.ArrayList;
-import java.util.TreeMap;
+
 
 /**
  * @author Joell

@@ -30,8 +30,6 @@
 package nl.han.ica.ap.nlp.controller;
 
 import java.util.ArrayList;
-import java.util.TreeMap;
-import java.util.Map.Entry;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.ParseTree;
 import nl.han.ica.ap.nlp.NlpParser;
