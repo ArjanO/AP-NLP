@@ -161,51 +161,52 @@ public class PowerDesignerExport implements IExport {
 	    packagedElementAssociation.setAttribute("xmi:id", "ASSOCIATION_" + associationid);
 	    packagedElementAssociation.setAttribute("memberEnd", "ASSOCIATION_" + associationid + "OWNEDEND_1" + " " + "ASSOCIATION_" + associationid + "OWNEDEND_2");
 	    packagedElementAssociation.setAttribute("navigableOwnedEnd", "ASSOCIATION_" + associationid + "OWNEDEND_2");
-    	
-		    Element ownedEnd1 = null;
-	    	ownedEnd1 = doc.createElement("ownedEnd");
-	    	ownedEnd1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "OWNEDEND_1");
-	    	ownedEnd1.setAttribute("visibility", "public");
-	    	ownedEnd1.setAttribute("type", class1.getName().toUpperCase());
-	    	ownedEnd1.setAttribute("association", "ASSOCIATION_" + associationid);
-	    	packagedElementAssociation.appendChild(ownedEnd1);
-	    	
-		    	Element upperValue1 = null;
-		    	upperValue1 = doc.createElement("upperValue");
-		    	upperValue1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "UPPERVALUE_1");
-		    	upperValue1.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
-		    	upperValue1.setAttribute("value", asso.getParentMultiplicity().getUpperBound().getValue());
-		    	ownedEnd1.appendChild(upperValue1);	
-		    	
-		    	Element lowerValue1 = null;
-		    	lowerValue1 = doc.createElement("lowerValue");
-		    	lowerValue1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "LOWERVALUE_1");
-		    	lowerValue1.setAttribute("xmi:type", "LiteralInteger");
-		    	lowerValue1.setAttribute("value", asso.getParentMultiplicity().getLowerBound().getValue());
-		    	ownedEnd1.appendChild(lowerValue1);
-	    	
-	    	Element ownedEnd2 = null;
-	    	ownedEnd2 = doc.createElement("ownedEnd");
-	    	ownedEnd2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "OWNEDEND_2");
-	    	ownedEnd2.setAttribute("visibility", "public");
-	    	ownedEnd2.setAttribute("type", class2.getName().toUpperCase());
-	    	ownedEnd2.setAttribute("association", "ASSOCIATION_" + associationid);
-	    	packagedElementAssociation.appendChild(ownedEnd2);
-	    	
-		    	Element upperValue2 = null;
-		    	upperValue2 = doc.createElement("upperValue");
-		    	upperValue2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "UPPERVALUE_2");
-		    	upperValue2.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
-		    	upperValue2.setAttribute("value", asso.getChildMultiplicity().getUpperBound().getValue());
-		    	ownedEnd2.appendChild(upperValue2);
-		    	
-		    	Element lowerValue2 = null;
-		    	lowerValue2 = doc.createElement("lowerValue");
-		    	lowerValue2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "LOWERVALUE_2");
-		    	lowerValue2.setAttribute("xmi:type", "LiteralInteger");
-		    	lowerValue2.setAttribute("value", asso.getChildMultiplicity().getLowerBound().getValue());
-		    	ownedEnd2.appendChild(lowerValue2);	
-    	
+	
+	    Element ownedEnd1 = null;
+		ownedEnd1 = doc.createElement("ownedEnd");
+		ownedEnd1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "OWNEDEND_1");
+		ownedEnd1.setAttribute("visibility", "public");
+		ownedEnd1.setAttribute("type", class1.getName().toUpperCase());
+		ownedEnd1.setAttribute("association", "ASSOCIATION_" + associationid);
+		packagedElementAssociation.appendChild(ownedEnd1);
+		
+		Element upperValue1 = null;
+		upperValue1 = doc.createElement("upperValue");
+		upperValue1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "UPPERVALUE_1");
+		upperValue1.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
+		upperValue1.setAttribute("value", asso.getParentMultiplicity().getUpperBound().getValue());
+		ownedEnd1.appendChild(upperValue1);	
+		
+		Element lowerValue1 = null;
+		lowerValue1 = doc.createElement("lowerValue");
+		lowerValue1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "LOWERVALUE_1");
+		lowerValue1.setAttribute("xmi:type", "uml:LiteralInteger");
+		lowerValue1.setAttribute("value", asso.getParentMultiplicity().getLowerBound().getValue());
+		
+		ownedEnd1.appendChild(lowerValue1);
+		
+		Element ownedEnd2 = null;
+		ownedEnd2 = doc.createElement("ownedEnd");
+		ownedEnd2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "OWNEDEND_2");
+		ownedEnd2.setAttribute("visibility", "public");
+		ownedEnd2.setAttribute("type", class2.getName().toUpperCase());
+		ownedEnd2.setAttribute("association", "ASSOCIATION_" + associationid);
+		packagedElementAssociation.appendChild(ownedEnd2);
+		
+		Element upperValue2 = null;
+		upperValue2 = doc.createElement("upperValue");
+		upperValue2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "UPPERVALUE_2");
+		upperValue2.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
+		upperValue2.setAttribute("value", asso.getChildMultiplicity().getUpperBound().getValue());
+		ownedEnd2.appendChild(upperValue2);
+		
+		Element lowerValue2 = null;
+		lowerValue2 = doc.createElement("lowerValue");
+		lowerValue2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "LOWERVALUE_2");
+		lowerValue2.setAttribute("xmi:type", "uml:LiteralInteger");
+		lowerValue2.setAttribute("value", asso.getChildMultiplicity().getLowerBound().getValue());
+		ownedEnd2.appendChild(lowerValue2);	
+
 		associationid++;
 		
 	    return packagedElementAssociation;
