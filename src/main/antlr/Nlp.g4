@@ -36,11 +36,11 @@ import NlpWerkwoorden, NlpLexer;
 }
 tekst: zin+;
 zin:  (bijwoord|naamwoordgroep|zelfstandignaamwoord ) verbaleconstituent eindezin;
-naamwoordgroep: woord* voorzetsel? bijwoord? (lidwoord|telwoord|bezittelijkvoornaamwoord|kwantor) (bijvoeglijknaamwoord)* zelfstandignaamwoord (voorzetsel|voegwoord)?;
-verbaleconstituent : woord* werkwoord (naamwoordgroep|zelfstandignaamwoord) voegwoord? naamwoordgroep* (verbaleconstituent*|werkwoord);
+samengesteld: voegwoord (naamwoordgroep|zelfstandignaamwoord);
+naamwoordgroep: voorzetsel? bijwoord? (lidwoord|telwoord|kwantor) zelfstandignaamwoord (voorzetsel)?;
+verbaleconstituent : woord* werkwoord (naamwoordgroep|zelfstandignaamwoord) voegwoord? samengesteld+ (verbaleconstituent*|werkwoord);
 eindezin: EINDEZIN;
 zelfstandignaamwoord: WOORD;
-bijvoeglijknaamwoord: WOORD;
 voorzetsel: ('in'|'op');
 voegwoord: ('en'|'of');
 werkwoord: WERKWOORD;
