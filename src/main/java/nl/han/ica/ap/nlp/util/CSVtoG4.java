@@ -41,12 +41,27 @@ import nl.han.ica.ap.nlp.CSVtoG4Parser;
 import nl.han.ica.ap.nlp.listeners.CSVRowListener;
 
 public class CSVtoG4 {
+	private IFile importfile;
+	private IFile exportfile;
 	
-	public static void main(String[] args) throws Exception {
+	public CSVtoG4() {
+		String import_filepath = "res/werkwoorden.xml";
+		String export_filepath = "src/main/antlr/imports/NlpWerkwoorden.g4";
 		
-		File werkwoordenCSV = new File("res/werkwoorden.csv");
-		werkwoordenCSV.read();
-		String csvfile = werkwoordenCSV.getContent();
+		importfile = new File(import_filepath);
+		exportfile = new File(export_filepath);
+	}
+	
+	public void setExportFile(IFile file) {
+		this.exportfile = file;
+	}
+	public void setImportFile(IFile file) {
+		this.importfile = file;
+	}
+	
+	public boolean export(){
+		importfile.read();
+		String csvfile = importfile.getContent();
 		
 		ANTLRInputStream 	input 	= new ANTLRInputStream(csvfile);
 		CSVtoG4Lexer 		lexer 	= new CSVtoG4Lexer(input);
@@ -70,13 +85,8 @@ public class CSVtoG4 {
 		werkwoorden = werkwoorden.substring(0, werkwoorden.length()-1);
 		werkwoorden += ");";
 		
-		File werkwoordenFile = new File("src/main/antlr/imports/NlpWerkwoorden.g4");
-		werkwoordenFile.setContent(werkwoorden);
-		
-		if (werkwoordenFile.write()) {
-			System.out.println("Finished exporting werkwoorden to NlpWerkwoorden.g4");
-		} else {
-			System.out.println("Error while exporting werkwoorden to NlpWerkwoorden.g4");
-		}
+		exportfile.setContent(werkwoorden);
+
+		return exportfile.write();
 	}
 }

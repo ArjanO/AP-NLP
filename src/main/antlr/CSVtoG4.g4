@@ -2,7 +2,7 @@
  Copyright (c) 2013 HAN University of Applied Sciences
  Arjan Oortgiese
  Boyd Hofman
- JoÃ«ll Portier
+ Joëll Portier
  Michiel Westerbeek
  Tim Waalewijn
  
