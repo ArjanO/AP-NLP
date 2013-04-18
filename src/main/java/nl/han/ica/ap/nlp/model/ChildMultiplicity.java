@@ -27,21 +27,46 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package nl.han.ica.ap.nlp.model;
 
-
-public class Multiplicity {
-	public char lowerBound;
-	public char upperBound;
+/**
+ * @author Joell
+ *
+ */
+public class ChildMultiplicity implements IMultiplicity {
 	
-	public Multiplicity() {
-		lowerBound = '0';
-		upperBound = '*';
+	private Bound lowerBound;
+	private Bound upperBound;
+	
+	public ChildMultiplicity() {
+		lowerBound = new Bound("0");
+		upperBound = new Bound("*");
 	}
-	
-	public Multiplicity(char lowerBound, char upperBound) {
-		this.lowerBound = lowerBound;
-		this.upperBound = upperBound;		
-	}	
-	
+
+	/* (non-Javadoc)
+	 * @see nl.han.ica.ap.nlp.model.IMultiplicity#getLowerBound()
+	 */
+	@Override
+	public Bound getLowerBound() {
+		return lowerBound;
+	}
+
+	/* (non-Javadoc)
+	 * @see nl.han.ica.ap.nlp.model.IMultiplicity#getUpperBound()
+	 */
+	@Override
+	public Bound getUpperBound() {
+		return upperBound;
+	}
+
+	@Override
+	public void setLowerBound(String boundValue) {
+		this.lowerBound.setValue(boundValue);
+	}
+
+	@Override
+	public void setUpperBound(String boundValue) {
+		this.upperBound.setValue(boundValue);
+	}
 }

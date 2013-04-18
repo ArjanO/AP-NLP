@@ -27,49 +27,47 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package nl.han.ica.ap.nlp.model;
 
-import java.util.ArrayList;
-import java.util.TreeMap;
+package nl.han.ica.ap.nlp.model;
 
 /**
  * @author Joell
  *
  */
-public class Class{
-	private String name;
-	private ArrayList<Attribute> attributes;
-	private ArrayList<Association> associations;
+public class ParentMultiplicity implements IMultiplicity {
 
-	public Class(String name) {
-		this.name = name;
+	private Bound lowerBound;
+	private Bound upperBound;
+	
+	public ParentMultiplicity() {
+		lowerBound = new Bound("0");
+		upperBound = new Bound("1");
 	}
 	
-	public String getName() {
-		return name;
-	}	
-	
-	public void setName(String name) {
-		this.name = name;
+	/* (non-Javadoc)
+	 * @see nl.han.ica.ap.nlp.model.IMultiplicity#getLowerBound()
+	 */
+	@Override
+	public Bound getLowerBound() {
+		return lowerBound;
 	}
-	
-	public void addAttribute(Attribute attribute) {
-		attributes.add(attribute);
+
+	/* (non-Javadoc)
+	 * @see nl.han.ica.ap.nlp.model.IMultiplicity#getUpperBound()
+	 */
+	@Override
+	public Bound getUpperBound() {
+		return upperBound;
 	}
-	
-	public ArrayList<Attribute> getAttributes() {
-		return attributes;
+
+	@Override
+	public void setLowerBound(String boundValue) {
+		this.lowerBound.setValue(boundValue);
 	}
-	
-	public void addAssociation(Class assocation) {
-		associations.add(new Association(assocation,null));
+
+	@Override
+	public void setUpperBound(String boundValue) {
+		this.upperBound.setValue(boundValue);
 	}
-	
-	public void addAssociation(String name, Class association) {
-		associations.add(new Association(association,name));
-	}
-	
-	public ArrayList<Association> getAssociations() {
-		return associations;
-	}	
+
 }

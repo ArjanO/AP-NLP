@@ -1,4 +1,3 @@
-
 /**
  * Copyright (c) 2013 HAN University of Applied Sciences
  * Arjan Oortgiese
@@ -28,22 +27,46 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
+
 package nl.han.ica.ap.nlp.model;
 
-public class Primitive {
-	private String name;
-	private String value;
+/**
+ * @author Joell
+ *
+ */
+public class AttributeMultiplicity implements IMultiplicity {
+
+	private Bound lowerBound;
+	private Bound upperBound;
 	
-	public Primitive(String name, String value){
-		this.name = name;
-		this.value = value;
+	public AttributeMultiplicity() {
+		lowerBound = new Bound("0");
+		upperBound = new Bound("*");
 	}
 	
-	public String getName(){
-		return name;
+	/* (non-Javadoc)
+	 * @see nl.han.ica.ap.nlp.model.IMultiplicity#getLowerBound()
+	 */
+	@Override
+	public Bound getLowerBound() {
+		return lowerBound;
 	}
-	
-	public String getValue(){
-		return value;
+
+	/* (non-Javadoc)
+	 * @see nl.han.ica.ap.nlp.model.IMultiplicity#getUpperBound()
+	 */
+	@Override
+	public Bound getUpperBound() {
+		return upperBound;
+	}
+
+	@Override
+	public void setLowerBound(String boundValue) {
+		this.lowerBound.setValue(boundValue);
+	}
+
+	@Override
+	public void setUpperBound(String boundValue) {
+		this.upperBound.setValue(boundValue);
 	}
 }

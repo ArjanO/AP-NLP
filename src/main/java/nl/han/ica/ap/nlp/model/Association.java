@@ -27,49 +27,43 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package nl.han.ica.ap.nlp.model;
 
-import java.util.ArrayList;
-import java.util.TreeMap;
+package nl.han.ica.ap.nlp.model;
 
 /**
  * @author Joell
  *
  */
-public class Class{
+public class Association {
 	private String name;
-	private ArrayList<Attribute> attributes;
-	private ArrayList<Association> associations;
-
-	public Class(String name) {
+	private Class childClass;
+	private IMultiplicity parentMultiplicity;
+	private IMultiplicity childMultiplicity;
+	
+	public Association(Class child,String name) {
 		this.name = name;
+		this.childClass = child;	
+		childMultiplicity = new ChildMultiplicity();
+		parentMultiplicity = new ParentMultiplicity();
+	}
+	
+	public IMultiplicity getChildMultiplicity() {
+		return childMultiplicity;
+	}
+	
+	public IMultiplicity getParentMultiplicity() {
+		return parentMultiplicity;
+	}		
+	
+	public Class getChildClass() {
+		return childClass;
 	}
 	
 	public String getName() {
 		return name;
-	}	
+	}
 	
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	public void addAttribute(Attribute attribute) {
-		attributes.add(attribute);
-	}
-	
-	public ArrayList<Attribute> getAttributes() {
-		return attributes;
-	}
-	
-	public void addAssociation(Class assocation) {
-		associations.add(new Association(assocation,null));
-	}
-	
-	public void addAssociation(String name, Class association) {
-		associations.add(new Association(association,name));
-	}
-	
-	public ArrayList<Association> getAssociations() {
-		return associations;
-	}	
 }
