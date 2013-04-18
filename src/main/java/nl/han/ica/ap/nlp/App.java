@@ -45,7 +45,6 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import nl.han.ica.ap.nlp.controller.TreeController;
 import nl.han.ica.ap.nlp.export.IExport;
 import nl.han.ica.ap.nlp.export.PowerDesignerExport;
-import nl.han.ica.ap.nlp.model.IClass;
 
 
 /**
