@@ -60,7 +60,6 @@ public class PowerDesignerExport implements IExport {
 	
 	public PowerDesignerExport() {
 		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
-		
 		file = new File(filepath);
 	}
 	
@@ -83,6 +82,12 @@ public class PowerDesignerExport implements IExport {
 		return export(treemap_classes, filepath);
 	}
 	
+	/**
+	 * Export the Classes to an xml file.
+	 * @param classes
+	 * @param filepath
+	 * @return
+	 */
     public String export(TreeMap<IClass, Multiplicity[]> classes, String filepath) {
     	
     	// Create a new document.
@@ -124,6 +129,13 @@ public class PowerDesignerExport implements IExport {
         return filepath;
 	}
     
+    /**
+     * Recursive function to walk all classes and attributes of classes and create the xml-file.
+     * @param doc
+     * @param root
+     * @param classes
+     * @param parent
+     */
     private void createClasses(Document doc, Element root, TreeMap<IClass, Multiplicity[]> classes, Entry<IClass, Multiplicity[]> parent) {
     	if (classes.size() > 0) {
 	    	for (Entry<IClass, Multiplicity[]> entry : classes.entrySet()) {
@@ -168,7 +180,13 @@ public class PowerDesignerExport implements IExport {
     	}
     }
     
-    private Element createClass(Document doc, IAttribute element_class) {
+    /**
+     * Create a xml class from an IClass
+     * @param doc
+     * @param element_class
+     * @return XML Class
+     */
+	private Element createClass(Document doc, IClass element_class) {
     	Element packagedElementClass = null;
     	packagedElementClass = doc.createElement("packagedElement");
     	packagedElementClass.setAttribute("xmi:type", "uml:Class");
@@ -177,6 +195,13 @@ public class PowerDesignerExport implements IExport {
     	return packagedElementClass;
     }
     
+	/**
+	 * Create a xml association between two classes.
+	 * @param doc
+	 * @param class1
+	 * @param class2
+	 * @return XML Association
+	 */
     private Element createAssociation(Document doc, Entry<IClass,Multiplicity[]> class1, Entry<IClass,Multiplicity[]> class2) {
     	Element packagedElementAssociation = null;
 	    packagedElementAssociation = doc.createElement("packagedElement");
@@ -234,6 +259,10 @@ public class PowerDesignerExport implements IExport {
 	    return packagedElementAssociation;
     }
     
+    /**
+     * Relation between two classes.
+     *
+     */
     class ClassRelation implements Comparable<ClassRelation> {
     	private IClass class1;
     	private IClass class2;
