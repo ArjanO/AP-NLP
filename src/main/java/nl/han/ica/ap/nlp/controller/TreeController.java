@@ -116,7 +116,7 @@ public class TreeController {
 				return cInList;
 			} else if(cInList.getAssociations().size() > 0 && !checkedClasses.contains(cInList)){		
 				checkedClasses.add(cInList);
-				Class result = getClass(c,extractChildClassFromAssociations(c.getAssociations()),checkedClasses);
+				Class result = getClass(c,extractChildClassFromAssociations(cInList.getAssociations()),checkedClasses);
 				if(result != null) {
 					return result;
 				}
