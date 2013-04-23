@@ -33,14 +33,17 @@ import nl.han.ica.ap.nlp.controller.TreeController;
 import nl.han.ica.ap.nlp.controller.VerbDirectionController;
 import nl.han.ica.ap.nlp.model.Class;
 import nl.han.ica.ap.nlp.NlpBaseListener;
+import nl.han.ica.ap.nlp.NlpParser.SamengesteldContext;
+import nl.han.ica.ap.nlp.NlpParser.VerbaleconstituentContext;
+import nl.han.ica.ap.nlp.NlpParser.VoegwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.WerkwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.ZelfstandignaamwoordContext;
 
 public class ZelfstandignaamwoordListener extends NlpBaseListener {
-	TreeController controller;	
-	ZelfstandignaamwoordContext znw;
-	boolean direction;
-	boolean start = false;
+	private TreeController controller;	
+	private ZelfstandignaamwoordContext zelfstandignaamwoord;
+	private boolean direction;
+	private boolean start = false;
 	
 	public ZelfstandignaamwoordListener(TreeController controller) {
 		this.controller = controller;
@@ -50,17 +53,16 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	public void enterZelfstandignaamwoord(ZelfstandignaamwoordContext ctx) {
 		if(start) {
 			if(!direction) {
-				Class c = new Class(znw.getText());
+				Class c = new Class(zelfstandignaamwoord.getText());
 				c.addAssociation(new Class(ctx.getText()));					
 				controller.addClass(c);
 			} else {
 				Class c = new Class(ctx.getText());
-				c.addAssociation(new Class(znw.getText()));	
+				c.addAssociation(new Class(zelfstandignaamwoord.getText()));	
 				controller.addClass(c);
-			}
-			start = false;
+			}			
 		} else {
-			znw = ctx;
+			zelfstandignaamwoord = ctx;
 			start = true;
 		}		
 	}
@@ -69,6 +71,11 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	public void enterWerkwoord(WerkwoordContext ctx) {
 		VerbDirectionController vc = new VerbDirectionController();
 		direction = vc.getDirection(ctx.getText());		
+	}
+	
+	@Override
+	public void exitVerbaleconstituent(VerbaleconstituentContext ctx) {
+		start = false;
 	}
 }
 
