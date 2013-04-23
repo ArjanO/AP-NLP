@@ -87,9 +87,9 @@ public class TreeController {
 				classes.add(c);
 			} else {
 				existingParent.addAssociation(existingChild);
-				if(classes.size() > 1) {
-					classes.remove(existingChild);
-				}
+//				if(classes.size() > 1) {
+//					classes.remove(existingChild);
+//				}
 			}
 		}
 	}	
