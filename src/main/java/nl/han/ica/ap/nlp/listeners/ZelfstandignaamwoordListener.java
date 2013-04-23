@@ -29,42 +29,83 @@
  */
 package nl.han.ica.ap.nlp.listeners;
 
+import java.util.TreeSet;
 import nl.han.ica.ap.nlp.controller.TreeController;
 import nl.han.ica.ap.nlp.controller.VerbDirectionController;
+import nl.han.ica.ap.nlp.model.Association;
 import nl.han.ica.ap.nlp.model.Class;
 import nl.han.ica.ap.nlp.NlpBaseListener;
-import nl.han.ica.ap.nlp.NlpParser.SamengesteldContext;
+import nl.han.ica.ap.nlp.NlpParser.BijwoordContext;
+import nl.han.ica.ap.nlp.NlpParser.TelwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.VerbaleconstituentContext;
-import nl.han.ica.ap.nlp.NlpParser.VoegwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.WerkwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.ZelfstandignaamwoordContext;
 
 public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	private TreeController controller;	
 	private ZelfstandignaamwoordContext zelfstandignaamwoord;
+	private BijwoordContext bijwoord;
+	private TelwoordContext telwoord;
 	private boolean direction;
 	private boolean start = false;
+	private TreeSet<String> keywords = new TreeSet<String>();
 	
 	public ZelfstandignaamwoordListener(TreeController controller) {
 		this.controller = controller;
+		fillKeyWords();
 	}
 	
+	/**
+	 * fills the keywords list with words with an extra contextual meaning 
+	 */
+	private void fillKeyWords() {
+		keywords.add("maximaal");
+		keywords.add("minimaal");
+	}
+
 	@Override
 	public void enterZelfstandignaamwoord(ZelfstandignaamwoordContext ctx) {
 		if(start) {
-			if(!direction) {
+			if(!direction) {				
 				Class c = new Class(zelfstandignaamwoord.getText());
-				c.addAssociation(new Class(ctx.getText()));					
-				controller.addClass(c);
+//				c.addAssociation(new Class(ctx.getText()));
+//				controller.addClass(c);
+				addAttributeToClass(ctx, c);
 			} else {
 				Class c = new Class(ctx.getText());
 				c.addAssociation(new Class(zelfstandignaamwoord.getText()));	
 				controller.addClass(c);
-			}			
+			}		
 		} else {
 			zelfstandignaamwoord = ctx;
 			start = true;
 		}		
+	}
+
+	private void addAttributeToClass(ZelfstandignaamwoordContext ctx, Class c) {
+		if(telwoord != null && hasMeaning(bijwoord)) {
+			Association a = new Association(new Class(ctx.getText()),null);
+			String bijwoordval = bijwoord.getText();
+			if(bijwoordval.equals("maximaal")) {
+				String boundval = telwoord.getText();
+				a.getChildMultiplicity().setUpperBound(boundval);
+			} else if(bijwoordval.equals("minimaal")) {
+				a.getChildMultiplicity().setLowerBound(telwoord.getText());
+			}
+			c.getAssociations().add(a);
+		} else {
+			c.addAssociation(new Class(ctx.getText()));
+		}
+		controller.addClass(c);
+	}
+
+	/**
+	 * Checks of the given bijwoord has an contextual meaning.
+	 * @param bijwoord The bijwoord to be checked.
+	 * @return True if it has an extra meaning, false if not.
+	 */
+	public boolean hasMeaning(BijwoordContext bijwoord) {		
+		return keywords.contains(bijwoord.getText());
 	}
 
 	@Override
@@ -74,8 +115,17 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	}
 	
 	@Override
+	public void enterBijwoord(BijwoordContext ctx) {
+		bijwoord = ctx;
+	}
+	
+	@Override
+	public void enterTelwoord(TelwoordContext ctx) {
+		telwoord = ctx;
+	}
+	
+	@Override
 	public void exitVerbaleconstituent(VerbaleconstituentContext ctx) {
 		start = false;
 	}
 }
-
