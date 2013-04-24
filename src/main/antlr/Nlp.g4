@@ -35,13 +35,13 @@ import NlpWerkwoorden, NlpLexer;
     package nl.han.ica.ap.nlp;
 }
 tekst: zin+;
-zin:  (bijwoord|naamwoordgroep|zelfstandignaamwoord ) verbaleconstituent eindezin;
+zin:  (bijwoord|naamwoordgroep|zelfstandignaamwoord) verbaleconstituent eindezin;
 samengesteld: voegwoord (naamwoordgroep|zelfstandignaamwoord);
-naamwoordgroep: voorzetsel? bijwoord? (lidwoord|telwoord|kwantor) zelfstandignaamwoord (voorzetsel)?;
+naamwoordgroep: voorzetsel? bijwoord? (lidwoord|telwoord|decimaal|kwantor) zelfstandignaamwoord ;
 verbaleconstituent : woord* werkwoord (naamwoordgroep|zelfstandignaamwoord) voegwoord? samengesteld* (verbaleconstituent*|werkwoord);
 eindezin: EINDEZIN;
-zelfstandignaamwoord: WOORD;
-voorzetsel: ('in'|'op');
+zelfstandignaamwoord: WOORD | telwoord | decimaal | string | maand | datum | tijd;
+voorzetsel: ('in'|'op'|'Op'|'In');
 voegwoord: ('en'|'of');
 werkwoord: WERKWOORD;
 bezittelijkvoornaamwoord: ('zijn'|'haar'|'hun'|'mijn');
@@ -50,3 +50,12 @@ bijwoord: ('maximaal'|'minimaal'|'minstens'|'Er'|'er');
 kwantor: ('elke' 'e'?) ;
 lidwoord: LIDWOORD;
 woord: WOORD;
+
+/*
+*	Grammar that concerns the primitive types of the UML.
+*/
+maand: MAAND;
+string: STRING;
+decimaal: DECIMAAL;
+tijd: TIJD;
+datum: DATUM;
