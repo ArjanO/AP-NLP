@@ -61,31 +61,27 @@ public class PowerDesignerExport implements IExport {
 		this.file = file;
 	}
 	
-	/*public String export(ArrayList<Class> classes){
-		String filepath = "target/Powerdesigner-xml-" + (System.currentTimeMillis()) + ".xml";
-		return export(classes, filepath);
-	}*/
-	
-    public String export(ArrayList<Class> classes) {
-    	
-    	// Create a new document.
+	public Document exportDoc(ArrayList<Class> classes) {
+		// Create a new document.
 	    Document doc = null;
 		try {
 			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		} catch (ParserConfigurationException e) {
 			e.printStackTrace();
 		}
-	    
-	    // Create and add a root element and add attributes.
-	    Element root = doc.createElement("uml:Model");
-	    root.setAttribute("name", "ObjectOrientedModel");
-	    root.setAttribute("xmi:version", "2.1");
-	    root.setAttribute("xmlns:xmi", "http://schema.omg.org/spec/XMI/2.1");
-	    root.setAttribute("xmlns:uml", "http://www.eclipse.org/uml2/2.1.0/UML");
-	    doc.appendChild(root);
+		
+		Element root = PowerDesignerXML.createRoot(doc);
+		doc.appendChild(root);
     	
 	    //Create classes
 	    createClasses(doc, root, classes);
+	    
+	    return doc;
+	}
+	
+    public String export(ArrayList<Class> classes) {
+    	
+    	Document doc = exportDoc(classes);
 		
 		// Output the document to string.
 	    DOMImplementation impl = doc.getImplementation();
@@ -107,13 +103,19 @@ public class PowerDesignerExport implements IExport {
         return file.getPath();
 	}
     
+    /**
+     * Create all classes and associations and add them to the document.
+     * @param doc
+     * @param root
+     * @param classes
+     */
     private void createClasses(Document doc, Element root, ArrayList<Class> classes) {
     	if (classes.size() > 0) {
     		for(Class child : classes){
 
     			//Create classes if not already created.
 	    		if (!classlist.contains(child)) {
-	    			Element childClassElement = createClass(doc, child);
+	    			Element childClassElement = PowerDesignerXML.createClass(doc, child);
 	    			root.appendChild(childClassElement);
 	    			classlist.add(child);
 	    		}
@@ -126,7 +128,7 @@ public class PowerDesignerExport implements IExport {
 		    		//Check if association is already created, if it hasn't create it.
 		    		ClassRelation tmprelation = new ClassRelation(asso.getChildClass(), child);
 		    		if (!associationlist.contains(tmprelation)) {
-		    			Element association = createAssociation(doc, child, asso.getChildClass(), asso);
+		    			Element association = PowerDesignerXML.createAssociation(doc, child, asso.getChildClass(), asso);
 		    			root.appendChild(association);
 		    			associationlist.add(tmprelation);
 		    		} else {
@@ -139,107 +141,94 @@ public class PowerDesignerExport implements IExport {
     	}
     }
     
-    private Element createClass(Document doc, Class element_class) {
-    	Element packagedElementClass = null;
-    	packagedElementClass = doc.createElement("packagedElement");
-    	packagedElementClass.setAttribute("xmi:type", "uml:Class");
-    	packagedElementClass.setAttribute("xmi:id", element_class.getName().toUpperCase());
-    	packagedElementClass.setAttribute("name", element_class.getName());
-    	return packagedElementClass;
-    }
-    
-    private Element createAssociation(Document doc, Class class1, Class class2, Association asso) {
-    	Element packagedElementAssociation = null;
-	    packagedElementAssociation = doc.createElement("packagedElement");
-	    packagedElementAssociation.setAttribute("xmi:type", "uml:Association");
-	    packagedElementAssociation.setAttribute("xmi:id", "ASSOCIATION_" + associationid);
-	    packagedElementAssociation.setAttribute("memberEnd", "ASSOCIATION_" + associationid + "OWNEDEND_1" + " " + "ASSOCIATION_" + associationid + "OWNEDEND_2");
-	    packagedElementAssociation.setAttribute("navigableOwnedEnd", "ASSOCIATION_" + associationid + "OWNEDEND_2");
+    /**
+	 * Get list of classes from recursive class.
+	 * @param classes
+	 * @param class_list
+	 * @return
+	 */
+	public ArrayList<Class> getClassList(ArrayList<Class> classes, ArrayList<Class> class_list) {
+		for(Class child_class : classes){
+			if(!class_list.contains(child_class))
+				class_list.add(child_class);
+			
+			if(child_class.getAssociations().size() > 0){
+				for(Association asso : child_class.getAssociations()){
+					if(!class_list.contains(asso.getChildClass())){
+						class_list.add(asso.getChildClass());
+						
+						ArrayList<Class> child_class_list = new ArrayList<Class>();
+						child_class_list.add(asso.getChildClass());
+						getClassList(child_class_list, class_list);
+					}
+				}
+			}
+		}
+		return class_list;
+	}
 	
-	    Element ownedEnd1 = null;
-		ownedEnd1 = doc.createElement("ownedEnd");
-		ownedEnd1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "OWNEDEND_1");
-		ownedEnd1.setAttribute("visibility", "public");
-		ownedEnd1.setAttribute("type", class1.getName().toUpperCase());
-		ownedEnd1.setAttribute("association", "ASSOCIATION_" + associationid);
-		packagedElementAssociation.appendChild(ownedEnd1);
-		
-		Element upperValue1 = null;
-		upperValue1 = doc.createElement("upperValue");
-		upperValue1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "UPPERVALUE_1");
-		upperValue1.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
-		upperValue1.setAttribute("value", asso.getParentMultiplicity().getUpperBound().getValue());
-		ownedEnd1.appendChild(upperValue1);	
-		
-		Element lowerValue1 = null;
-		lowerValue1 = doc.createElement("lowerValue");
-		lowerValue1.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "LOWERVALUE_1");
-		lowerValue1.setAttribute("xmi:type", "uml:LiteralInteger");
-		lowerValue1.setAttribute("value", asso.getParentMultiplicity().getLowerBound().getValue());
-		
-		ownedEnd1.appendChild(lowerValue1);
-		
-		Element ownedEnd2 = null;
-		ownedEnd2 = doc.createElement("ownedEnd");
-		ownedEnd2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "OWNEDEND_2");
-		ownedEnd2.setAttribute("visibility", "public");
-		ownedEnd2.setAttribute("type", class2.getName().toUpperCase());
-		ownedEnd2.setAttribute("association", "ASSOCIATION_" + associationid);
-		packagedElementAssociation.appendChild(ownedEnd2);
-		
-		Element upperValue2 = null;
-		upperValue2 = doc.createElement("upperValue");
-		upperValue2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "UPPERVALUE_2");
-		upperValue2.setAttribute("xmi:type", "uml:LiteralUnlimitedNatural");
-		upperValue2.setAttribute("value", asso.getChildMultiplicity().getUpperBound().getValue());
-		ownedEnd2.appendChild(upperValue2);
-		
-		Element lowerValue2 = null;
-		lowerValue2 = doc.createElement("lowerValue");
-		lowerValue2.setAttribute("xmi:id", "ASSOCIATION_" + associationid + "LOWERVALUE_2");
-		lowerValue2.setAttribute("xmi:type", "uml:LiteralInteger");
-		lowerValue2.setAttribute("value", asso.getChildMultiplicity().getLowerBound().getValue());
-		ownedEnd2.appendChild(lowerValue2);	
+	/**
+	 * Get list of associations of recursive class.
+	 * @param classes
+	 * @param asso_list
+	 * @return
+	 */
+	public ArrayList<ClassRelation> getAssociationList(ArrayList<Class> classes, ArrayList<ClassRelation> asso_list) {
+		for(Class child_class : classes){
+			if(child_class.getAssociations().size() > 0){
+				for(Association asso : child_class.getAssociations()){
+					ClassRelation tmp_relation = new ClassRelation(child_class, asso.getChildClass());
+					if(!asso_list.contains(tmp_relation)){
+						asso_list.add(tmp_relation);
+						
+						ArrayList<Class> child_class_list = new ArrayList<Class>();
+						child_class_list.add(asso.getChildClass());
+						getAssociationList(child_class_list, asso_list);
+					}
+				}	
+			}
+		}
+		return asso_list;
+	}
+}
+class ClassRelation {
+	public Class class1;
+	public Class class2;
+	
+	public ClassRelation(Class class1, Class class2) {
+		this.class1 = class1;
+		this.class2 = class2;
+	}
 
-		associationid++;
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof ClassRelation)) {
+			return super.equals(obj);
+		}
 		
-	    return packagedElementAssociation;
-    }
-    
-    class ClassRelation {
-    	private Class class1;
-    	private Class class2;
-    	
-    	public ClassRelation(Class class1, Class class2) {
-    		this.class1 = class1;
-    		this.class2 = class2;
-    	}
-
-    	@Override
-    	public boolean equals(Object obj) {
-    		if (!(obj instanceof ClassRelation)) {
-    			return super.equals(obj);
-    		}
-    		
-    		ClassRelation other = (ClassRelation)obj;
-    		
-    		if (class1 != other.class1) {
-    			return false;
-    		}
-    		
-    		if (class2 != other.class2) {
-    			return false;
-    		}
-    		
-    		return true;
-    	}
-    	
-    	@Override
-    	public int hashCode() {
-    		int hash = 1;
-    		hash = hash * 31 + class1.hashCode();
-    		hash = hash * 31 + class2.hashCode();
-    		return hash;
-    	}
-    }
+		ClassRelation other = (ClassRelation)obj;
+		
+		if (class1 != other.class1) {
+			return false;
+		}
+		
+		if (class2 != other.class2) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	@Override
+	public int hashCode() {
+		int hash = 1;
+		hash = hash * 31 + class1.hashCode();
+		hash = hash * 31 + class2.hashCode();
+		return hash;
+	}
+	
+	@Override
+	public String toString() {
+		return class1.getName() + " -> " + class2.getName();
+	}
 }
