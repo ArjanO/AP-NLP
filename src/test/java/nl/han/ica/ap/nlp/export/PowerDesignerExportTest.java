@@ -30,8 +30,13 @@
 package nl.han.ica.ap.nlp.export;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import nl.han.ica.ap.nlp.export.PowerDesignerExport;
+import nl.han.ica.ap.nlp.export.ClassRelation;
+import nl.han.ica.ap.nlp.model.Association;
 import nl.han.ica.ap.nlp.model.Class;
 import nl.han.ica.ap.nlp.util.IFile;
 
@@ -44,6 +49,8 @@ import static org.junit.Assert.*;
 
 import org.easymock.Capture;
 import org.junit.Test;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 public class PowerDesignerExportTest {
 	private Capture<String> content = new Capture<String>(); 
@@ -73,20 +80,12 @@ public class PowerDesignerExportTest {
 		vliegtuig.addAssociation(passagier);		
 		classes.add(vliegtuig);
 		
-		String exportpath = exporter.export(classes);
+		Document resultdoc = exporter.exportDoc(classes);
 		
-		assertNotNull(exportpath);
+		ArrayList<Class> class_list = exporter.getClassList(classes, new ArrayList<Class>());
+		ArrayList<ClassRelation> asso_list = exporter.getAssociationList(classes, new ArrayList<ClassRelation>());
 		
-		String output = content.getValue();
-		
-		String expected_output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><uml:Model name=\"ObjectOrientedModel\" xmi:version=\"2.1\" xmlns:uml=\"http://www.eclipse.org/uml2/2.1.0/UML\" xmlns:xmi=\"http://schema.omg.org/spec/XMI/2.1\"><packagedElement name=\"Vliegtuig\" xmi:id=\"VLIEGTUIG\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_0OWNEDEND_1 ASSOCIATION_0OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_0OWNEDEND_2\" xmi:id=\"ASSOCIATION_0\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_0\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_0UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_0LOWERVALUE_1\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_0\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_2\"><upperValue value=\"*\" xmi:id=\"ASSOCIATION_0UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_0LOWERVALUE_2\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Passagier\" xmi:id=\"PASSAGIER\" xmi:type=\"uml:Class\"/></uml:Model>";
-		
-		output = output.replaceAll("\\s","");
-		expected_output = expected_output.replaceAll("\\s","");
-		
-		assertEquals(expected_output, output);
-		
-		verify(fileMock);
+		assertTrue(testDoc(resultdoc, class_list, asso_list));
 	}
 	
 	@Test
@@ -106,20 +105,12 @@ public class PowerDesignerExportTest {
 		classes.add(vliegtuig);
 		classes.add(bus);
 		
-		String exportpath = exporter.export(classes);
+		Document resultdoc = exporter.exportDoc(classes);
 		
-		assertNotNull(exportpath);
+		ArrayList<Class> class_list = exporter.getClassList(classes, new ArrayList<Class>());
+		ArrayList<ClassRelation> asso_list = exporter.getAssociationList(classes, new ArrayList<ClassRelation>());
 		
-		String output = content.getValue();
-	
-		String expected_output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><uml:Model name=\"ObjectOrientedModel\" xmi:version=\"2.1\" xmlns:uml=\"http://www.eclipse.org/uml2/2.1.0/UML\" xmlns:xmi=\"http://schema.omg.org/spec/XMI/2.1\"><packagedElement name=\"Vliegtuig\" xmi:id=\"VLIEGTUIG\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_0OWNEDEND_1 ASSOCIATION_0OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_0OWNEDEND_2\" xmi:id=\"ASSOCIATION_0\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_0\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_0UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_0LOWERVALUE_1\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_0\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_2\"><upperValue value=\"*\" xmi:id=\"ASSOCIATION_0UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_0LOWERVALUE_2\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Passagier\" xmi:id=\"PASSAGIER\" xmi:type=\"uml:Class\"/><packagedElement name=\"Bus\" xmi:id=\"BUS\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_1OWNEDEND_1 ASSOCIATION_1OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_1OWNEDEND_2\" xmi:id=\"ASSOCIATION_1\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_1\" type=\"BUS\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_1UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_1LOWERVALUE_1\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_1\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_2\"><upperValue value=\"*\" xmi:id=\"ASSOCIATION_1UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_1LOWERVALUE_2\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd></packagedElement></uml:Model>";
-		
-		output = output.replaceAll("\\s","");
-		expected_output = expected_output.replaceAll("\\s","");
-		
-		assertEquals(expected_output, output);
-		
-		verify(fileMock);
+		assertTrue(testDoc(resultdoc, class_list, asso_list));
 	}
 	
 	@Test
@@ -138,20 +129,12 @@ public class PowerDesignerExportTest {
 		
 		classes.add(vliegtuigmaatschappij);
 		
-		String exportpath = exporter.export(classes);
+		Document resultdoc = exporter.exportDoc(classes);
 		
-		assertNotNull(exportpath);
+		ArrayList<Class> class_list = exporter.getClassList(classes, new ArrayList<Class>());
+		ArrayList<ClassRelation> asso_list = exporter.getAssociationList(classes, new ArrayList<ClassRelation>());
 		
-		String output = content.getValue();
-		
-		String expected_output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><uml:Model name=\"ObjectOrientedModel\" xmi:version=\"2.1\" xmlns:uml=\"http://www.eclipse.org/uml2/2.1.0/UML\" xmlns:xmi=\"http://schema.omg.org/spec/XMI/2.1\"><packagedElement name=\"Vliegtuigmaatschappij\" xmi:id=\"VLIEGTUIGMAATSCHAPPIJ\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_0OWNEDEND_1 ASSOCIATION_0OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_0OWNEDEND_2\" xmi:id=\"ASSOCIATION_0\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_0\" type=\"VLIEGTUIGMAATSCHAPPIJ\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_0UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_0LOWERVALUE_1\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_0\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_2\"><upperValue value=\"*\" xmi:id=\"ASSOCIATION_0UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_0LOWERVALUE_2\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Vliegtuig\" xmi:id=\"VLIEGTUIG\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_1OWNEDEND_1 ASSOCIATION_1OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_1OWNEDEND_2\" xmi:id=\"ASSOCIATION_1\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_1\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_1UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_1LOWERVALUE_1\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_1\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_2\"><upperValue value=\"*\" xmi:id=\"ASSOCIATION_1UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_1LOWERVALUE_2\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Passagier\" xmi:id=\"PASSAGIER\" xmi:type=\"uml:Class\"/></uml:Model>";
-		
-		output = output.replaceAll("\\s","");
-		expected_output = expected_output.replaceAll("\\s","");
-		
-		assertEquals(expected_output, output);
-		
-		verify(fileMock);
+		assertTrue(testDoc(resultdoc, class_list, asso_list));
 	}
 	
 	@Test
@@ -170,20 +153,12 @@ public class PowerDesignerExportTest {
 		
 		classes.add(vliegtuig);
 		
-		String exportpath = exporter.export(classes);
+		Document resultdoc = exporter.exportDoc(classes);
 		
-		assertNotNull(exportpath);
+		ArrayList<Class> class_list = exporter.getClassList(classes, new ArrayList<Class>());
+		ArrayList<ClassRelation> asso_list = exporter.getAssociationList(classes, new ArrayList<ClassRelation>());
 		
-		String output = content.getValue();
-	
-		String expected_output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><uml:Model name=\"ObjectOrientedModel\" xmi:version=\"2.1\" xmlns:uml=\"http://www.eclipse.org/uml2/2.1.0/UML\" xmlns:xmi=\"http://schema.omg.org/spec/XMI/2.1\"><packagedElement name=\"Vliegtuig\" xmi:id=\"VLIEGTUIG\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_0OWNEDEND_1 ASSOCIATION_0OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_0OWNEDEND_2\" xmi:id=\"ASSOCIATION_0\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_0\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_0UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_0LOWERVALUE_1\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_0\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_2\"><upperValue value=\"*\" xmi:id=\"ASSOCIATION_0UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_0LOWERVALUE_2\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Passagier\" xmi:id=\"PASSAGIER\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_1OWNEDEND_1 ASSOCIATION_1OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_1OWNEDEND_2\" xmi:id=\"ASSOCIATION_1\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_1\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_1UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_1LOWERVALUE_1\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_1\" type=\"PASSPOORT\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_2\"><upperValue value=\"*\" xmi:id=\"ASSOCIATION_1UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_1LOWERVALUE_2\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Passpoort\" xmi:id=\"PASSPOORT\" xmi:type=\"uml:Class\"/></uml:Model>";
-		
-		output = output.replaceAll("\\s","");
-		expected_output = expected_output.replaceAll("\\s","");
-		
-		assertEquals(expected_output, output);
-		
-		verify(fileMock);
+		assertTrue(testDoc(resultdoc, class_list, asso_list));
 	}
 	
 	@Test
@@ -202,20 +177,12 @@ public class PowerDesignerExportTest {
 		
 		classes.add(vliegtuig);
 		
-		String exportpath = exporter.export(classes);
+		Document resultdoc = exporter.exportDoc(classes);
 		
-		assertNotNull(exportpath);
+		ArrayList<Class> class_list = exporter.getClassList(classes, new ArrayList<Class>());
+		ArrayList<ClassRelation> asso_list = exporter.getAssociationList(classes, new ArrayList<ClassRelation>());
 		
-		String output = content.getValue();
-	
-		String expected_output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><uml:Model name=\"ObjectOrientedModel\" xmi:version=\"2.1\" xmlns:uml=\"http://www.eclipse.org/uml2/2.1.0/UML\" xmlns:xmi=\"http://schema.omg.org/spec/XMI/2.1\"><packagedElement name=\"Vliegtuig\" xmi:id=\"VLIEGTUIG\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_0OWNEDEND_1 ASSOCIATION_0OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_0OWNEDEND_2\" xmi:id=\"ASSOCIATION_0\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_0\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_0UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_0LOWERVALUE_1\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_0\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_2\"><upperValue value=\"*\" xmi:id=\"ASSOCIATION_0UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_0LOWERVALUE_2\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd></packagedElement><packagedElement memberEnd=\"ASSOCIATION_1OWNEDEND_1 ASSOCIATION_1OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_1OWNEDEND_2\" xmi:id=\"ASSOCIATION_1\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_1\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_1UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_1LOWERVALUE_1\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_1\" type=\"PILOOT\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_2\"><upperValue value=\"*\" xmi:id=\"ASSOCIATION_1UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_1LOWERVALUE_2\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Passagier\" xmi:id=\"PASSAGIER\" xmi:type=\"uml:Class\"/><packagedElement name=\"Piloot\" xmi:id=\"PILOOT\" xmi:type=\"uml:Class\"/></uml:Model>";
-		
-		output = output.replaceAll("\\s","");
-		expected_output = expected_output.replaceAll("\\s","");
-		
-		assertEquals(expected_output, output);
-		
-		verify(fileMock);
+		assertTrue(testDoc(resultdoc, class_list, asso_list));
 	}
 	
 	@Test
@@ -236,20 +203,12 @@ public class PowerDesignerExportTest {
 		
 		classes.add(vliegtuigmaatschappij);
 		
-		String exportpath = exporter.export(classes);
+		Document resultdoc = exporter.exportDoc(classes);
 		
-		assertNotNull(exportpath);
+		ArrayList<Class> class_list = exporter.getClassList(classes, new ArrayList<Class>());
+		ArrayList<ClassRelation> asso_list = exporter.getAssociationList(classes, new ArrayList<ClassRelation>());
 		
-		String output = content.getValue();
-		
-		String expected_output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><uml:Model name=\"ObjectOrientedModel\" xmi:version=\"2.1\" xmlns:uml=\"http://www.eclipse.org/uml2/2.1.0/UML\" xmlns:xmi=\"http://schema.omg.org/spec/XMI/2.1\"><packagedElement name=\"Vliegtuigmaatschappij\" xmi:id=\"VLIEGTUIGMAATSCHAPPIJ\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_0OWNEDEND_1 ASSOCIATION_0OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_0OWNEDEND_2\" xmi:id=\"ASSOCIATION_0\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_0\" type=\"VLIEGTUIGMAATSCHAPPIJ\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_0UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_0LOWERVALUE_1\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_0\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_2\"><upperValue value=\"*\" xmi:id=\"ASSOCIATION_0UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_0LOWERVALUE_2\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Vliegtuig\" xmi:id=\"VLIEGTUIG\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_1OWNEDEND_1 ASSOCIATION_1OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_1OWNEDEND_2\" xmi:id=\"ASSOCIATION_1\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_1\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_1UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_1LOWERVALUE_1\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_1\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_2\"><upperValue value=\"*\" xmi:id=\"ASSOCIATION_1UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_1LOWERVALUE_2\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Passagier\" xmi:id=\"PASSAGIER\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_2OWNEDEND_1 ASSOCIATION_2OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_2OWNEDEND_2\" xmi:id=\"ASSOCIATION_2\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_2\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_2OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_2UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_2LOWERVALUE_1\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_2\" type=\"PASPOORT\" visibility=\"public\" xmi:id=\"ASSOCIATION_2OWNEDEND_2\"><upperValue value=\"*\" xmi:id=\"ASSOCIATION_2UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_2LOWERVALUE_2\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Paspoort\" xmi:id=\"PASPOORT\" xmi:type=\"uml:Class\"/></uml:Model>";
-		
-		output = output.replaceAll("\\s","");
-		expected_output = expected_output.replaceAll("\\s","");
-		
-		assertEquals(expected_output, output);
-		
-		verify(fileMock);
+		assertTrue(testDoc(resultdoc, class_list, asso_list));
 	}
 	
 	@Test
@@ -269,19 +228,71 @@ public class PowerDesignerExportTest {
 		
 		classes.add(vliegtuig);
 		
-		String exportpath = exporter.export(classes);
+		Document resultdoc = exporter.exportDoc(classes);
 		
-		assertNotNull(exportpath);
+		ArrayList<Class> class_list = exporter.getClassList(classes, new ArrayList<Class>());
+		ArrayList<ClassRelation> asso_list = exporter.getAssociationList(classes, new ArrayList<ClassRelation>());
 		
-		String output = content.getValue();
+		assertTrue(testDoc(resultdoc, class_list, asso_list));
+	}
+	
+	@Test
+	public void testDoc() {
+		PowerDesignerExport exporter = new PowerDesignerExport();
+		ArrayList<Class> classes = new ArrayList<Class>();
+		Class vliegtuig = new Class("Vliegtuig");
+		Class passagier = new Class("Passagier");
+		Class paspoort = new Class("Paspoort");
 
-		String expected_output = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><uml:Model name=\"ObjectOrientedModel\" xmi:version=\"2.1\" xmlns:uml=\"http://www.eclipse.org/uml2/2.1.0/UML\" xmlns:xmi=\"http://schema.omg.org/spec/XMI/2.1\"><packagedElement name=\"Vliegtuig\" xmi:id=\"VLIEGTUIG\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_0OWNEDEND_1 ASSOCIATION_0OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_0OWNEDEND_2\" xmi:id=\"ASSOCIATION_0\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_0\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_0UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_0LOWERVALUE_1\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_0\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_0OWNEDEND_2\"><upperValue value=\"*\" xmi:id=\"ASSOCIATION_0UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_0LOWERVALUE_2\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Passagier\" xmi:id=\"PASSAGIER\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_1OWNEDEND_1 ASSOCIATION_1OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_1OWNEDEND_2\" xmi:id=\"ASSOCIATION_1\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_1\" type=\"PASSAGIER\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_1UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_1LOWERVALUE_1\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_1\" type=\"PASPOORT\" visibility=\"public\" xmi:id=\"ASSOCIATION_1OWNEDEND_2\"><upperValue value=\"*\" xmi:id=\"ASSOCIATION_1UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_1LOWERVALUE_2\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd></packagedElement><packagedElement name=\"Paspoort\" xmi:id=\"PASPOORT\" xmi:type=\"uml:Class\"/><packagedElement memberEnd=\"ASSOCIATION_2OWNEDEND_1 ASSOCIATION_2OWNEDEND_2\" navigableOwnedEnd=\"ASSOCIATION_2OWNEDEND_2\" xmi:id=\"ASSOCIATION_2\" xmi:type=\"uml:Association\"><ownedEnd association=\"ASSOCIATION_2\" type=\"PASPOORT\" visibility=\"public\" xmi:id=\"ASSOCIATION_2OWNEDEND_1\"><upperValue value=\"1\" xmi:id=\"ASSOCIATION_2UPPERVALUE_1\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_2LOWERVALUE_1\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd><ownedEnd association=\"ASSOCIATION_2\" type=\"VLIEGTUIG\" visibility=\"public\" xmi:id=\"ASSOCIATION_2OWNEDEND_2\"><upperValue value=\"*\" xmi:id=\"ASSOCIATION_2UPPERVALUE_2\" xmi:type=\"uml:LiteralUnlimitedNatural\"/><lowerValue value=\"0\" xmi:id=\"ASSOCIATION_2LOWERVALUE_2\" xmi:type=\"uml:LiteralInteger\"/></ownedEnd></packagedElement></uml:Model>";
+		vliegtuig.addAssociation(passagier);
+		passagier.addAssociation(paspoort);
+		paspoort.addAssociation(vliegtuig);
+		classes.add(vliegtuig);
 		
-		output = output.replaceAll("\\s","");
-		expected_output = expected_output.replaceAll("\\s","");
+		Document resultdoc = exporter.exportDoc(classes);
 		
-		assertEquals(expected_output, output);
+		ArrayList<Class> class_list = exporter.getClassList(classes, new ArrayList<Class>());
+		ArrayList<ClassRelation> asso_list = exporter.getAssociationList(classes, new ArrayList<ClassRelation>());
 		
-		verify(fileMock);
+		assertTrue(testDoc(resultdoc, class_list, asso_list));
+	}
+	
+	/**
+	 * Check a Document for classes and associations, if all are found in the arraylists the doc is correct.
+	 * @param resultdoc The document to check
+	 * @param class_list List of Classes
+	 * @param asso_list List of ClassRelations
+	 * @return true if document is correct, false if incorrect
+	 */
+	public boolean testDoc(Document resultdoc, ArrayList<Class> class_list, ArrayList<ClassRelation> asso_list){
+		for (int i = 0; i < resultdoc.getDocumentElement().getChildNodes().getLength(); i++) {
+			Node childnode = resultdoc.getDocumentElement().getChildNodes().item(i);
+			String nodetype = childnode.getAttributes().getNamedItem(PowerDesignerXML.attributename_xmi_type).getNodeValue();
+			
+			if(nodetype == PowerDesignerXML.attributetype_uml_class){
+				String nodename = childnode.getAttributes().getNamedItem(PowerDesignerXML.attributename_name).getNodeValue();
+				Class tmpclass = new Class(nodename);
+				if(!class_list.contains(tmpclass))
+					return false;
+			}
+			
+			if(nodetype == PowerDesignerXML.attributetype_uml_association){
+				String classname1 = childnode.getChildNodes().item(0).getAttributes().getNamedItem("type").getNodeValue();
+				String classname2 = childnode.getChildNodes().item(1).getAttributes().getNamedItem("type").getNodeValue();
+				ClassRelation tmprelation = new ClassRelation(new Class(classname1), new Class(classname2));
+				
+				boolean relation_found = false;
+				for(ClassRelation asso_list_relation : asso_list){
+					if(asso_list_relation.class1.getName().toUpperCase().equals(tmprelation.class1.getName()) &&
+					   asso_list_relation.class2.getName().toUpperCase().equals(tmprelation.class2.getName())){
+						relation_found = true;
+						break;
+					}
+				}
+				if(!relation_found)
+					return false;
+			}
+		}
+		return true;
 	}
 }

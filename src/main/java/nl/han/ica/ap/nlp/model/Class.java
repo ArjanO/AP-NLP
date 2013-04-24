@@ -73,5 +73,25 @@ public class Class{
 	
 	public ArrayList<Association> getAssociations() {
 		return associations;
-	}	
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Class)) {
+			return super.equals(obj);
+		}
+		
+		Class other = (Class)obj;
+		
+		if (this.name != other.name) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	@Override
+	public String toString() {
+		return this.name;
+	}
 }

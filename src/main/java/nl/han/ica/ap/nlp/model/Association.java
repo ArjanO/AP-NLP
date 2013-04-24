@@ -66,4 +66,8 @@ public class Association {
 	public void setName(String name) {
 		this.name = name;
 	}
+	
+	public void setChild(Class child) {
+		this.childClass = child;
+	}
 }

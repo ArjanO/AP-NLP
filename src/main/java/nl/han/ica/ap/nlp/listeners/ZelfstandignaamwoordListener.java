@@ -68,9 +68,7 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		if(start) {
 			if(!direction) {				
 				Class c = new Class(zelfstandignaamwoord.getText());
-//				c.addAssociation(new Class(ctx.getText()));
-//				controller.addClass(c);
-				addAttributeToClass(ctx, c);
+				addAssociationToClass(ctx, c);
 			} else {
 				Class c = new Class(ctx.getText());
 				c.addAssociation(new Class(zelfstandignaamwoord.getText()));	
@@ -82,13 +80,19 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		}		
 	}
 
-	private void addAttributeToClass(ZelfstandignaamwoordContext ctx, Class c) {
+	/**
+	 * Adds an association to a class, which will be sent to the controller as Class-Association pair.
+	 * If a bijwoord + telwoord is detected a multiplicity bound will modified from the default value to the
+	 * value of the telwoord.
+	 * @param ctx A name for a childclass
+	 * @param c The class which gets a association
+	 */
+	private void addAssociationToClass(ZelfstandignaamwoordContext ctx, Class c) {
 		if(telwoord != null && hasMeaning(bijwoord)) {
 			Association a = new Association(new Class(ctx.getText()),null);
 			String bijwoordval = bijwoord.getText();
-			if(bijwoordval.equals("maximaal")) {
-				String boundval = telwoord.getText();
-				a.getChildMultiplicity().setUpperBound(boundval);
+			if(bijwoordval.equals("maximaal")) {				
+				a.getChildMultiplicity().setUpperBound(telwoord.getText());
 			} else if(bijwoordval.equals("minimaal")) {
 				a.getChildMultiplicity().setLowerBound(telwoord.getText());
 			}
@@ -127,5 +131,7 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	@Override
 	public void exitVerbaleconstituent(VerbaleconstituentContext ctx) {
 		start = false;
+		bijwoord = null;
+		telwoord = null;
 	}
 }
