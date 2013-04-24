@@ -29,11 +29,18 @@
 */
 lexer grammar NlpGlobal;
 
-LIDWOORD: ('de'|'het'|'een'|'De'|'Het'|'Een');
+MAAND : ('januari'|'februari'|'maart'|'april'|'mei'|'juni'|'july'|'augustus'|'september'|'oktober'|'november'|'december');
+LIDWOORD : ('de'|'het'|'een'|'De'|'Het'|'Een');
+NUMMER : '0'..'9'+ | ('0'..'9'+ ' ');
+EINDEZIN : '.';
+WOORD : (('a'..'z')|('A'..'Z')|'Ã«'|'Ã¯'|'\'')+;
+WS : (' ' | '\t' | '\n' | '\f' | '\r')+ {$channel = HIDDEN;};
 
-NUMMER: '0'..'9'+;
-
-EINDEZIN: '.';
-
-WOORD: (('a'..'z')|('A'..'Z')|'ë'|'ï'|'\'')+;
-WS  :  (' ' |'\n' |'\r' )+ -> skip ;
+/*
+*	Grammar that concerns the primitive types of the UML.
+*/
+STRING : ('"') (('a'..'z')|('A'..'Z')|('0'..'9')|'Ã«'|'Ã¯'|'\''|','|SEPARATOR|WS)+ ('"');
+DECIMAAL : '0'..'9'+ (',') '0'..'9'+;
+TIJD : ('0'..'9'+ ':' '0'..'9'+) | ('0'..'9'+ ':' '0'..'9'+ ' uur') | ('0'..'9'+ ' uur') | ('0'..'9'+ ' uur ' '0'..'9'+);
+SEPARATOR : ('-'|'/');
+DATUM : ('0'..'9' '0'..'9'? SEPARATOR '0'..'9' '0'..'9'? SEPARATOR ('0'..'9' '0'..'9' ('0'..'9' '0'..'9')?)) | ('0'..'9' '0'..'9'? ' 'MAAND) | ('0'..'9' '0'..'9'? ' 'MAAND' ' ('0'..'9' '0'..'9')('0'..'9' '0'..'9')?);
