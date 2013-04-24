@@ -34,7 +34,7 @@ LIDWOORD : ('de'|'het'|'een'|'De'|'Het'|'Een');
 NUMMER : '0'..'9'+ | ('0'..'9'+ ' ');
 EINDEZIN : '.';
 WOORD : (('a'..'z')|('A'..'Z')|'Ã«'|'Ã¯'|'\'')+;
-WS : (' ' | '\t' | '\n' | '\f' | '\r')+ {$channel = HIDDEN;};
+WS  :  (' ' |'\n' |'\r' )+ -> skip ;
 
 /*
 *	Grammar that concerns the primitive types of the UML.
