@@ -68,8 +68,6 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		if(start) {
 			if(!direction) {				
 				Class c = new Class(zelfstandignaamwoord.getText());
-//				c.addAssociation(new Class(ctx.getText()));
-//				controller.addClass(c);
 				addAttributeToClass(ctx, c);
 			} else {
 				Class c = new Class(ctx.getText());
@@ -86,9 +84,8 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		if(telwoord != null && hasMeaning(bijwoord)) {
 			Association a = new Association(new Class(ctx.getText()),null);
 			String bijwoordval = bijwoord.getText();
-			if(bijwoordval.equals("maximaal")) {
-				String boundval = telwoord.getText();
-				a.getChildMultiplicity().setUpperBound(boundval);
+			if(bijwoordval.equals("maximaal")) {				
+				a.getChildMultiplicity().setUpperBound(telwoord.getText());
 			} else if(bijwoordval.equals("minimaal")) {
 				a.getChildMultiplicity().setLowerBound(telwoord.getText());
 			}
@@ -127,5 +124,7 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	@Override
 	public void exitVerbaleconstituent(VerbaleconstituentContext ctx) {
 		start = false;
+		bijwoord = null;
+		telwoord = null;
 	}
 }

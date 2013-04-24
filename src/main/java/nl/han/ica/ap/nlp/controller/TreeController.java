@@ -79,14 +79,15 @@ public class TreeController {
 			if(existingParent == null && existingChild == null){
 				classes.add(c);			
 			} else if(existingParent != null && existingChild == null) {
-				existingParent.addAssociation(child);
+				existingParent.getAssociations().add(association);
 			} else if(existingParent == null && existingChild != null) {
-				c.addAssociation(existingChild);
-				c.getAssociations().remove(association);				
+				c.getAssociations().get(0).setChild(existingChild);				
 				classes.remove(existingChild);
 				classes.add(c);
 			} else {
-				existingParent.addAssociation(existingChild);
+				association.setChild(existingChild);
+				existingParent.getAssociations().add(association);
+				//existingParent.addAssociation(existingChild);
 //				if(classes.size() > 1) {
 //					classes.remove(existingChild);
 //				}
