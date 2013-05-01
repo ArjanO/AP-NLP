@@ -48,6 +48,7 @@ import nl.han.ica.ap.nlp.controller.TreeController;
  */
 public class App {
 	
+	private TreeController controller;
 	private static App app;
 	private App(){}
 	public static App getInstance() {
@@ -89,8 +90,12 @@ public class App {
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		NlpParser parser = new NlpParser(tokens);
 		ParseTree tree = parser.tekst(); // begin parsing at init rule
-		TreeController controller = new TreeController();
+		controller = new TreeController();
 		controller.walkTree(tree, parser);
+	}
+	
+	public TreeController getController() {
+		return controller;
 	}
 		
 	public static void main(String[] args) throws Exception {
