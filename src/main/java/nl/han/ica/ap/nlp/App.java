@@ -58,15 +58,33 @@ public class App {
 	}
 	
 	/**
-	 * Starts parsing the input text to an uml diagram xml file.
+	 * Starts the application with a given string to be parsed.
+	 */
+	public void start(String text) {
+		ANTLRInputStream input = null;
+		input = new ANTLRInputStream(text);
+		parseInput(input);
+	}
+	
+	/**
+	 * Starts the application with input from the console
 	 */
 	public void start() {
 		ANTLRInputStream input = null;
 		try {
 			input = new ANTLRInputStream(System.in);
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		parseInput(input);
+	}
+	
+	/**
+	 * Parses the input to an uml diagram xml file.
+	 * @param input The input to be parsed
+	 */
+	private void parseInput(ANTLRInputStream input) {
 		NlpLexer lexer = new NlpLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		NlpParser parser = new NlpParser(tokens);
