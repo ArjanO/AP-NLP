@@ -88,13 +88,18 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	 * @param c The class which gets a association
 	 */
 	private void addAssociationToClass(ZelfstandignaamwoordContext ctx, Class c) {
-		if(telwoord != null && hasMeaning(bijwoord)) {
+		if(telwoord != null) {
 			Association a = new Association(new Class(ctx.getText()),null);
-			String bijwoordval = bijwoord.getText();
-			if(bijwoordval.equals("maximaal")) {				
-				a.getChildMultiplicity().setUpperBound(telwoord.getText());
-			} else if(bijwoordval.equals("minimaal")) {
+			if(hasMeaning(bijwoord)) {
+				String bijwoordval = bijwoord.getText();
+				if(bijwoordval.equals("maximaal")) {				
+					a.getChildMultiplicity().setUpperBound(telwoord.getText());
+				} else if(bijwoordval.equals("minimaal")) {
+					a.getChildMultiplicity().setLowerBound(telwoord.getText());
+				}
+			} else {
 				a.getChildMultiplicity().setLowerBound(telwoord.getText());
+				a.getChildMultiplicity().setUpperBound(telwoord.getText());
 			}
 			c.getAssociations().add(a);
 		} else {
@@ -108,8 +113,12 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	 * @param bijwoord The bijwoord to be checked.
 	 * @return True if it has an extra meaning, false if not.
 	 */
-	public boolean hasMeaning(BijwoordContext bijwoord) {		
-		return keywords.contains(bijwoord.getText());
+	public boolean hasMeaning(BijwoordContext bijwoord) {
+		if(bijwoord != null) {
+			return keywords.contains(bijwoord.getText());
+		} else {
+			return false;
+		}
 	}
 
 	@Override
