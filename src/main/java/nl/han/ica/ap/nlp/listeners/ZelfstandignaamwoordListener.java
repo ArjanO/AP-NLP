@@ -36,6 +36,7 @@ import nl.han.ica.ap.nlp.model.Association;
 import nl.han.ica.ap.nlp.model.Class;
 import nl.han.ica.ap.nlp.NlpBaseListener;
 import nl.han.ica.ap.nlp.NlpParser.BijwoordContext;
+import nl.han.ica.ap.nlp.NlpParser.EnumeratieContext;
 import nl.han.ica.ap.nlp.NlpParser.TelwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.VerbaleconstituentContext;
 import nl.han.ica.ap.nlp.NlpParser.WerkwoordContext;
@@ -79,6 +80,11 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 			start = true;
 		}		
 	}
+	
+	@Override
+	public void exitZelfstandignaamwoord(ZelfstandignaamwoordContext ctx) {
+		telwoord = null;
+	}
 
 	/**
 	 * Adds an association to a class, which will be sent to the controller as Class-Association pair.
@@ -107,6 +113,8 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		}
 		controller.addClass(c);
 	}
+	
+	
 
 	/**
 	 * Checks of the given bijwoord has an contextual meaning.
@@ -143,4 +151,10 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		bijwoord = null;
 		telwoord = null;
 	}
+	
+	@Override
+	public void exitEnumeratie(EnumeratieContext ctx) {
+		bijwoord = null;
+	}	
+	
 }

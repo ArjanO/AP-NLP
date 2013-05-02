@@ -82,5 +82,54 @@ public class ZelfstandignaamwoordListenerTest {
 		assertEquals("2", actualLowerBound);
 		assertEquals("2", actualUpperBound);
 	}
-
+	
+	@Test
+	public void testCompositeSentence(){
+		App app = App.getInstance();
+		app.start("Een vliegtuig heeft passagiers, piloten en stewardesses en baggage.");
+		assertEquals(1, app.getController().classes.size());
+		assertEquals(4,app.getController().classes.get(0).getAssociations().size());
+	}
+	
+	@Test
+	public void testCompositeSentenceExplicitMultiplicity(){
+		App app = App.getInstance();
+		app.start("Een vliegtuig heeft minimaal 3 piloten, 5 stewardesses en 50 passagiers en 2 vleugels.");
+		assertEquals("3", app.getController().classes.get(0).getAssociations().get(0).getChildMultiplicity().getLowerBound().getValue());
+		assertEquals("*", app.getController().classes.get(0).getAssociations().get(0).getChildMultiplicity().getUpperBound().getValue());
+		assertEquals("5", app.getController().classes.get(0).getAssociations().get(1).getChildMultiplicity().getLowerBound().getValue());
+		assertEquals("*", app.getController().classes.get(0).getAssociations().get(1).getChildMultiplicity().getUpperBound().getValue());
+		assertEquals("50", app.getController().classes.get(0).getAssociations().get(2).getChildMultiplicity().getLowerBound().getValue());
+		assertEquals("*", app.getController().classes.get(0).getAssociations().get(2).getChildMultiplicity().getUpperBound().getValue());
+		assertEquals("2", app.getController().classes.get(0).getAssociations().get(3).getChildMultiplicity().getLowerBound().getValue());
+		assertEquals("2", app.getController().classes.get(0).getAssociations().get(3).getChildMultiplicity().getUpperBound().getValue());	
+	}
+	
+	@Test
+	public void testCompositeSentenceMixedMultiplicities(){
+		App app = App.getInstance();
+		app.start("Een vliegtuig heeft 3 piloten, 5 stewardesses en passagiers en 2 vleugels.");
+		assertEquals("3", app.getController().classes.get(0).getAssociations().get(0).getChildMultiplicity().getLowerBound().getValue());
+		assertEquals("3", app.getController().classes.get(0).getAssociations().get(0).getChildMultiplicity().getUpperBound().getValue());
+		assertEquals("5", app.getController().classes.get(0).getAssociations().get(1).getChildMultiplicity().getLowerBound().getValue());
+		assertEquals("5", app.getController().classes.get(0).getAssociations().get(1).getChildMultiplicity().getUpperBound().getValue());
+		assertEquals("0", app.getController().classes.get(0).getAssociations().get(2).getChildMultiplicity().getLowerBound().getValue());
+		assertEquals("*", app.getController().classes.get(0).getAssociations().get(2).getChildMultiplicity().getUpperBound().getValue());
+		assertEquals("2", app.getController().classes.get(0).getAssociations().get(3).getChildMultiplicity().getLowerBound().getValue());
+		assertEquals("2", app.getController().classes.get(0).getAssociations().get(3).getChildMultiplicity().getUpperBound().getValue());	
+	}
+	
+	@Test
+	public void testCompositeSentenceExplicitSeperateMultiplicities(){
+		App app = App.getInstance();
+		app.start("Een vliegtuig heeft minimaal 3 piloten, minimaal 5 stewardesses en maximaal 500 passagiers en 2 vleugels.");
+		assertEquals("3", app.getController().classes.get(0).getAssociations().get(0).getChildMultiplicity().getLowerBound().getValue());
+		assertEquals("*", app.getController().classes.get(0).getAssociations().get(0).getChildMultiplicity().getUpperBound().getValue());
+		assertEquals("5", app.getController().classes.get(0).getAssociations().get(1).getChildMultiplicity().getLowerBound().getValue());
+		assertEquals("*", app.getController().classes.get(0).getAssociations().get(1).getChildMultiplicity().getUpperBound().getValue());
+		assertEquals("0", app.getController().classes.get(0).getAssociations().get(2).getChildMultiplicity().getLowerBound().getValue());
+		assertEquals("500", app.getController().classes.get(0).getAssociations().get(2).getChildMultiplicity().getUpperBound().getValue());
+		assertEquals("2", app.getController().classes.get(0).getAssociations().get(3).getChildMultiplicity().getLowerBound().getValue());
+		assertEquals("2", app.getController().classes.get(0).getAssociations().get(3).getChildMultiplicity().getUpperBound().getValue());	
+	}
 }
