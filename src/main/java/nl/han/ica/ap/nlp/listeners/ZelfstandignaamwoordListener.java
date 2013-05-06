@@ -36,6 +36,7 @@ import nl.han.ica.ap.nlp.model.Association;
 import nl.han.ica.ap.nlp.model.Class;
 import nl.han.ica.ap.nlp.NlpBaseListener;
 import nl.han.ica.ap.nlp.NlpParser.BijwoordContext;
+import nl.han.ica.ap.nlp.NlpParser.EnumeratieContext;
 import nl.han.ica.ap.nlp.NlpParser.TelwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.VerbaleconstituentContext;
 import nl.han.ica.ap.nlp.NlpParser.WerkwoordContext;
@@ -79,6 +80,11 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 			start = true;
 		}		
 	}
+	
+	@Override
+	public void exitZelfstandignaamwoord(ZelfstandignaamwoordContext ctx) {
+		telwoord = null;
+	}
 
 	/**
 	 * Adds an association to a class, which will be sent to the controller as Class-Association pair.
@@ -88,13 +94,18 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	 * @param c The class which gets a association
 	 */
 	private void addAssociationToClass(ZelfstandignaamwoordContext ctx, Class c) {
-		if(telwoord != null && hasMeaning(bijwoord)) {
+		if(telwoord != null) {
 			Association a = new Association(new Class(ctx.getText()),null);
-			String bijwoordval = bijwoord.getText();
-			if(bijwoordval.equals("maximaal")) {				
-				a.getChildMultiplicity().setUpperBound(telwoord.getText());
-			} else if(bijwoordval.equals("minimaal")) {
+			if(hasMeaning(bijwoord)) {
+				String bijwoordval = bijwoord.getText();
+				if(bijwoordval.equals("maximaal")) {				
+					a.getChildMultiplicity().setUpperBound(telwoord.getText());
+				} else if(bijwoordval.equals("minimaal")) {
+					a.getChildMultiplicity().setLowerBound(telwoord.getText());
+				}
+			} else {
 				a.getChildMultiplicity().setLowerBound(telwoord.getText());
+				a.getChildMultiplicity().setUpperBound(telwoord.getText());
 			}
 			c.getAssociations().add(a);
 		} else {
@@ -102,14 +113,20 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		}
 		controller.addClass(c);
 	}
+	
+	
 
 	/**
 	 * Checks of the given bijwoord has an contextual meaning.
 	 * @param bijwoord The bijwoord to be checked.
 	 * @return True if it has an extra meaning, false if not.
 	 */
-	public boolean hasMeaning(BijwoordContext bijwoord) {		
-		return keywords.contains(bijwoord.getText());
+	public boolean hasMeaning(BijwoordContext bijwoord) {
+		if(bijwoord != null) {
+			return keywords.contains(bijwoord.getText());
+		} else {
+			return false;
+		}
 	}
 
 	@Override
@@ -134,4 +151,10 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		bijwoord = null;
 		telwoord = null;
 	}
+	
+	@Override
+	public void exitEnumeratie(EnumeratieContext ctx) {
+		bijwoord = null;
+	}	
+	
 }

@@ -37,19 +37,21 @@ import NlpWerkwoorden, NlpLexer;
 tekst: zin+;
 zin:  (bijwoord|naamwoordgroep|zelfstandignaamwoord) verbaleconstituent eindezin;
 samengesteld: voegwoord (naamwoordgroep|zelfstandignaamwoord);
-naamwoordgroep: voorzetsel? bijwoord? (lidwoord|telwoord|decimaal|kwantor) zelfstandignaamwoord ;
-verbaleconstituent : woord* werkwoord (naamwoordgroep|zelfstandignaamwoord) voegwoord? samengesteld* (verbaleconstituent*|werkwoord);
+naamwoordgroep: voorzetsel? bijwoord? (telwoord|lidwoord|kwantor)zelfstandignaamwoord;
+verbaleconstituent : woord* werkwoord (naamwoordgroep|zelfstandignaamwoord) voegwoord? (enumeratie|samengesteld)* (verbaleconstituent*|werkwoord);
 eindezin: EINDEZIN;
-zelfstandignaamwoord: WOORD | telwoord | decimaal | string | maand | datum | tijd;
+zelfstandignaamwoord: WOORD;
 voorzetsel: ('in'|'op'|'Op'|'In');
 voegwoord: ('en'|'of');
 werkwoord: WERKWOORD;
 bezittelijkvoornaamwoord: ('zijn'|'haar'|'hun'|'mijn');
 telwoord: NUMMER;
-bijwoord: ('maximaal'|'minimaal'|'minstens'|'Er'|'er');
+bijwoord: ('maximaal'|'minimaal'|'minstens'|'Er'|'er'|'tenminste');
 kwantor: ('elke' 'e'?) ;
 lidwoord: LIDWOORD;
 woord: WOORD;
+enumeratie: KOMMA (naamwoordgroep|zelfstandignaamwoord) (voegwoord (naamwoordgroep|zelfstandignaamwoord))?;
+
 
 /*
 *	Grammar that concerns the primitive types of the UML.

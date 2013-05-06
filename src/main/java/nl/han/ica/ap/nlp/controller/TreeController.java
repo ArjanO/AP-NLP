@@ -87,10 +87,11 @@ public class TreeController {
 			} else {
 				association.setChild(existingChild);
 				existingParent.getAssociations().add(association);
-				//existingParent.addAssociation(existingChild);
-//				if(classes.size() > 1) {
-//					classes.remove(existingChild);
-//				}
+				ArrayList<Class> _classes = new ArrayList<Class>(classes);
+				_classes.remove(existingChild);
+				if(getClass(existingChild, _classes, null) != null) {
+					classes.remove(existingChild);
+				}
 			}
 		}
 	}	
