@@ -13,6 +13,12 @@ public class YUMLExport implements IExport{
 		createClasses(classes);
 		return doc.trim();
 	}
+	
+	public String exportImage(ArrayList<Class> classes) {
+		createClasses(classes);
+		//http://yuml.me/diagram/scruffy;/class/
+		return null;
+	}
     
     private void createClasses(ArrayList<Class> classes) {
     	if (classes.size() > 0) {
