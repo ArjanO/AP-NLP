@@ -47,10 +47,10 @@ import nl.han.ica.ap.nlp.NlpParser.ZinContext;
 
 public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	private TreeController controller;	
-	private ZelfstandignaamwoordContext zelfstandignaamwoord;
+	private String zelfstandignaamwoord;
 	private IMultiplicity parentMultiplicity;
-	private BijwoordContext bijwoord;
-	private TelwoordContext telwoord;
+	private String bijwoord;
+	private String telwoord;
 	private boolean direction;
 	private boolean start = false;
 	private TreeSet<String> keywords = new TreeSet<String>();
@@ -72,15 +72,15 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	public void enterZelfstandignaamwoord(ZelfstandignaamwoordContext ctx) {
 		if(start) {
 			if(!direction) {				
-				Class c = new Class(zelfstandignaamwoord.getText());
+				Class c = new Class(zelfstandignaamwoord);
 				addAssociationToClass(ctx, c);
 			} else {
 				Class c = new Class(ctx.getText());
-				c.addAssociation(new Class(zelfstandignaamwoord.getText()));	
+				c.addAssociation(new Class(zelfstandignaamwoord));	
 				controller.addClass(c);
 			}		
 		} else {
-			zelfstandignaamwoord = ctx;
+			zelfstandignaamwoord = ctx.getText();
 			start = true;
 			setParentMultiplicity(); 
 		}		
@@ -93,17 +93,15 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	private void setParentMultiplicity() {
 		if(telwoord != null) {
 			parentMultiplicity = new ParentMultiplicity();
-			if(hasMeaning(bijwoord)) {
-				String bijwoordval = bijwoord.getText();
-				if(bijwoordval.equals("maximaal")) {						
-					parentMultiplicity.setUpperBound(telwoord.getText());
-				} else if(bijwoordval.equals("minimaal")) {
-					parentMultiplicity = new ParentMultiplicity();
-					parentMultiplicity.setLowerBound(telwoord.getText());
+			if(hasMeaning(bijwoord)) {				
+				if(bijwoord.equals("maximaal")) {						
+					parentMultiplicity.setUpperBound(telwoord);
+				} else if(bijwoord.equals("minimaal")) {
+					parentMultiplicity.setLowerBound(telwoord);
 				}
 			} else {
-				parentMultiplicity.setLowerBound(telwoord.getText());
-				parentMultiplicity.setUpperBound(telwoord.getText());
+				parentMultiplicity.setLowerBound(telwoord);
+				parentMultiplicity.setUpperBound(telwoord);
 			}				
 		}
 	}
@@ -128,15 +126,14 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		}
 		if(telwoord != null) {
 			if(hasMeaning(bijwoord)) {
-				String bijwoordval = bijwoord.getText();
-				if(bijwoordval.equals("maximaal")) {				
-					a.getChildMultiplicity().setUpperBound(telwoord.getText());
-				} else if(bijwoordval.equals("minimaal")) {
-					a.getChildMultiplicity().setLowerBound(telwoord.getText());
+				if(bijwoord.equals("maximaal")) {				
+					a.getChildMultiplicity().setUpperBound(telwoord);
+				} else if(bijwoord.equals("minimaal")) {
+					a.getChildMultiplicity().setLowerBound(telwoord);
 				}
 			} else {
-				a.getChildMultiplicity().setLowerBound(telwoord.getText());
-				a.getChildMultiplicity().setUpperBound(telwoord.getText());
+				a.getChildMultiplicity().setLowerBound(telwoord);
+				a.getChildMultiplicity().setUpperBound(telwoord);
 			}
 			c.getAssociations().add(a);
 		} else {
@@ -152,9 +149,9 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	 * @param bijwoord The bijwoord to be checked.
 	 * @return True if it has an extra meaning, false if not.
 	 */
-	public boolean hasMeaning(BijwoordContext bijwoord) {
+	public boolean hasMeaning(String bijwoord) {
 		if(bijwoord != null) {
-			return keywords.contains(bijwoord.getText());
+			return keywords.contains(bijwoord);
 		} else {
 			return false;
 		}
@@ -168,12 +165,12 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	
 	@Override
 	public void enterBijwoord(BijwoordContext ctx) {
-		bijwoord = ctx;
+		bijwoord = ctx.getText().toLowerCase();
 	}
 	
 	@Override
 	public void enterTelwoord(TelwoordContext ctx) {
-		telwoord = ctx;
+		telwoord = ctx.getText();
 	}
 	
 	@Override
