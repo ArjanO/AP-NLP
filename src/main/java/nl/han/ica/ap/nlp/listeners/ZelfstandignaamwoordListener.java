@@ -135,10 +135,9 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 				a.getChildMultiplicity().setLowerBound(telwoord);
 				a.getChildMultiplicity().setUpperBound(telwoord);
 			}
-			c.getAssociations().add(a);
-		} else {
-			c.addAssociation(new Class(ctx.getText()));
-		}		
+			
+		} 
+		c.getAssociations().add(a);	
 		controller.addClass(c);
 	}
 	
