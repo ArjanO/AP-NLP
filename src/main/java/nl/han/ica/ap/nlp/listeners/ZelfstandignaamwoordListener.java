@@ -34,6 +34,8 @@ import nl.han.ica.ap.nlp.controller.TreeController;
 import nl.han.ica.ap.nlp.controller.VerbDirectionController;
 import nl.han.ica.ap.nlp.model.Association;
 import nl.han.ica.ap.nlp.model.Class;
+import nl.han.ica.ap.nlp.model.IMultiplicity;
+import nl.han.ica.ap.nlp.model.ParentMultiplicity;
 import nl.han.ica.ap.nlp.NlpBaseListener;
 import nl.han.ica.ap.nlp.NlpParser.BijwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.EnumeratieContext;
@@ -41,10 +43,12 @@ import nl.han.ica.ap.nlp.NlpParser.TelwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.VerbaleconstituentContext;
 import nl.han.ica.ap.nlp.NlpParser.WerkwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.ZelfstandignaamwoordContext;
+import nl.han.ica.ap.nlp.NlpParser.ZinContext;
 
 public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	private TreeController controller;	
 	private ZelfstandignaamwoordContext zelfstandignaamwoord;
+	private IMultiplicity parentMultiplicity;
 	private BijwoordContext bijwoord;
 	private TelwoordContext telwoord;
 	private boolean direction;
@@ -78,7 +82,30 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		} else {
 			zelfstandignaamwoord = ctx;
 			start = true;
+			setParentMultiplicity(); 
 		}		
+	}
+
+	
+	/**
+	 * Sets the parent multiplicity if a telwoord and proper bijwoord is available.
+	 */
+	private void setParentMultiplicity() {
+		if(telwoord != null) {
+			parentMultiplicity = new ParentMultiplicity();
+			if(hasMeaning(bijwoord)) {
+				String bijwoordval = bijwoord.getText();
+				if(bijwoordval.equals("maximaal")) {						
+					parentMultiplicity.setUpperBound(telwoord.getText());
+				} else if(bijwoordval.equals("minimaal")) {
+					parentMultiplicity = new ParentMultiplicity();
+					parentMultiplicity.setLowerBound(telwoord.getText());
+				}
+			} else {
+				parentMultiplicity.setLowerBound(telwoord.getText());
+				parentMultiplicity.setUpperBound(telwoord.getText());
+			}				
+		}
 	}
 	
 	@Override
@@ -94,8 +121,12 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	 * @param c The class which gets a association
 	 */
 	private void addAssociationToClass(ZelfstandignaamwoordContext ctx, Class c) {
+		Association a = new Association(new Class(ctx.getText()),null);
+		if(parentMultiplicity != null) {
+			a.getParentMultiplicity().setLowerBound(parentMultiplicity.getLowerBound().getValue());
+			a.getParentMultiplicity().setUpperBound(parentMultiplicity.getUpperBound().getValue());
+		}
 		if(telwoord != null) {
-			Association a = new Association(new Class(ctx.getText()),null);
 			if(hasMeaning(bijwoord)) {
 				String bijwoordval = bijwoord.getText();
 				if(bijwoordval.equals("maximaal")) {				
@@ -110,7 +141,7 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 			c.getAssociations().add(a);
 		} else {
 			c.addAssociation(new Class(ctx.getText()));
-		}
+		}		
 		controller.addClass(c);
 	}
 	
@@ -157,4 +188,8 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		bijwoord = null;
 	}	
 	
+	@Override
+	public void exitZin(ZinContext ctx) {
+		parentMultiplicity = null;
+	}	
 }

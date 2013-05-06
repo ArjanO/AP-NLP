@@ -132,4 +132,22 @@ public class ZelfstandignaamwoordListenerTest {
 		assertEquals("2", app.getController().classes.get(0).getAssociations().get(3).getChildMultiplicity().getLowerBound().getValue());
 		assertEquals("2", app.getController().classes.get(0).getAssociations().get(3).getChildMultiplicity().getUpperBound().getValue());	
 	}
+	
+	@Test
+	public void testParentMultiplicityAbsolute(){
+		App app = App.getInstance();
+		app.start("1 vliegtuig heeft maximaal 2 piloten.");
+		Association a = app.getController().classes.get(0).getAssociations().get(0);
+		assertEquals("1",a.getParentMultiplicity().getLowerBound().getValue());
+		assertEquals("1",a.getParentMultiplicity().getUpperBound().getValue());
+	}
+	
+	@Test
+	public void testParentMultiplicityLowerBound(){
+		App app = App.getInstance();
+		app.start("Minimaal 1 vliegveld heeft een vliegtuig.");
+		Association a = app.getController().classes.get(0).getAssociations().get(0);
+		assertEquals("1",a.getParentMultiplicity().getLowerBound().getValue());
+		assertEquals("1",a.getParentMultiplicity().getUpperBound().getValue());
+	}
 }
