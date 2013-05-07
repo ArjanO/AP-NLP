@@ -38,6 +38,7 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import nl.han.ica.ap.nlp.controller.TreeController;
+import nl.han.ica.ap.nlp.errorhandler.ErrorHandler;
 
 
 
@@ -89,6 +90,7 @@ public class App {
 		NlpLexer lexer = new NlpLexer(input);
 		CommonTokenStream tokens = new CommonTokenStream(lexer);
 		NlpParser parser = new NlpParser(tokens);
+		parser.setErrorHandler(new ErrorHandler());
 		ParseTree tree = parser.tekst(); // begin parsing at init rule
 		controller = new TreeController();
 		controller.walkTree(tree, parser);

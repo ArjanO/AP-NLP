@@ -30,9 +30,12 @@
 package nl.han.ica.ap.nlp.controller;
 
 import java.util.ArrayList;
+
+import org.antlr.v4.runtime.ANTLRErrorStrategy;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.ParseTree;
 import nl.han.ica.ap.nlp.NlpParser;
+import nl.han.ica.ap.nlp.errorhandler.ErrorHandler;
 import nl.han.ica.ap.nlp.export.IExport;
 import nl.han.ica.ap.nlp.export.PowerDesignerExport;
 import nl.han.ica.ap.nlp.export.YUMLExport;
@@ -56,7 +59,7 @@ public class TreeController {
 	 * @param tree The tree of the input text
 	 * @param parser The parser which parses the input text
 	 */
-	public void walkTree(ParseTree tree,NlpParser parser) {
+	public void walkTree(ParseTree tree,NlpParser parser) {	
 		ParseTreeWalker walker = new ParseTreeWalker();
 		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(this);
 		walker.walk(listener, tree);
