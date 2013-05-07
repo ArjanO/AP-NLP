@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import nl.han.ica.ap.nlp.model.Class;
 
 public interface IExport {
-	
 	/**
 	 * Exports NLP model to other format.
 	 * @param classes List of classes.
