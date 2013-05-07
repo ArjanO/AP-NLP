@@ -35,7 +35,7 @@ import NlpWerkwoorden, NlpLexer;
     package nl.han.ica.ap.nlp;
 }
 tekst: zin+;
-zin:  (bijwoord|naamwoordgroep|zelfstandignaamwoord) verbaleconstituent eindezin;
+zin:  (naamwoordgroep|zelfstandignaamwoord) verbaleconstituent eindezin;
 samengesteld: voegwoord (naamwoordgroep|zelfstandignaamwoord);
 naamwoordgroep: voorzetsel? bijwoord? (telwoord|lidwoord|kwantor) zelfstandignaamwoord;
 verbaleconstituent : woord* werkwoord (naamwoordgroep|zelfstandignaamwoord) voegwoord? (enumeratie|samengesteld)* (verbaleconstituent*|werkwoord);
