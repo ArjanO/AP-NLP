@@ -19,7 +19,7 @@ public class YUMLExport implements IExport{
 	
 	//http://yuml.me/diagram/scruffy;/class/
 	public String export(ArrayList<Class> classes) {
-		String filepath = "target/YUML-" + (System.currentTimeMillis()) + ".jpg";
+		String filepath = "target/YUML-" + (System.currentTimeMillis()) + ".png";
 		
 		createClasses(classes);
 		doc = doc.trim();
