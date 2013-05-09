@@ -33,7 +33,7 @@ public class YUMLExport implements IExport{
 		    		ClassRelation tmprelation = new ClassRelation(asso.getChildClass(), child);
 		    		if (!associationlist.contains(tmprelation)) {
 		    			//[classname]<multiplicity>-<multiplicity>[classname]
-		    			doc += "["+child.getName()+"]"+asso.getParentMultiplicity().getUpperBound().getValue()+".."+asso.getParentMultiplicity().getLowerBound().getValue()+"-"+asso.getChildMultiplicity().getUpperBound().getValue()+".."+asso.getChildMultiplicity().getLowerBound().getValue()+"["+asso.getChildClass().getName()+"]"+"\n";
+		    			doc += "["+child.getName()+"]"+asso.getParentMultiplicity().getLowerBound().getValue()+".."+asso.getParentMultiplicity().getUpperBound().getValue()+"-"+asso.getChildMultiplicity().getLowerBound().getValue()+".."+asso.getChildMultiplicity().getUpperBound().getValue()+"["+asso.getChildClass().getName()+"]"+"\n";
 		    			associationlist.add(tmprelation);
 		    		} else {
 		    			//We already have this association, so stop
