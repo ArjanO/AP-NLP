@@ -17,12 +17,20 @@ public class YUMLExport implements IExport{
 	private ArrayList<ClassRelation> associationlist = new ArrayList<ClassRelation>();
 	private String doc = "";
 	
+	public String exportSource(ArrayList<Class> classes) {
+		createClasses(classes);
+		doc = doc.trim();
+		doc = doc.substring(0, doc.length()-1);
+		return doc;
+	}
+	
 	//http://yuml.me/diagram/scruffy;/class/
 	public String export(ArrayList<Class> classes) {
 		String filepath = "target/YUML-" + (System.currentTimeMillis()) + ".png";
 		
 		createClasses(classes);
 		doc = doc.trim();
+		doc = doc.substring(0, doc.length()-1);
 		System.out.println(doc);
 		
 		//Download image
