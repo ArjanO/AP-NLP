@@ -30,6 +30,8 @@
 package nl.han.ica.ap.nlp;
 
 import java.io.IOException;
+import java.util.Scanner;
+
 import nl.han.ica.ap.nlp.NlpLexer;
 import nl.han.ica.ap.nlp.NlpParser;
 
@@ -39,9 +41,6 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import nl.han.ica.ap.nlp.controller.TreeController;
 
-
-
-
 /**
  * @author Joell
  * 
@@ -50,6 +49,8 @@ public class App {
 	
 	private TreeController controller;
 	private static App app;
+	private String method;
+	
 	private App(){}
 	public static App getInstance() {
 		if(app == null) {
@@ -62,6 +63,7 @@ public class App {
 	 * Starts the application with a given string to be parsed.
 	 */
 	public void start(String text) {
+		method = "YUML";
 		ANTLRInputStream input = null;
 		input = new ANTLRInputStream(text);
 		parseInput(input);
@@ -71,11 +73,15 @@ public class App {
 	 * Starts the application with input from the console
 	 */
 	public void start() {
+		System.out.println("Please choose your export method. (PowerDesigner, YUML):");
+		Scanner s = new Scanner(System.in);
+		method = s.next();
+
+		System.out.println("Give your input-sentences:");
 		ANTLRInputStream input = null;
 		try {
 			input = new ANTLRInputStream(System.in);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		parseInput(input);
@@ -91,7 +97,7 @@ public class App {
 		NlpParser parser = new NlpParser(tokens);
 		ParseTree tree = parser.tekst(); // begin parsing at init rule
 		controller = new TreeController();
-		controller.walkTree(tree, parser);
+		controller.walkTree(tree, parser, method);
 	}
 	
 	public TreeController getController() {
