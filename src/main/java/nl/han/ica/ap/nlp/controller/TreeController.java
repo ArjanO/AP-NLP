@@ -35,6 +35,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import nl.han.ica.ap.nlp.NlpParser;
 import nl.han.ica.ap.nlp.export.IExport;
 import nl.han.ica.ap.nlp.export.PowerDesignerExport;
+import nl.han.ica.ap.nlp.export.YUMLExport;
 import nl.han.ica.ap.nlp.listeners.ZelfstandignaamwoordListener;
 import nl.han.ica.ap.nlp.model.Association;
 import nl.han.ica.ap.nlp.model.Class;
@@ -59,7 +60,7 @@ public class TreeController {
 		ParseTreeWalker walker = new ParseTreeWalker();
 		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(this);
 		walker.walk(listener, tree);
-		IExport export = new PowerDesignerExport();		
+		IExport export = new YUMLExport();
 		System.out.println(export.export(classes));
 	}
 
