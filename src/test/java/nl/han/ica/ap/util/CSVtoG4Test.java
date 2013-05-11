@@ -7,6 +7,8 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.*;
 
+import java.io.FileNotFoundException;
+
 import nl.han.ica.ap.nlp.util.CSVtoG4;
 import nl.han.ica.ap.nlp.util.File;
 import nl.han.ica.ap.nlp.util.IFile;
@@ -22,7 +24,12 @@ public class CSVtoG4Test {
 		
 		testFile.setContent(capture(content));
 		expect(testFile.getContent()).andReturn("hebben;LR;heeft,had,hebben\nbevatten;LR;bevat,bevatten\nrijden;LR;rijd,rijdt,reed,reden").anyTimes();
-		expect(testFile.read()).andReturn(true).anyTimes();
+		try {
+			expect(testFile.read()).andReturn(true).anyTimes();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		expect(testFile.write()).andReturn(true).anyTimes();
 		
 		replay(testFile);

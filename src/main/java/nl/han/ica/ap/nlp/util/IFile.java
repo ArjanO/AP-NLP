@@ -29,13 +29,15 @@
  */
 package nl.han.ica.ap.nlp.util;
 
+import java.io.FileNotFoundException;
+
 public interface IFile {
 	
 	/**
 	 * Read a file.
 	 * @return
 	 */
-	boolean read();
+	boolean read() throws FileNotFoundException;
 	
 	/**
 	 * Append data to content.

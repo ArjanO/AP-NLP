@@ -29,6 +29,7 @@
  */
 package nl.han.ica.ap.nlp.util;
 
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -60,7 +61,12 @@ public class CSVtoG4 {
 	}
 	
 	public boolean export(){
-		importfile.read();
+		try {
+			importfile.read();
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found");
+			e.printStackTrace();
+		}
 		String csvfile = importfile.getContent();
 		
 		ANTLRInputStream 	input 	= new ANTLRInputStream(csvfile);
