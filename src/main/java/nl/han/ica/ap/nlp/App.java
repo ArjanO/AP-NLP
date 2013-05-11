@@ -29,6 +29,7 @@
  */
 package nl.han.ica.ap.nlp;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Scanner;
 
@@ -41,6 +42,9 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import nl.han.ica.ap.nlp.controller.TreeController;
 import nl.han.ica.ap.nlp.errorhandler.ErrorHandler;
+import nl.han.ica.ap.nlp.export.IExport;
+import nl.han.ica.ap.nlp.export.YUMLExport;
+import nl.han.ica.ap.nlp.util.File;
 
 /**
  * @author Joell
@@ -50,9 +54,11 @@ public class App {
 	
 	private TreeController controller;
 	private static App app;
-	private String method;
+	public IExport export;
 	
-	private App(){}
+	private App(){
+		export = new YUMLExport();
+	}
 	public static App getInstance() {
 		if(app == null) {
 			app = new App();
@@ -60,11 +66,56 @@ public class App {
 		return app;
 	}
 	
+	public void setExportType(String method) {
+		//Load the Class.
+		ClassLoader myClassLoader = ClassLoader.getSystemClassLoader();
+		String classNameToBeLoaded = "nl.han.ica.ap.nlp.export."+method+"Export";
+		java.lang.Class<?> myClass = null;
+		try {
+			myClass = myClassLoader.loadClass(classNameToBeLoaded);
+			if(myClass.newInstance() instanceof IExport){
+				export = (IExport) myClass.newInstance();
+			}else{
+				throw new Exception("Not an instance of IExport");
+			}
+		} catch (Exception e) {
+			System.out.println("Invalid exporter name. Switching to default exporter.");	
+			export = new YUMLExport();
+		}			
+	}
+	
+	/**
+	 * Give the user an option to set the exporter.
+	 * @param method The exportername of the chosen exportmethod.
+	 */
+	public void selectExporter() {		
+		System.out.println("Please choose your export method. (PowerDesigner, YUML):");
+		Scanner s = new Scanner(System.in);
+		String method = s.next();
+		setExportType(method);
+	}
+	
+	/**
+	 * Starts the application with a given textfile to be parsed.
+	 * @param File to be parsed
+	 */
+	private void start(File inputfile) {
+		try {
+			if(inputfile.read()) {
+				start(inputfile.getContent());
+			} else {
+				start();
+			}
+		} catch (FileNotFoundException e) {
+			System.out.println("File not found, switching to default input.");
+			start();
+		}
+	}	
+	
 	/**
 	 * Starts the application with a given string to be parsed.
 	 */
-	public void start(String text) {
-		method = "YUML";
+	public void start(String text) {		
 		ANTLRInputStream input = null;
 		input = new ANTLRInputStream(text);
 		parseInput(input);
@@ -74,10 +125,6 @@ public class App {
 	 * Starts the application with input from the console
 	 */
 	public void start() {
-		System.out.println("Please choose your export method. (PowerDesigner, YUML):");
-		Scanner s = new Scanner(System.in);
-		method = s.next();
-
 		System.out.println("Give your input-sentences:");
 		ANTLRInputStream input = null;
 		try {
@@ -99,15 +146,25 @@ public class App {
 		parser.setErrorHandler(new ErrorHandler());
 		ParseTree tree = parser.tekst(); // begin parsing at init rule
 		controller = new TreeController();
-		controller.walkTree(tree, parser, method);
+		controller.walkTree(tree, parser, export);
 	}
 	
+	/**
+	 * 
+	 * @return The TreeController for this application.
+	 */
 	public TreeController getController() {
 		return controller;
 	}
 		
 	public static void main(String[] args) throws Exception {
 		App app = App.getInstance();
-		app.start();
-	}
+		OptionsHandler opthandler = new OptionsHandler(args,app);		
+		if(opthandler.getInputfile() != null) {
+			app.start(opthandler.getInputfile());
+		} else {
+			app.start();
+		}
+		System.out.println("Done!");
+	}		
 }
