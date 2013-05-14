@@ -27,7 +27,6 @@ public class CSVtoG4Test {
 		try {
 			expect(testFile.read()).andReturn(true).anyTimes();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		expect(testFile.write()).andReturn(true).anyTimes();
