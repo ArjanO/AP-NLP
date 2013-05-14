@@ -29,12 +29,16 @@
  */
 package nl.han.ica.ap.nlp.util;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.URL;
 
 /**
  * A File class with write, read and append functionality.
@@ -54,7 +58,36 @@ public class File implements IFile {
 	}
 	
 	/**
+	 * Download a file from a url.
+	 * @param urlstring
+	 * @throws IOException
+	 */
+	public void download(String downloadpath) throws IOException {
+		URL url = new URL(downloadpath);
+		InputStream in = null;
+		ByteArrayOutputStream out = null;
+		
+		in = new BufferedInputStream(url.openStream());
+		out = new ByteArrayOutputStream();
+		byte[] buf = new byte[1024];
+		int n = 0;
+		
+		while (-1!=(n=in.read(buf))) {
+		   out.write(buf, 0, n);
+		}
+		out.close();
+		in.close();
+		
+		//save to file
+		FileOutputStream fos = null;
+		fos = new FileOutputStream(path);
+		fos.write(out.toByteArray());
+		fos.close();
+	}
+	
+	/**
 	 * Write content to path.
+	 * @throws FileNotFoundException 
 	 */
 	public boolean write() {
 		PrintStream out = null;
@@ -62,11 +95,10 @@ public class File implements IFile {
 		    out = new PrintStream(new FileOutputStream(this.path));
 		    out.print(this.content.toString());
 		} catch (FileNotFoundException e) {
-			System.out.println("Path not found.");
-			e.printStackTrace();
+			System.out.println("File not found, can't write.");
 		}
 		finally {
-		    if (out != null) {
+		    if (out != null){
 		    	out.close();
 		    	return true;
 		    }

@@ -40,14 +40,9 @@ public interface IFile {
 	boolean read() throws FileNotFoundException;
 	
 	/**
-	 * Append data to content.
-	 * @param content
-	 */
-	void append(String content);
-	
-	/**
 	 * Write the content to path.
 	 * @return
+	 * @throws FileNotFoundException 
 	 */
 	boolean write();
 	
