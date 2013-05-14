@@ -57,7 +57,6 @@ public class App {
 	public IExport export;
 	
 	private App(){
-		export = new YUMLExport();
 	}
 	public static App getInstance() {
 		if(app == null) {
@@ -79,7 +78,7 @@ public class App {
 				throw new Exception("Not an instance of IExport");
 			}
 		} catch (Exception e) {
-			System.out.println("Invalid exporter name. Switching to default exporter.");	
+			System.out.println("Invalid exporter name. Switching to default exporter.");
 			export = new YUMLExport();
 		}			
 	}
@@ -125,6 +124,7 @@ public class App {
 	 * Starts the application with input from the console
 	 */
 	public void start() {
+		export = new YUMLExport();
 		System.out.println("Give your input-sentences:");
 		ANTLRInputStream input = null;
 		try {
