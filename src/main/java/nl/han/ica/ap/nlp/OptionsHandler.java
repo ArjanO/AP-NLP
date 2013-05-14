@@ -47,6 +47,10 @@ public class OptionsHandler {
 		handleOptions(args);
 	}
 	
+	/**
+	 * 
+	 * @return The inputfile if specified in console parameters. 
+	 */
 	public File getInputfile() {
 		return inputfile;
 	}
@@ -73,6 +77,12 @@ public class OptionsHandler {
 		}
 	}
 	
+	/**
+	 * checks if an commandline option has a value
+	 * @param options The list with parameters
+	 * @param option The id of the option to be checked
+	 * @return True if it has a value, False if it has a value.
+	 */
 	private boolean hasOptionValue(String[] options, int option) {
 		if(option + 1 >= options.length) {
 			return false;

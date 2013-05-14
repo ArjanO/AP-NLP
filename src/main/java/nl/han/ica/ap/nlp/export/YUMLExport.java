@@ -27,8 +27,6 @@ public class YUMLExport implements IExport{
 		doc = doc.trim();
 		doc = doc.substring(0, doc.length()-1);
 		
-		System.out.println(doc);
-		
 		//Download and save image
 		String url = "http://yuml.me/diagram/plain;/class/"+doc;
 		String filepath = "target/YUML-" + (System.currentTimeMillis()) + ".png";
