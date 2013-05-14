@@ -30,6 +30,7 @@
 package nl.han.ica.ap.nlp.controller;
 
 import java.util.ArrayList;
+
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.ParseTree;
 import nl.han.ica.ap.nlp.NlpParser;
@@ -54,38 +55,11 @@ public class TreeController {
 	 * @param tree The tree of the input text
 	 * @param parser The parser which parses the input text
 	 */
-	public void walkTree(ParseTree tree, NlpParser parser, String method) {
-		Object export = null;
+	public void walkTree(ParseTree tree, NlpParser parser, IExport exporter) {
 		ParseTreeWalker walker = new ParseTreeWalker();
 		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(this);
 		walker.walk(listener, tree);
-		
-		//Load the Class.
-		ClassLoader myClassLoader = ClassLoader.getSystemClassLoader();
-		String classNameToBeLoaded = "nl.han.ica.ap.nlp.export."+method+"Export";
-		java.lang.Class<?> myClass = null;
-		try {
-			myClass = myClassLoader.loadClass(classNameToBeLoaded);
-		} catch (ClassNotFoundException e) {
-			System.out.println("Class not found.");
-			e.printStackTrace();
-		}
-		
-		//Create new instance of class.
-		try {
-			export = myClass.newInstance();
-		} catch (InstantiationException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-			
-		if(export instanceof IExport){
-			IExport exportclass = (IExport) export;
-			System.out.println(exportclass.export(classes));
-		}else{
-			System.out.println("Not an instance of IExport.");
-		}
+		System.out.println(exporter.export(classes));
 	}
 
 	/**

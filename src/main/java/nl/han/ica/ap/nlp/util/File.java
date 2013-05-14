@@ -83,16 +83,13 @@ public class File implements IFile {
 	
 	/**
 	 * Read a file as a string.
+	 * @throws FileNotFoundException 
 	 */
-    public boolean read() {
+    public boolean read() throws FileNotFoundException {
     	StringBuffer fileData = new StringBuffer(1000);
     	BufferedReader reader = null;
-		try {
-			reader = new BufferedReader(new FileReader(this.path));
-		} catch (FileNotFoundException e) {
-			System.out.println("Path not found.");
-			e.printStackTrace();
-		}
+		reader = new BufferedReader(new FileReader(this.path));
+		
     	char[] buf = new char[1024];
     	int numRead=0;
     	try {

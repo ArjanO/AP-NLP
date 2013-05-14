@@ -27,45 +27,59 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package nl.han.ica.ap.nlp.util;
+package nl.han.ica.ap.nlp;
 
-import java.io.FileNotFoundException;
+import nl.han.ica.ap.nlp.util.File;
 
-public interface IFile {
+
+
+/**
+ * @author Joell
+ *
+ */
+public class OptionsHandler {
 	
+	private File inputfile;
+	private App app;
+	
+	public OptionsHandler(String[] args, App app) {
+		this.app = app;
+		handleOptions(args);
+	}
+	
+	public File getInputfile() {
+		return inputfile;
+	}
+
 	/**
-	 * Read a file.
-	 * @return
+	 * Handels the console options.
+	 * @param args The options of the console input.
 	 */
-	boolean read() throws FileNotFoundException;
+	public void handleOptions(String[] args) {
+		for(int i = 0;i < args.length; i++) {
+			if(args[i].equals("-inputfile")) {
+				if(hasOptionValue(args,i)) {
+					inputfile = new File(args[++i]);
+				} else {
+					System.out.println("No inputfile given, switching to default input");
+				}
+			} else if(args[i].equals("-exporter")) {
+				if(hasOptionValue(args,i)) {
+					app.setExportType(args[++i]);
+				} else {
+					app.selectExporter();
+				}
+			}
+		}
+	}
 	
-	/**
-	 * Append data to content.
-	 * @param content
-	 */
-	void append(String content);
+	private boolean hasOptionValue(String[] options, int option) {
+		if(option + 1 >= options.length) {
+			return false;
+		} else if(options[option+1].startsWith("-")) {
+			return false;
+		}
+		return true;		
+	}
 	
-	/**
-	 * Write the content to path.
-	 * @return
-	 */
-	boolean write();
-	
-	/**
-     * Set the content of this file.
-     * @param content
-     */
-    void setContent(String content);
-    
-    /**
-     * Get the content of this class.
-     * @return
-     */
-    String getContent();
-    
-    /**
-     * 
-     * @return The filepath.
-     */
-    String getPath();
 }

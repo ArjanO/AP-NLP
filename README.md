@@ -24,6 +24,10 @@ Natural language processing tool
 
 + [https://github.com/timwaalewijn](https://github.com/timwaalewijn)
 
+## Third party
+
+fail.wav: http://soundbible.com/1830-Sad-Trombone.html Joe Lamb
+
 ## MIT License
 Copyright (c) 2013 HAN University of Applied Sciences
 Arjan Oortgiese
