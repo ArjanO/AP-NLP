@@ -2,6 +2,8 @@ package nl.han.ica.ap.nlp;
 
 import static org.junit.Assert.*;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
@@ -16,7 +18,7 @@ import org.junit.Test;
 public class TreeControllerTest {
 	
 	@Test
-	public void testClassAlreadyExistsAsAttribute() {
+	public void testClassAlreadyExistsAsAssociation() {
 		TreeController controller = new TreeController();	
 		Class vliegtuig = new Class("Vliegtuig");		
 		Class passagier = new Class("Passagier");
@@ -39,7 +41,7 @@ public class TreeControllerTest {
 	}
 	
 	@Test
-	public void testClassBecomesAttribute() {
+	public void testClassBecomesAssociation() {
 		TreeController controller = new TreeController();
 		Class vliegtuig = new Class("Vliegtuig");
 		Class passagier = new Class("Passagier");
@@ -56,7 +58,7 @@ public class TreeControllerTest {
 	}
 	
 	@Test
-	public void testClassesShareAttribute() {
+	public void testClassesShareAssociation() {
 		TreeController controller = new TreeController();
 		Class vliegtuig = new Class("vliegtuig");
 		Class passagier1 = new Class("passagier");
@@ -90,7 +92,7 @@ public class TreeControllerTest {
 	}
 	
 	@Test
-	public void testClassAndAttributeAlreadyExist() {
+	public void testClassAndAssociationAlreadyExist() {
 		TreeController controller = new TreeController();
 		Class vliegtuig = new Class("vliegtuig");
 		Class passagier = new Class("passagier");
@@ -112,7 +114,7 @@ public class TreeControllerTest {
 	}
 	
 	@Test
-	public void testClassAttributeLoop() {
+	public void testClassAssociationLoop() {
 		TreeController controller = new TreeController();
 		Class ouder1 = new Class("ouder");
 		Class kind1 = new Class("kind");
@@ -131,5 +133,19 @@ public class TreeControllerTest {
 		assertSame(kind1,controller.classes.get(0).getAssociations().get(0).getChildClass());
 		assertSame(ouder1,controller.classes.get(0).getAssociations().get(0).getChildClass().getAssociations().get(0).getChildClass());
 		assertSame(voorouder1,controller.classes.get(0).getAssociations().get(0).getChildClass().getAssociations().get(1).getChildClass());
+	}
+	
+	@Test	
+	public void testAttributeAlreadyExists() {
+		TreeController controller = new TreeController();
+		Class passagier = new Class("Passagier");
+		Class naamAsAssociation = new Class("Naam");	
+		passagier.addAssociation(naamAsAssociation);
+		controller.addClass(passagier);
+		Attribute naamAsAttribute = new Attribute("Naam", String.class);
+		controller.addAttribute(naamAsAttribute);
+		assertEquals(1,controller.classes.get(0).getAttributes().size());
+		assertEquals(0, controller.classes.get(0).getAssociations().size());
+		assertEquals(naamAsAttribute, controller.classes.get(0).getAttributes().get(0));		
 	}
 }
