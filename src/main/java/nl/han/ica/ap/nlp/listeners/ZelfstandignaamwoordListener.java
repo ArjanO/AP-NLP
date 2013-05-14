@@ -86,15 +86,14 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		}		
 	}
 
-	
 	/**
 	 * Sets the parent multiplicity if a telwoord and proper bijwoord is available.
 	 */
 	private void setParentMultiplicity() {
 		if(telwoord != null) {
 			parentMultiplicity = new ParentMultiplicity();
-			if(hasMeaning(bijwoord)) {				
-				if(bijwoord.equals("maximaal")) {						
+			if(hasMeaning(bijwoord)) {
+				if(bijwoord.equals("maximaal")) {
 					parentMultiplicity.setUpperBound(telwoord);
 				} else if(bijwoord.equals("minimaal")) {
 					parentMultiplicity.setLowerBound(telwoord);
@@ -102,7 +101,7 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 			} else {
 				parentMultiplicity.setLowerBound(telwoord);
 				parentMultiplicity.setUpperBound(telwoord);
-			}				
+			}
 		}
 	}
 	
@@ -126,7 +125,7 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		}
 		if(telwoord != null) {
 			if(hasMeaning(bijwoord)) {
-				if(bijwoord.equals("maximaal")) {				
+				if(bijwoord.equals("maximaal")) {
 					a.getChildMultiplicity().setUpperBound(telwoord);
 				} else if(bijwoord.equals("minimaal")) {
 					a.getChildMultiplicity().setLowerBound(telwoord);
@@ -135,13 +134,11 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 				a.getChildMultiplicity().setLowerBound(telwoord);
 				a.getChildMultiplicity().setUpperBound(telwoord);
 			}
-			
-		} 
-		c.getAssociations().add(a);	
+		
+		}
+		c.getAssociations().add(a);
 		controller.addClass(c);
 	}
-	
-	
 
 	/**
 	 * Checks of the given bijwoord has an contextual meaning.
