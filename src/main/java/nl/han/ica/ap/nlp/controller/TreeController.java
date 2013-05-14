@@ -160,8 +160,8 @@ public class TreeController {
 	}
 
 	/**
-	 *  Get the word stem of the input noun.
-	 *
+	 *  Get the singular of the input noun.
+	 *	@param inputLength The length of the new input zelfstandig naamwoord
 	 */
 	private String getInputSingular(String name) {
 		int inputLength= name.length();
@@ -185,8 +185,8 @@ public class TreeController {
 	}
 
 	/**
-	 *  Get the word stem of the existing noun.
-	 *
+	 *  Get the singular of the existing noun.
+	 *	@param cInListLength The length of the existing zelfstandig naamwoord
 	 */
 	private String getClassSingular(String cInList) {
 		int cInListLength= cInList.length();
