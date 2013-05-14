@@ -27,40 +27,42 @@
  * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  * OTHER DEALINGS IN THE SOFTWARE.
  */
-package nl.han.ica.ap.nlp.util;
+package nl.han.ica.ap.nlp.export;
 
-import java.io.FileNotFoundException;
-
-public interface IFile {
+/**
+ * @author Joell
+ *
+ */
+public class ExportFactory {
 	
 	/**
-	 * Read a file.
+	 * Creates an exporter given a exportname.
+	 * @param exportName The name of an exporter
+	 * @return The exporter.
+	 */
+	public IExport createExport(String exportName) {
+		ClassLoader myClassLoader = ClassLoader.getSystemClassLoader();
+		String classNameToBeLoaded = "nl.han.ica.ap.nlp.export."+exportName+"Export";
+		java.lang.Class<?> myClass = null;
+		try {
+			myClass = myClassLoader.loadClass(classNameToBeLoaded);
+			if(myClass.newInstance() instanceof IExport){
+				return (IExport) myClass.newInstance();
+			} else{
+				throw new Exception("Not an instance of IExport");
+			}
+		} catch (Exception e) {
+			System.out.println("Invalid exporter name. Switching to default exporter.");	
+			return new YUMLExport();
+		}		
+	}
+	
+	/**
+	 * Creates an default exporter, an YUMLExport.
 	 * @return
 	 */
-	boolean read() throws FileNotFoundException;
-	
-	/**
-	 * Write the content to path.
-	 * @return
-	 * @throws FileNotFoundException 
-	 */
-	boolean write();
-	
-	/**
-     * Set the content of this file.
-     * @param content
-     */
-    void setContent(String content);
-    
-    /**
-     * Get the content of this class.
-     * @return
-     */
-    String getContent();
-    
-    /**
-     * 
-     * @return The filepath.
-     */
-    String getPath();
+	public IExport createExport() {
+		return new YUMLExport();
+	}
+
 }

@@ -59,7 +59,10 @@ public class TreeController {
 		ParseTreeWalker walker = new ParseTreeWalker();
 		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(this);
 		walker.walk(listener, tree);
-		System.out.println(exporter.export(classes));
+		
+		if(exporter != null) {
+			System.out.println(exporter.export(classes));
+		}
 	}
 
 	/**

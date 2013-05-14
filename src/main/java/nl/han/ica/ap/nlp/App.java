@@ -42,6 +42,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import nl.han.ica.ap.nlp.controller.TreeController;
 import nl.han.ica.ap.nlp.errorhandler.ErrorHandler;
+import nl.han.ica.ap.nlp.export.ExportFactory;
 import nl.han.ica.ap.nlp.export.IExport;
 import nl.han.ica.ap.nlp.export.YUMLExport;
 import nl.han.ica.ap.nlp.util.File;
@@ -54,11 +55,14 @@ public class App {
 	
 	private TreeController controller;
 	private static App app;
-	public IExport export;
+	public String exportName;
+	private IExport export;
+	private ExportFactory exportFactory;
 	
 	private App(){
-		export = new YUMLExport();
+		exportFactory = new ExportFactory();
 	}
+	
 	public static App getInstance() {
 		if(app == null) {
 			app = new App();
@@ -66,6 +70,10 @@ public class App {
 		return app;
 	}
 	
+	/**
+	 * Sets the exporter to be used
+	 * @param method The exportname.
+	 */
 	public void setExportType(String method) {
 		//Load the Class.
 		ClassLoader myClassLoader = ClassLoader.getSystemClassLoader();
@@ -79,9 +87,10 @@ public class App {
 				throw new Exception("Not an instance of IExport");
 			}
 		} catch (Exception e) {
-			System.out.println("Invalid exporter name. Switching to default exporter.");	
+			System.out.println("Invalid exporter name. Switching to default exporter.");
 			export = new YUMLExport();
-		}			
+		}
+		export = exportFactory.createExport(method);
 	}
 	
 	/**
@@ -125,6 +134,7 @@ public class App {
 	 * Starts the application with input from the console
 	 */
 	public void start() {
+		export = new YUMLExport();
 		System.out.println("Give your input-sentences:");
 		ANTLRInputStream input = null;
 		try {

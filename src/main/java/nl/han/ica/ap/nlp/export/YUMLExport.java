@@ -1,23 +1,18 @@
 package nl.han.ica.ap.nlp.export;
 
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 import nl.han.ica.ap.nlp.model.Association;
 import nl.han.ica.ap.nlp.model.Class;
+import nl.han.ica.ap.nlp.util.File;
 
 public class YUMLExport implements IExport{
 	private ArrayList<ClassRelation> associationlist = new ArrayList<ClassRelation>();
 	private String doc = "";
 	
 	public String exportSource(ArrayList<Class> classes) {
+		doc = "";
 		createClasses(classes);
 		doc = doc.trim();
 		doc = doc.substring(0, doc.length()-1);
@@ -26,61 +21,23 @@ public class YUMLExport implements IExport{
 	
 	//http://yuml.me/diagram/scruffy;/class/
 	public String export(ArrayList<Class> classes) {
-		String filepath = "target/YUML-" + (System.currentTimeMillis()) + ".png";
+		doc = "";
 		
 		createClasses(classes);
 		doc = doc.trim();
 		doc = doc.substring(0, doc.length()-1);
-		System.out.println(doc);
 		
-		//Download image
-		URL url = null;
-		try {
-			url = new URL("http://yuml.me/diagram/plain;/class/"+doc);
-		} catch (MalformedURLException e) {
-			System.out.println("Malformed URL.");
-			e.printStackTrace();
-		}
-		InputStream in = null;
-		ByteArrayOutputStream out = null;
+		//Download and save image
+		String url = "http://yuml.me/diagram/plain;/class/"+doc;
+		String filepath = "target/YUML-" + (System.currentTimeMillis()) + ".png";
 		
-		try {
-			in = new BufferedInputStream(url.openStream());
-			out = new ByteArrayOutputStream();
-			byte[] buf = new byte[1024];
-			int n = 0;
-			
-			while (-1!=(n=in.read(buf))) {
-			   out.write(buf, 0, n);
-			}
-			out.close();
-			in.close();
-		} catch (IOException e) {
-			System.out.println("Can't download file.");
-			e.printStackTrace();
-		}
-
-		byte[] response = out.toByteArray();
+		File file = new File(filepath);
 		
-		//Save image
-		FileOutputStream fos = null;
+		//Download
 		try {
-			fos = new FileOutputStream(filepath);
-		} catch (FileNotFoundException e) {
-			System.out.println("File not found.");
-			e.printStackTrace();
-		}
-	    try {
-			fos.write(response);
+			file.download(url);
 		} catch (IOException e) {
-			System.out.println("Can't write to file.");
-			e.printStackTrace();
-		}
-	    try {
-			fos.close();
-		} catch (IOException e) {
-			System.out.println("Can't close file.");
-			e.printStackTrace();
+			System.out.println("Can't download yuml image.");
 		}
 		
 		return filepath;
@@ -99,7 +56,12 @@ public class YUMLExport implements IExport{
 		    		ClassRelation tmprelation = new ClassRelation(asso.getChildClass(), child);
 		    		if (!associationlist.contains(tmprelation)) {
 		    			//[classname]<multiplicity>-<multiplicity>[classname]
-		    			doc += "["+child.getName()+"]"+asso.getParentMultiplicity().getLowerBound().getValue()+".."+asso.getParentMultiplicity().getUpperBound().getValue()+"-"+asso.getChildMultiplicity().getLowerBound().getValue()+".."+asso.getChildMultiplicity().getUpperBound().getValue()+"["+asso.getChildClass().getName()+"]"+", ";
+		    			doc += "["+child.getName()+"]";
+		    			doc += asso.getParentMultiplicity().getLowerBound().getValue()+".."+asso.getParentMultiplicity().getUpperBound().getValue();
+		    			doc += "-";
+		    			doc += asso.getChildMultiplicity().getLowerBound().getValue()+".."+asso.getChildMultiplicity().getUpperBound().getValue();
+		    			doc += "["+asso.getChildClass().getName()+"]";
+		    			doc += ", ";
 		    			associationlist.add(tmprelation);
 		    		} else {
 		    			//We already have this association, so stop
