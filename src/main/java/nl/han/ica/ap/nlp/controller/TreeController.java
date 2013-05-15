@@ -170,7 +170,7 @@ public class TreeController {
 				Class result = changeAssociationToAttribute(attribute,extractChildClassFromAssociations(cInList.getAssociations()),checkedClasses);
 				if(result != null) {
 					cInList.removeAssociation(result);
-					cInList.addAttribute(attribute);
+					cInList.addAttribute(new Attribute(attribute.getName(), attribute.getType()));
 				}
 			}
 		}
