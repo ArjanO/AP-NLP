@@ -29,16 +29,19 @@
  */
 package nl.han.ica.ap.nlp.listeners;
 
+import java.lang.reflect.Type;
 import java.util.TreeSet;
 import nl.han.ica.ap.nlp.controller.TreeController;
 import nl.han.ica.ap.nlp.controller.VerbDirectionController;
 import nl.han.ica.ap.nlp.model.Association;
+import nl.han.ica.ap.nlp.model.Attribute;
 import nl.han.ica.ap.nlp.model.Class;
 import nl.han.ica.ap.nlp.model.IMultiplicity;
 import nl.han.ica.ap.nlp.model.ParentMultiplicity;
 import nl.han.ica.ap.nlp.NlpBaseListener;
 import nl.han.ica.ap.nlp.NlpParser.BijwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.EnumeratieContext;
+import nl.han.ica.ap.nlp.NlpParser.StringContext;
 import nl.han.ica.ap.nlp.NlpParser.TelwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.VerbaleconstituentContext;
 import nl.han.ica.ap.nlp.NlpParser.WerkwoordContext;
@@ -47,7 +50,8 @@ import nl.han.ica.ap.nlp.NlpParser.ZinContext;
 
 public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	private TreeController controller;	
-	private String zelfstandignaamwoord;
+	private String zelfstandignaamwoord1;
+	private String zelfstandignaamwoord2;
 	private IMultiplicity parentMultiplicity;
 	private String bijwoord;
 	private String telwoord;
@@ -72,15 +76,16 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	public void enterZelfstandignaamwoord(ZelfstandignaamwoordContext ctx) {
 		if(start) {
 			if(!direction) {				
-				Class c = new Class(zelfstandignaamwoord);
+				Class c = new Class(zelfstandignaamwoord1);
 				addAssociationToClass(ctx, c);
 			} else {
 				Class c = new Class(ctx.getText());
-				c.addAssociation(new Class(zelfstandignaamwoord));	
+				c.addAssociation(new Class(zelfstandignaamwoord1));	
 				controller.addClass(c);
-			}		
+			}
+			zelfstandignaamwoord2 = ctx.getText();
 		} else {
-			zelfstandignaamwoord = ctx.getText();
+			zelfstandignaamwoord1 = ctx.getText();
 			start = true;
 			setParentMultiplicity(); 
 		}		
@@ -184,5 +189,28 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	@Override
 	public void exitZin(ZinContext ctx) {
 		parentMultiplicity = null;
+		zelfstandignaamwoord1 = null;
+		zelfstandignaamwoord2 = null;
 	}	
+	
+	@Override
+	public void enterString(StringContext ctx) {
+		addAttributeToController(String.class);
+	}
+	
+	/**
+	 * Adds a found attribute to the controller. 
+	 * Either by adding it directly to a Class or have it send as a single attribute
+	 * @param type Java type of the attribute.
+	 */
+	private void addAttributeToController(Type type) {
+		if(zelfstandignaamwoord2 == null) {
+			Class c = new Class(zelfstandignaamwoord1);
+			c.addAttribute(new Attribute(zelfstandignaamwoord2,type));
+			controller.addClass(c);
+		} else {
+			Attribute attr = new Attribute(zelfstandignaamwoord1, type);
+			controller.addAttribute(attr);
+		}
+	}
 }
