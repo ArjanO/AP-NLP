@@ -92,11 +92,9 @@ public class ZelfstandignaamwoordListenerTest {
 	@Test
 	public void testCompositeSentence(){
 		App app= App.getInstance();
-		app.start("Een vliegtuig heeft een passagier en minimaal 2 piloten.");
+		app.start("Een vliegtuig heeft een passagier en een piloot.");
 		assertEquals(1, app.getController().classes.size());
 		assertEquals(2, app.getController().classes.get(0).getAssociations().size());
-		assertEquals("2", app.getController().classes.get(0).getAssociations().get(1).getChildMultiplicity().getLowerBound().getValue());
-		assertEquals("*", app.getController().classes.get(0).getAssociations().get(1).getChildMultiplicity().getUpperBound().getValue());
 	}
 	
 	@Test
