@@ -135,4 +135,27 @@ public class YUMLExportTest {
 		String yumlresult = exporter.exportSource(classes);
 		assertEquals(yumlresult, "[Vliegtuig]0..1-0..*[Passagier], [Passagier]0..1-0..*[Paspoort], [Paspoort]0..1-0..*[Vliegtuig]");
 	}
+	
+	@Test
+	public void testScenario7() {
+		YUMLExport exporter = new YUMLExport();
+		
+		ArrayList<Class> classes1 = new ArrayList<Class>();
+		Class passagier1 = new Class("Passagier");
+		Class vliegtuig1 = new Class("Vliegtuig");
+		vliegtuig1.addAssociation(passagier1);
+		classes1.add(vliegtuig1);
+		
+		ArrayList<Class> classes2 = new ArrayList<Class>();
+		Class passagier2 = new Class("Passagier");
+		Class vliegtuig2 = new Class("Vliegtuig");
+		vliegtuig2.addAssociation(passagier2);
+		classes2.add(vliegtuig2);
+		
+		String yumlresult1 = exporter.exportSource(classes1);
+		String yumlresult2 = exporter.exportSource(classes2);
+
+		assertEquals(yumlresult1, "[Vliegtuig]0..1-0..*[Passagier]");
+		assertEquals(yumlresult2, "[Vliegtuig]0..1-0..*[Passagier]");
+	}
 }

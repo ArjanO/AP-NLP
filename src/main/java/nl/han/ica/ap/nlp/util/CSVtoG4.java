@@ -37,8 +37,10 @@ import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
+import nl.han.ica.ap.nlp.App;
 import nl.han.ica.ap.nlp.CSVtoG4Lexer;
 import nl.han.ica.ap.nlp.CSVtoG4Parser;
+import nl.han.ica.ap.nlp.OptionsHandler;
 import nl.han.ica.ap.nlp.listeners.CSVRowListener;
 
 public class CSVtoG4 {
@@ -46,12 +48,17 @@ public class CSVtoG4 {
 	private IFile exportfile;
 	
 	public CSVtoG4() {
-		String import_filepath = "res/werkwoorden.xml";
+		String import_filepath = "res/werkwoorden.csv";
 		String export_filepath = "src/main/antlr/imports/NlpWerkwoorden.g4";
 		
 		importfile = new File(import_filepath);
 		exportfile = new File(export_filepath);
 	}
+	public static void main(String[] args) throws Exception {
+		CSVtoG4 csvtog4 = new CSVtoG4();
+		csvtog4.export();
+		System.out.println("Done!");
+	}		
 	
 	public void setExportFile(IFile file) {
 		this.exportfile = file;
