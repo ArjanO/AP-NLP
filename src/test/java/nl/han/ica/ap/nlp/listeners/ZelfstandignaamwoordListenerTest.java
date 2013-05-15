@@ -173,4 +173,12 @@ public class ZelfstandignaamwoordListenerTest {
 		assertEquals("1",a.getParentMultiplicity().getLowerBound().getValue());
 		assertEquals("1",a.getParentMultiplicity().getUpperBound().getValue());
 	}
+	
+	@Test
+	public void testAssociationBecomesAttribute(){
+		App app = App.getInstance();
+		app.start("Een vliegtuig heeft type. Een naam is \"Type\".");
+		assertEquals(0,app.getController().classes.get(0).getAssociations().size());
+		assertEquals(1,app.getController().classes.get(0).getAttributes().size());
+	}
 }
