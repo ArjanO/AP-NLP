@@ -37,6 +37,7 @@ import nl.han.ica.ap.nlp.NlpParser;
 import nl.han.ica.ap.nlp.export.IExport;
 import nl.han.ica.ap.nlp.listeners.ZelfstandignaamwoordListener;
 import nl.han.ica.ap.nlp.model.Association;
+import nl.han.ica.ap.nlp.model.Attribute;
 import nl.han.ica.ap.nlp.model.Class;
 
 /**
@@ -45,9 +46,9 @@ import nl.han.ica.ap.nlp.model.Class;
  */
 public class TreeController {
 	public ArrayList<Class> classes = new ArrayList<Class>();
+	private ArrayList<Attribute> attributesToAssign = new ArrayList<Attribute>();
 	
-	public TreeController() {
-		
+	public TreeController() {		
 	}
 	
 	/**
@@ -76,8 +77,8 @@ public class TreeController {
 	public void addClass(Class c) {
 		for(Association association : c.getAssociations()) {
 			Class child = association.getChildClass();
-			Class existingParent = getClass(c, classes,null);
-			Class existingChild = getClass(child,classes,null);
+			Class existingParent = getClass(c.getName(), classes,null);
+			Class existingChild = getClass(child.getName(),classes,null);
 			if(existingParent == null && existingChild == null){
 				classes.add(c);			
 			} else if(existingParent != null && existingChild == null) {
@@ -91,7 +92,7 @@ public class TreeController {
 				existingParent.getAssociations().add(association);
 				ArrayList<Class> _classes = new ArrayList<Class>(classes);
 				_classes.remove(existingChild);
-				if(getClass(existingChild, _classes, null) != null) {
+				if(getClass(existingChild.getName(), _classes, null) != null) {
 					classes.remove(existingChild);
 				}
 			}
@@ -99,21 +100,21 @@ public class TreeController {
 	}	
 	/**
 	 * Finds the class in the classlist or in the attributes of a class.
-	 * @param c The class to be compared.
+	 * @param c The classname to be compared.
 	 * @param classlist The classlist which the class will be compared to.
 	 * @param checkedClasses The (attribute)classes of the classlist which already are checked.
 	 * @return The class that alreadt exists or null if the class doesn't exist.
 	 */
-	private Class getClass(Class c,ArrayList<Class> classlist,ArrayList<Class> checkedClasses) {
+	private Class getClass(String className,ArrayList<Class> classlist,ArrayList<Class> checkedClasses) {
 		if(checkedClasses == null) {
 			checkedClasses = new ArrayList<Class>();
 		}
 		for(Class cInList : classlist) {
-			if(cInList.getName().equalsIgnoreCase(c.getName()) || pluralExists(c.getName(),cInList)) {
+			if(cInList.getName().equalsIgnoreCase(className) || cInList.pluralExists(className)) {
 				return cInList;
 			} else if(cInList.getAssociations().size() > 0 && !checkedClasses.contains(cInList)){		
 				checkedClasses.add(cInList);
-				Class result = getClass(c,extractChildClassFromAssociations(cInList.getAssociations()),checkedClasses);
+				Class result = getClass(className,extractChildClassFromAssociations(cInList.getAssociations()),checkedClasses);
 				if(result != null) {
 					return result;
 				}
@@ -134,82 +135,47 @@ public class TreeController {
 		}
 		return childClasses;
 	}
-	
+		
 	/**
-	 * Check if the name of a new class/attribute already exists as plural 
-	 * @param name The new name to be compared
-	 * @param cInList The classes to be compared with
-	 * @return True if the plural exists. False if the plural doesn't exists
+	 * Adds this attribute doesn't already exist as association, it will be added to the waiting list.
+	 * If it already exists, all associations will be replaced with attributes.
+	 * @param attr
 	 */
-	private boolean pluralExists(String name, Class cInList) {
-		if(name.equalsIgnoreCase(cInList.getName() + "s")) {
-			return true;
-		} else if(cInList.getName().equalsIgnoreCase(name + "s")) {
-			cInList.setName(name);
-			return true;
-		} else if(name.equalsIgnoreCase(cInList.getName() + "'s")) {
-			return true;
-		} else if(cInList.getName().equalsIgnoreCase(name + "'s")) {
-			cInList.setName(name);
-			return true;
-		} else if(name.equalsIgnoreCase(getClassSingular(cInList.getName()))){
-			cInList.setName(name);
-			return true;
-		} else if(cInList.getName().equalsIgnoreCase(getInputSingular(name))){			
-			return true;
+	public void addAttribute(Attribute attr) {
+		if(getClass(attr.getName(), classes, null) != null) {
+			changeAssociationToAttribute(attr,classes,null);
 		} else {
-			return false;
+			attributesToAssign.add(attr);
 		}
 	}
-
-	/**
-	 *  Get the singular of the input noun.
-	 *	@param inputLength The length of the new input zelfstandig naamwoord
-	 */
-	private String getInputSingular(String name) {
-		int inputLength= name.length();
 		
-		if(name.endsWith("en")) {
-			if(name.charAt(inputLength-3) == name.charAt(inputLength-4)) {
-				name= name.substring(0, inputLength-3);	// Get stem of noun (- "nen" or "pen" etc).
-			} else {
-				name= name.substring(0, inputLength-2);	// Get stem of noun (- "en").
-				inputLength= name.length()-1;
-				// Check if letter before the second to last is a vowel. 
-				if(name.charAt(inputLength-2) == 'a' || name.charAt(inputLength-2) == 'e' || name.charAt(inputLength-2) == 'o' || name.charAt(inputLength-2) == 'i' || name.charAt(inputLength-2) == 'u' || name.charAt(inputLength-2) == 'y') {
-					return name;
-				} else {
-					char charToAdd= name.charAt(inputLength-1);
-					name= name.substring(0, inputLength) + charToAdd + name.substring(inputLength);
-				}	
-			}
+	/**
+	 * Changes all associations that match a given attribute to attributes.
+	 * All associations that match the given attribute will be removed from a class. A new attribute will be added to that class.
+	 * 
+	 * @param attribute The element to be switched from association to attribute.
+	 * @param classlist The class graph to be searched.
+	 * @param checkedClasses The classes which already are checked.
+	 * @return 
+	 */
+	private Class changeAssociationToAttribute(Attribute attribute,ArrayList<Class> classlist,ArrayList<Class> checkedClasses) {
+		if(checkedClasses == null) {
+			checkedClasses = new ArrayList<Class>();
 		}
-		return name;
-	}
-
-	/**
-	 *  Get the singular of the existing noun.
-	 *	@param cInListLength The length of the existing zelfstandig naamwoord
-	 */
-	private String getClassSingular(String cInList) {
-		int cInListLength= cInList.length();
-		
-		if(cInList.endsWith("en")) {
-			if(cInList.charAt(cInListLength-3) == cInList.charAt(cInListLength-4)) {
-				cInList= cInList.substring(0, cInListLength-3); // Get stem of noun (- "nen" or "pen" etc). 
-			} else {
-				cInList= cInList.substring(0, cInListLength-2); // Get stem of noun (- "en").
-				cInListLength= cInList.length()-1;
-				// Check if letter before the second to last is a vowel.
-				if(cInList.charAt(cInListLength-2) == 'a' || cInList.charAt(cInListLength-2) == 'e' || cInList.charAt(cInListLength-2) == 'o' || cInList.charAt(cInListLength-2) == 'i' || cInList.charAt(cInListLength-2) == 'u'  || cInList.charAt(cInListLength-2) == 'y') {
-					return cInList;
-				} else {
-					char charToAdd= cInList.charAt(cInListLength-1);
-					cInList= cInList.substring(0, cInListLength) + charToAdd + cInList.substring(cInListLength);
+		for(Class cInList : classlist) {
+			if(cInList.getName().equalsIgnoreCase(attribute.getName()) || cInList.pluralExists(attribute.getName())) {
+				return cInList;
+			} else if(cInList.getAssociations().size() > 0 && !checkedClasses.contains(cInList)){		
+				checkedClasses.add(cInList);
+				Class result = changeAssociationToAttribute(attribute,extractChildClassFromAssociations(cInList.getAssociations()),checkedClasses);
+				if(result != null) {
+					cInList.removeAssociation(result);
+					cInList.addAttribute(attribute);
 				}
 			}
 		}
-		return cInList;
+		return null;
 	}
+	
 }
 

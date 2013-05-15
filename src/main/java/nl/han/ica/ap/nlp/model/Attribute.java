@@ -30,6 +30,8 @@
 
 package nl.han.ica.ap.nlp.model;
 
+import java.lang.reflect.Type;
+
 /**
  * @author Joell
  *
@@ -40,9 +42,9 @@ public class Attribute {
 	private Type type;
 	private String name;
 	
-	public Attribute(String name, String type) {
+	public Attribute(String name, Type type) {
 		multiplicity = new AttributeMultiplicity();
-		this.type = new Type(type);
+		this.type = type;
 		this.name = name;
 	}
 	
