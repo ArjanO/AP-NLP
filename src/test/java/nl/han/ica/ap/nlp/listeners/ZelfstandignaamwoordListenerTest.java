@@ -91,6 +91,16 @@ public class ZelfstandignaamwoordListenerTest {
 	
 	@Test
 	public void testCompositeSentence(){
+		App app= App.getInstance();
+		app.start("Een vliegtuig heeft een passagier en minimaal 2 piloten.");
+		assertEquals(1, app.getController().classes.size());
+		assertEquals(2, app.getController().classes.get(0).getAssociations().size());
+		assertEquals("2", app.getController().classes.get(0).getAssociations().get(1).getChildMultiplicity().getLowerBound().getValue());
+		assertEquals("*", app.getController().classes.get(0).getAssociations().get(1).getChildMultiplicity().getUpperBound().getValue());
+	}
+	
+	@Test
+	public void testEnumerationEnSentence(){
 		App app = App.getInstance();
 		app.start("Een vliegtuig heeft passagiers en een piloot en pinda's en stoelen.");
 		assertEquals("vliegtuig", app.getController().classes.get(0).getName());
@@ -98,11 +108,19 @@ public class ZelfstandignaamwoordListenerTest {
 	}
 	
 	@Test
-	public void testEnumerationSentence(){
+	public void testEnumerationKommaSentence(){
 		App app = App.getInstance();
-		app.start("Een vliegtuig heeft passagiers, stoelen, een piloot, pinda's en een nooddeur.");
+		app.start("Een vliegtuig heeft passagiers, stoelen, een piloot, beeldschermen, een toilet.");
 		assertEquals(1, app.getController().classes.size());
 		assertEquals(5, app.getController().classes.get(0).getAssociations().size());
+	}
+	
+	@Test
+	public void testEnumerationEnKommaSentence(){
+		App app= App.getInstance();
+		app.start("Een vliegtuig heeft passagiers, stoelen, een piloot en een toilet.");
+		assertEquals(1, app.getController().classes.size());
+		assertEquals(4, app.getController().classes.get(0).getAssociations().size());
 	}
 	
 	@Test
