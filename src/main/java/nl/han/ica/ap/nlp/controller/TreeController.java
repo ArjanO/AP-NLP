@@ -30,7 +30,16 @@
 package nl.han.ica.ap.nlp.controller;
 
 import java.util.ArrayList;
+import java.util.BitSet;
 
+import org.antlr.v4.runtime.ANTLRErrorListener;
+import org.antlr.v4.runtime.Parser;
+import org.antlr.v4.runtime.RecognitionException;
+import org.antlr.v4.runtime.Recognizer;
+import org.antlr.v4.runtime.atn.ATNConfigSet;
+import org.antlr.v4.runtime.dfa.DFA;
+import org.antlr.v4.runtime.misc.NotNull;
+import org.antlr.v4.runtime.misc.Nullable;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.ParseTree;
 import nl.han.ica.ap.nlp.NlpParser;
@@ -39,14 +48,16 @@ import nl.han.ica.ap.nlp.listeners.ZelfstandignaamwoordListener;
 import nl.han.ica.ap.nlp.model.Association;
 import nl.han.ica.ap.nlp.model.Attribute;
 import nl.han.ica.ap.nlp.model.Class;
+import nl.han.ica.ap.nlp.util.ErrorAlarm;
 
 /**
  * @author Joell & Boyd
  *
  */
-public class TreeController {
+public class TreeController implements ANTLRErrorListener{
 	public ArrayList<Class> classes = new ArrayList<Class>();
 	private ArrayList<Attribute> attributesToAssign = new ArrayList<Attribute>();
+	private boolean isWithoutGrammerError = true;
 	
 	public TreeController() {		
 	}
@@ -60,8 +71,10 @@ public class TreeController {
 		ParseTreeWalker walker = new ParseTreeWalker();
 		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(this);
 		walker.walk(listener, tree);
-		
-		if(exporter != null) {
+		if(!isWithoutGrammerError) {
+			ErrorAlarm alarm = new ErrorAlarm();
+			alarm.soundAlarm();			
+		} else if(exporter != null) {
 			System.out.println(exporter.export(classes));
 		}
 	}
@@ -175,6 +188,33 @@ public class TreeController {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void reportAmbiguity(@NotNull Parser arg0, DFA arg1, int arg2,
+			int arg3, @NotNull BitSet arg4, @NotNull ATNConfigSet arg5) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void reportAttemptingFullContext(@NotNull Parser arg0,
+			@NotNull DFA arg1, int arg2, int arg3, @NotNull ATNConfigSet arg4) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void reportContextSensitivity(@NotNull Parser arg0,
+			@NotNull DFA arg1, int arg2, int arg3, @NotNull ATNConfigSet arg4) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void syntaxError(Recognizer<?, ?> arg0, @Nullable Object arg1,
+			int arg2, int arg3, String arg4, @Nullable RecognitionException arg5) {
+		isWithoutGrammerError = false;		
 	}
 	
 }
