@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import nl.han.ica.ap.nlp.model.Association;
+import nl.han.ica.ap.nlp.model.Attribute;
 import nl.han.ica.ap.nlp.model.Class;
 import nl.han.ica.ap.nlp.util.File;
 
@@ -21,11 +22,7 @@ public class YUMLExport implements IExport{
 	
 	//http://yuml.me/diagram/scruffy;/class/
 	public String export(ArrayList<Class> classes) {
-		doc = "";
-		
-		createClasses(classes);
-		doc = doc.trim();
-		doc = doc.substring(0, doc.length()-1);
+		String doc = exportSource(classes);
 		
 		//Download and save image
 		String url = "http://yuml.me/diagram/plain;/class/"+doc;
@@ -56,11 +53,11 @@ public class YUMLExport implements IExport{
 		    		ClassRelation tmprelation = new ClassRelation(asso.getChildClass(), child);
 		    		if (!associationlist.contains(tmprelation)) {
 		    			//[classname]<multiplicity>-<multiplicity>[classname]
-		    			doc += "["+child.getName()+"]";
+		    			doc += "["+child.getName()+getAttributesFromClass(child)+"]";
 		    			doc += asso.getParentMultiplicity().getLowerBound().getValue()+".."+asso.getParentMultiplicity().getUpperBound().getValue();
 		    			doc += "-";
 		    			doc += asso.getChildMultiplicity().getLowerBound().getValue()+".."+asso.getChildMultiplicity().getUpperBound().getValue();
-		    			doc += "["+asso.getChildClass().getName()+"]";
+		    			doc += "["+asso.getChildClass().getName()+getAttributesFromClass(asso.getChildClass())+"]";
 		    			doc += ", ";
 		    			associationlist.add(tmprelation);
 		    		} else {
@@ -69,8 +66,24 @@ public class YUMLExport implements IExport{
 		    		}
     			}		    	
 		    	createClasses(association_classes);
-		    }
+		    }    		
     	}
     }
-
+    
+    /**
+     * Composes a String of attributes in YUML format.
+     * @param c The class which holds the attributes
+     * @return String of attributes in YUML format
+     */
+	private String getAttributesFromClass(Class c) {
+		if(c.getAttributes().size() > 0) {
+			String attributes = "|";		
+			for(Attribute a : c.getAttributes()) {
+				attributes += a.getName() + " " + a.getType().getSimpleName() + ";";
+			}
+			return attributes;
+		} else {
+			return "";
+		}
+	}
 }

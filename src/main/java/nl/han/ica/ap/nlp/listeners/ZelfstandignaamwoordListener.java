@@ -203,7 +203,7 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	 * Either by adding it directly to a Class or have it send as a single attribute
 	 * @param type Java type of the attribute.
 	 */
-	private void addAttributeToController(Type type) {
+	private void addAttributeToController(java.lang.Class<?> type) {
 		if(zelfstandignaamwoord2 == null) {
 			Class c = new Class(zelfstandignaamwoord1);
 			c.addAttribute(new Attribute(zelfstandignaamwoord2,type));

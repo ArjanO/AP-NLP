@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
+import nl.han.ica.ap.nlp.model.Attribute;
 import nl.han.ica.ap.nlp.model.Class;
 
 import org.junit.Test;
@@ -157,5 +158,22 @@ public class YUMLExportTest {
 
 		assertEquals(yumlresult1, "[Vliegtuig]0..1-0..*[Passagier]");
 		assertEquals(yumlresult2, "[Vliegtuig]0..1-0..*[Passagier]");
+	}
+	
+	@Test
+	public void testModelWithAttributes() {
+		YUMLExport export = new YUMLExport();
+		ArrayList<Class> classes = new ArrayList<Class>();
+		Class vliegtuig = new Class("Vliegtuig");
+		Class passagier = new Class("Passagier");
+		Attribute id = new Attribute("ID", int.class);
+		Attribute naam = new Attribute("Naam", String.class);
+		Attribute werknemer = new Attribute("isWerknemer", boolean.class);
+		vliegtuig.addAttribute(id);
+		passagier.addAttribute(naam);
+		passagier.addAttribute(werknemer);
+		vliegtuig.addAssociation(passagier);
+		classes.add(vliegtuig);
+		assertEquals("[Vliegtuig|ID int;]0..1-0..*[Passagier|Naam String;isWerknemer boolean;]", export.exportSource(classes));
 	}
 }

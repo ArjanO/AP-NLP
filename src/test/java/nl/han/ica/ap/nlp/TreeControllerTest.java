@@ -146,6 +146,7 @@ public class TreeControllerTest {
 		controller.addAttribute(naamAsAttribute);
 		assertEquals(1,controller.classes.get(0).getAttributes().size());
 		assertEquals(0, controller.classes.get(0).getAssociations().size());
-		assertEquals(naamAsAttribute, controller.classes.get(0).getAttributes().get(0));		
+		assertEquals(naamAsAttribute.getName(), controller.classes.get(0).getAttributes().get(0).getName());	
+		assertEquals(naamAsAttribute.getType(), controller.classes.get(0).getAttributes().get(0).getType());	
 	}
 }

@@ -31,6 +31,7 @@
 package nl.han.ica.ap.nlp.model;
 
 import java.lang.reflect.Type;
+import java.lang.Class;
 
 /**
  * @author Joell
@@ -39,10 +40,10 @@ import java.lang.reflect.Type;
 public class Attribute {
 
 	private IMultiplicity multiplicity;	
-	private Type type;
+	private Class<?> type;
 	private String name;
 	
-	public Attribute(String name, Type type) {
+	public Attribute(String name, Class<?> type) {
 		multiplicity = new AttributeMultiplicity();
 		this.type = type;
 		this.name = name;
@@ -52,7 +53,7 @@ public class Attribute {
 		return multiplicity;
 	}
 
-	public Type getType() {
+	public java.lang.Class<?> getType() {
 		return type;
 	}
 
