@@ -30,16 +30,8 @@
 package nl.han.ica.ap.nlp.listeners;
 
 import static org.junit.Assert.*;
-
-import java.util.ArrayList;
-
-import javax.print.DocFlavor.INPUT_STREAM;
-
 import nl.han.ica.ap.nlp.App;
-import nl.han.ica.ap.nlp.NlpParser.VoegwoordContext;
 import nl.han.ica.ap.nlp.model.Association;
-
-import org.antlr.v4.tool.interp.ParserInterpreter;
 import org.junit.Test;
 
 /**
@@ -190,11 +182,11 @@ public class ZelfstandignaamwoordListenerTest {
 		assertEquals("1",a.getParentMultiplicity().getUpperBound().getValue());
 	}
 	
-	/*@Test
+	@Test
 	public void testAssociationBecomesAttribute(){
 		App app = App.getInstance();
-		app.start("Een vliegtuig heeft type. Een type is \" boeing \" .");
+		app.start("Een vliegtuig heeft een type. Een type is \"boeing\" .");
 		assertEquals(0,app.getController().classes.get(0).getAssociations().size());
 		assertEquals(1,app.getController().classes.get(0).getAttributes().size());
-	}*/
+	}
 }

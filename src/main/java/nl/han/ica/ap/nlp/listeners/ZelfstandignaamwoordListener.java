@@ -204,7 +204,7 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	 * @param type Java type of the attribute.
 	 */
 	private void addAttributeToController(java.lang.Class<?> type) {
-		if(zelfstandignaamwoord2 == null) {
+		if(zelfstandignaamwoord2 != null) {
 			Class c = new Class(zelfstandignaamwoord1);
 			c.addAttribute(new Attribute(zelfstandignaamwoord2,type));
 			controller.addClass(c);
