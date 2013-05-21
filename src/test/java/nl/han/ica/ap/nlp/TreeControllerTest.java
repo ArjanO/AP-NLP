@@ -136,7 +136,7 @@ public class TreeControllerTest {
 	}
 	
 	@Test	
-	public void testAttributeAlreadyExists() {
+	public void testAttributeAlreadyExistsAsAssociation() {
 		TreeController controller = new TreeController();
 		Class passagier = new Class("Passagier");
 		Class naamAsAssociation = new Class("Naam");	
@@ -144,9 +144,53 @@ public class TreeControllerTest {
 		controller.addClass(passagier);
 		Attribute naamAsAttribute = new Attribute("Naam", String.class);
 		controller.addAttribute(naamAsAttribute);
-		assertEquals(1,controller.classes.get(0).getAttributes().size());
+		assertEquals(1, controller.classes.get(0).getAttributes().size());
 		assertEquals(0, controller.classes.get(0).getAssociations().size());
 		assertEquals(naamAsAttribute.getName(), controller.classes.get(0).getAttributes().get(0).getName());	
 		assertEquals(naamAsAttribute.getType(), controller.classes.get(0).getAttributes().get(0).getType());	
+	}
+	
+	@Test
+	public void testAddSimpleAttributeClassPair(){
+		TreeController controller = new TreeController();
+		Class passagier = new Class("Passagier");
+		Attribute naamAsAttribute = new Attribute("Naam", String.class);
+		passagier.addAttribute(naamAsAttribute);
+		controller.addClass(passagier);
+		assertEquals(1, controller.classes.size());
+		assertEquals(1, controller.classes.get(0).getAttributes().size());
+		assertEquals(passagier.getName(), controller.classes.get(0).getName());
+		assertEquals(naamAsAttribute.getName(), controller.classes.get(0).getAttributes().get(0).getName());
+	}
+	
+	@Test
+	public void testAddAttributeWithExistingClass(){
+		TreeController controller = new TreeController();
+		Class passagier = new Class("Passagier");
+		Class passagier2 = new Class("Passagier");
+		Attribute naamAsAttribute = new Attribute("Naam", String.class);
+		passagier2.addAttribute(naamAsAttribute);
+		controller.addClass(passagier);
+		controller.addClass(passagier2);
+		assertEquals(1, controller.classes.size());
+		assertEquals(1, controller.classes.get(0).getAttributes().size());
+		assertEquals(passagier.getName(), controller.classes.get(0).getName());
+		assertEquals(naamAsAttribute.getName(), controller.classes.get(0).getAttributes().get(0).getName());
+	}
+	@Test
+	public void testAddExistingAttributeWithExistingClass(){
+		TreeController controller = new TreeController();
+		Class passagier = new Class("Passagier");
+		Class passagier2 = new Class("Passagier");
+		Attribute naamAsAttribute = new Attribute("Naam", String.class);
+		Attribute naamAsAttribute2 = new Attribute("Naam", String.class);
+		passagier.addAttribute(naamAsAttribute);
+		passagier2.addAttribute(naamAsAttribute2);
+		controller.addClass(passagier);
+		controller.addClass(passagier2);
+		assertEquals(1, controller.classes.size());
+		assertEquals(1, controller.classes.get(0).getAttributes().size());
+		assertEquals(passagier.getName(), controller.classes.get(0).getName());
+		assertEquals(naamAsAttribute.getName(), controller.classes.get(0).getAttributes().get(0).getName());
 	}
 }
