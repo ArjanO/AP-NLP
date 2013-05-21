@@ -124,7 +124,6 @@ public class ZelfstandignaamwoordListenerTest {
 		assertEquals(4, app.getController().classes.get(0).getAssociations().size());
 	}
 	
-	
 	@Test
 	public void testCompositeSentenceExplicitMultiplicity(){
 		App app = App.getInstance();
@@ -212,5 +211,12 @@ public class ZelfstandignaamwoordListenerTest {
 		App app = App.getInstance();
 		app.start("Een begindatum heeft een type. Een type is 15:01.");		
 		assertEquals(Date.class,app.getController().classes.get(0).getAttributes().get(0).getType());
+	}
+	
+	@Test
+	public void testAdvancedBijwoordSentence(){
+		App app = App.getInstance();
+		app.start("Een passagier heeft als geboortedatum 17-09-1991.");
+		//assertEquals(1, app.getController().classes.get(0).getAssociations().size());
 	}
 }
