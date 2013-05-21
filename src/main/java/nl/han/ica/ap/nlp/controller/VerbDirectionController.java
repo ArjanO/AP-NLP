@@ -53,8 +53,7 @@ public class VerbDirectionController {
 	    		buf = new char[1024];
 	    	}
 	    	reader.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
+		} catch (FileNotFoundException e) {			
 			e.printStackTrace();
 		} catch (IOException e) {
 			System.out.println("Error whilest loading the csv file");
