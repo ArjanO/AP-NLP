@@ -12,3 +12,6 @@ target/
 .settings*
 .project
 .classpath
+
+# Generated Grammar #
+src/main/antlr/imports/NlpWerkwoorden.g4
