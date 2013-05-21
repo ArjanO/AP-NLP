@@ -36,7 +36,7 @@ import java.lang.Class;
  * @author Joell
  *
  */
-public class Attribute implements Cloneable{
+public class Attribute extends Entity implements Cloneable {
 
 	private IMultiplicity multiplicity;
 	private Class<?> type;
@@ -55,14 +55,6 @@ public class Attribute implements Cloneable{
 	public java.lang.Class<?> getType() {
 		return type;
 	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -80,7 +72,12 @@ public class Attribute implements Cloneable{
 	}
 	
 	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
+	public Object clone() {
+		try {
+			return super.clone();
+		} catch (CloneNotSupportedException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

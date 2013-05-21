@@ -180,6 +180,83 @@ public class TreeController implements ANTLRErrorListener{
 		}
 	}
 	
+	private void addAssociationClass(Class c, Class existingClass) {
+		//Associations
+		for(Association association : c.getAssociations()) {
+			Class child = association.getChildClass();
+			Attribute queue_attribute = getAttribute(child.getName(), attributesToAssign);
+			
+			//Is there an attribute in the queue that has the same name?
+			if(queue_attribute != null) {
+				
+				//Does the class already exist?
+				if(existingClass != null) {
+					Attribute existing_attribute = getAttribute(queue_attribute.getName(), c.getAttributes());
+					
+					//Does the class already have an attribute with the same name as the queue attribute, if so, overwrite it from queue.
+					if(existing_attribute != null) {
+						int index = existingClass.getAttributes().indexOf(existing_attribute);
+						existingClass.getAttributes().set(index, queue_attribute);
+					//Add copy of queue attribute to the existing class, remove from queue.
+					} else {
+						Attribute queue_attribute_clone = (Attribute) queue_attribute.clone();
+						existingClass.addAttribute(queue_attribute_clone);
+						
+						attributesToAssign.remove(queue_attribute);
+					}
+				//Add new class with copy of attribute. Remove from queue.
+				} else {
+					Attribute queue_attribute_clone = (Attribute) queue_attribute.clone();
+					c.addAttribute(queue_attribute_clone);
+					classes.add(c);
+					
+					attributesToAssign.remove(queue_attribute);
+				}
+			} else {
+				Attribute existing_attribute_from_classes = getAttribute(child.getName(), classes, null);
+				
+				//Is there an attribute in the classlist with the same name?
+				if(existing_attribute_from_classes != null) {
+					//Does the class already exist?
+					if(existingClass != null) {
+						Attribute existing_attribute_from_class = getAttribute(child.getName(), existingClass.getAttributes());
+						//Does attribute already exist in class, if true, overwrite attribute.
+						if(existing_attribute_from_class != null) {
+							int index = existingClass.getAttributes().indexOf(existing_attribute_from_class);
+							existingClass.getAttributes().set(index, existing_attribute_from_classes);
+						//Add copy of attribute to existing class.
+						} else {
+							Attribute existing_attribute_from_classes_clone = (Attribute) existing_attribute_from_classes.clone();
+							existingClass.addAttribute(existing_attribute_from_classes_clone);
+							
+							attributesToAssign.remove(existing_attribute_from_classes);
+						}
+					//Add new class with copy of attribute.
+					} else {
+						Attribute existing_attribute_from_classes_clone = (Attribute) existing_attribute_from_classes.clone();
+						c.addAttribute(existing_attribute_from_classes_clone);
+						classes.add(c);
+						
+						attributesToAssign.remove(existing_attribute_from_classes);
+					}
+				} else {
+					Class existing_association_childclass = getClass(existingClass.getName(), classes, null);
+					
+					//Does association already exist?
+					if(existing_association_childclass == null) {
+						//Does class already exist? If true, add new association to existing class
+						if(existingClass != null) {
+							existingClass.addAssociation(child);
+						//Add new class with new association
+						} else {
+							classes.add(c);
+						}
+					}
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Finds the class in the classlist or in the attributes of a class.
 	 * @param c The classname to be compared.
@@ -187,7 +264,7 @@ public class TreeController implements ANTLRErrorListener{
 	 * @param checkedClasses The (attribute)classes of the classlist which already are checked.
 	 * @return The class that alreadt exists or null if the class doesn't exist.
 	 */
-	private Class getClass(String className,ArrayList<Class> classlist,ArrayList<Class> checkedClasses) {
+	private Class getClass(String className, ArrayList<Class> classlist, ArrayList<Class> checkedClasses) {
 		if(checkedClasses == null) {
 			checkedClasses = new ArrayList<Class>();
 		}
@@ -196,7 +273,7 @@ public class TreeController implements ANTLRErrorListener{
 				return cInList;
 			} else if(cInList.getAssociations().size() > 0 && !checkedClasses.contains(cInList)){		
 				checkedClasses.add(cInList);
-				Class result = getClass(className,extractChildClassFromAssociations(cInList.getAssociations()),checkedClasses);
+				Class result = getClass(className, extractChildClassFromAssociations(cInList.getAssociations()), checkedClasses);
 				if(result != null) {
 					return result;
 				}
@@ -205,6 +282,40 @@ public class TreeController implements ANTLRErrorListener{
 		return null;
 	}
 	
+	/**
+	 * Finds the class in the classlist or in the attributes of a class.
+	 * @param c The classname to be compared.
+	 * @param classlist The classlist which the class will be compared to.
+	 * @param checkedClasses The (attribute)classes of the classlist which already are checked.
+	 * @return The class that alreadt exists or null if the class doesn't exist.
+	 */
+	private Attribute getAttribute(String attributeName, ArrayList<Class> classlist, ArrayList<Class> checkedClasses) {
+		if(checkedClasses == null) {
+			checkedClasses = new ArrayList<Class>();
+		}
+		for(Class cInList : classlist) {
+			for(Attribute attributeInClass : cInList.getAttributes()) {
+				if(attributeInClass.getName().equalsIgnoreCase(attributeName) || attributeInClass.pluralExists(attributeName)) {
+					return attributeInClass;
+				}
+			}
+			if(cInList.getAssociations().size() > 0 && !checkedClasses.contains(cInList)){		
+				checkedClasses.add(cInList);
+				Attribute result = getAttribute(attributeName, extractChildClassFromAssociations(cInList.getAssociations()), checkedClasses);
+				if(result != null) {
+					return result;
+				}
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * Get an attribute if it is in the list, else return null.
+	 * @param attributeName Name of attribute to check for.
+	 * @param attributelist List of attributes.
+	 * @return
+	 */
 	private Attribute getAttribute(String attributeName, ArrayList<Attribute> attributelist){
 		for(Attribute attribute : attributelist) {
 			if(attribute.getName().equals(attributeName)) {
