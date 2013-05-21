@@ -60,6 +60,7 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	private boolean direction;
 	private boolean start = false;
 	private TreeSet<String> keywords = new TreeSet<String>();
+	private boolean literal = false;
 	
 	public ZelfstandignaamwoordListener(TreeController controller) {
 		this.controller = controller;
@@ -173,7 +174,11 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	
 	@Override
 	public void enterTelwoord(TelwoordContext ctx) {
-		telwoord = ctx.getText();
+		if(literal) {
+			addAttributeToController(Integer.class);
+		} else {
+			telwoord = ctx.getText();
+		}
 	}
 	
 	@Override
@@ -193,6 +198,7 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		parentMultiplicity = null;
 		zelfstandignaamwoord1 = null;
 		zelfstandignaamwoord2 = null;
+		literal = false;
 	}	
 	
 	@Override
@@ -217,6 +223,11 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	}
 	
 	@Override
+	public void enterLiteral(NlpParser.LiteralContext ctx) {
+		literal = true;
+	}
+	
+	@Override
 	public void enterDatum(NlpParser.DatumContext ctx) {
 		addAttributeToController(Date.class);
 	}
@@ -224,5 +235,10 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	@Override
 	public void enterTijd(NlpParser.TijdContext ctx) {
 		addAttributeToController(Date.class);
+	}
+	
+	@Override
+	public void enterDecimaal(NlpParser.DecimaalContext ctx) {
+		addAttributeToController(Double.class);
 	}
 }
