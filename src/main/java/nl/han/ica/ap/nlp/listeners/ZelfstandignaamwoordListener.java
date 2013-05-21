@@ -30,6 +30,7 @@
 package nl.han.ica.ap.nlp.listeners;
 
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.TreeSet;
 import nl.han.ica.ap.nlp.controller.TreeController;
 import nl.han.ica.ap.nlp.controller.VerbDirectionController;
@@ -39,6 +40,7 @@ import nl.han.ica.ap.nlp.model.Class;
 import nl.han.ica.ap.nlp.model.IMultiplicity;
 import nl.han.ica.ap.nlp.model.ParentMultiplicity;
 import nl.han.ica.ap.nlp.NlpBaseListener;
+import nl.han.ica.ap.nlp.NlpParser;
 import nl.han.ica.ap.nlp.NlpParser.BijwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.EnumeratieContext;
 import nl.han.ica.ap.nlp.NlpParser.StringContext;
@@ -212,5 +214,10 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 			Attribute attr = new Attribute(zelfstandignaamwoord1, type);
 			controller.addAttribute(attr);
 		}
+	}
+	
+	@Override
+	public void enterDatum(NlpParser.DatumContext ctx) {
+		addAttributeToController(Date.class);
 	}
 }

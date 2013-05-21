@@ -30,6 +30,9 @@
 package nl.han.ica.ap.nlp.listeners;
 
 import static org.junit.Assert.*;
+
+import java.util.Date;
+
 import nl.han.ica.ap.nlp.App;
 import nl.han.ica.ap.nlp.model.Association;
 import org.junit.Test;
@@ -188,5 +191,19 @@ public class ZelfstandignaamwoordListenerTest {
 		app.start("Een vliegtuig heeft een type. Een type is \"boeing\" .");
 		assertEquals(0,app.getController().classes.get(0).getAssociations().size());
 		assertEquals(1,app.getController().classes.get(0).getAttributes().size());
+	}
+	
+	@Test
+	public void testStringAsAttribute() {
+		App app = App.getInstance();
+		app.start("Een vliegtuig heeft een type. Een type is \"boeing\" .");		
+		assertEquals(String.class,app.getController().classes.get(0).getAttributes().get(0).getType());
+	}
+	
+	@Test
+	public void testDateAsAttribute() {
+		App app = App.getInstance();
+		app.start("Een begindatum heeft een type. Een type is 21/05/2013.");		
+		assertEquals(Date.class,app.getController().classes.get(0).getAttributes().get(0).getType());
 	}
 }
