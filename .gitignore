@@ -14,4 +14,4 @@ target/
 .classpath
 
 # Generated Grammar #
-src/main/antlr/imports/NlpWerkwoorden.g4
+*NlpWerkwoorden.g4
