@@ -220,4 +220,9 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	public void enterDatum(NlpParser.DatumContext ctx) {
 		addAttributeToController(Date.class);
 	}
+	
+	@Override
+	public void enterTijd(NlpParser.TijdContext ctx) {
+		addAttributeToController(Date.class);
+	}
 }

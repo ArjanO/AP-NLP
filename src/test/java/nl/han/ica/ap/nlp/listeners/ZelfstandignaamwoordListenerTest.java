@@ -206,4 +206,11 @@ public class ZelfstandignaamwoordListenerTest {
 		app.start("Een begindatum heeft een type. Een type is 21/05/2013.");		
 		assertEquals(Date.class,app.getController().classes.get(0).getAttributes().get(0).getType());
 	}
+	
+	@Test
+	public void testTimeAsAttribute() {
+		App app = App.getInstance();
+		app.start("Een begindatum heeft een type. Een type is 15:01.");		
+		assertEquals(Date.class,app.getController().classes.get(0).getAttributes().get(0).getType());
+	}
 }
