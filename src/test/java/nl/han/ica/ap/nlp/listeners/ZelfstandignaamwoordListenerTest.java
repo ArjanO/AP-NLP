@@ -194,22 +194,36 @@ public class ZelfstandignaamwoordListenerTest {
 	
 	@Test
 	public void testStringAsAttribute() {
-	  App app = App.getInstance();
-	  app.start("Een vliegtuig heeft een type. Een type is \"boeing\" .");    
-	  assertEquals(String.class,app.getController().classes.get(0).getAttributes().get(0).getType());
+		App app = App.getInstance();
+		app.start("Een vliegtuig heeft een type. Een type is \"boeing\" .");    
+		assertEquals(String.class,app.getController().classes.get(0).getAttributes().get(0).getType());
 	}
 	
 	@Test
 	public void testDateAsAttribute() {
-	  App app = App.getInstance();
-	  app.start("Een begindatum heeft een type. Een type is 21/05/2013.");    
-	  assertEquals(Date.class,app.getController().classes.get(0).getAttributes().get(0).getType());
+	 	App app = App.getInstance();
+	 	app.start("Een begindatum heeft een type. Een type is 21/05/2013.");    
+	 	assertEquals(Date.class,app.getController().classes.get(0).getAttributes().get(0).getType());
 	}
 	
 	@Test
 	public void testTimeAsAttribute() {
-	  App app = App.getInstance();
-	  app.start("Een begindatum heeft een type. Een type is 15:01.");    
-	  assertEquals(Date.class,app.getController().classes.get(0).getAttributes().get(0).getType());
+		App app = App.getInstance();
+		app.start("Een begindatum heeft een type. Een type is 15:01.");    
+		assertEquals(Date.class,app.getController().classes.get(0).getAttributes().get(0).getType());
+	}
+	
+	@Test
+	public void testDoubleAsAttribute() {
+		App app = App.getInstance();
+		app.start("Een vliegtuig heeft een id. Een id is 2,5.");
+		assertEquals(Double.class,app.getController().classes.get(0).getAttributes().get(0).getType());
+	}
+	
+	@Test
+	public void testAdvancedBijwoordSentence() {
+		App app = App.getInstance();
+		app.start("Een passagier heeft als geboortedatum 17/09/1991.");
+		assertEquals(Date.class,app.getController().classes.get(0).getAttributes().get(0).getType());
 	}
 }
