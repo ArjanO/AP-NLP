@@ -30,16 +30,15 @@
 
 package nl.han.ica.ap.nlp.model;
 
-import java.lang.reflect.Type;
 import java.lang.Class;
 
 /**
  * @author Joell
  *
  */
-public class Attribute {
+public class Attribute implements Cloneable{
 
-	private IMultiplicity multiplicity;	
+	private IMultiplicity multiplicity;
 	private Class<?> type;
 	private String name;
 	
@@ -63,5 +62,25 @@ public class Attribute {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Attribute)) {
+			return super.equals(obj);
+		}
+		
+		Attribute other = (Attribute)obj;
+		
+		if (this.name != other.name) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
 }

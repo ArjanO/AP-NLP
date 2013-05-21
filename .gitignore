@@ -12,3 +12,6 @@ target/
 .settings*
 .project
 .classpath
+
+# Generated Grammar #
+*NlpWerkwoorden.g4

@@ -88,18 +88,58 @@ public class TreeController implements ANTLRErrorListener{
 	 * @param c The Class to be added.
 	 */
 	public void addClass(Class c) {
+		Class existingParent = getClass(c.getName(), classes, null);
+		
+		//Associations
 		for(Association association : c.getAssociations()) {
 			Class child = association.getChildClass();
-			Class existingParent = getClass(c.getName(), classes,null);
-			Class existingChild = getClass(child.getName(),classes,null);
-			if(existingParent == null && existingChild == null){
-				classes.add(c);			
+			Class existingChild = getClass(child.getName(), classes, null);
+			Attribute queue_attribute = null;
+			Attribute class_attribute = null;
+			
+			if(child != null){
+				queue_attribute = getAttribute(child.getName(), attributesToAssign);
+			}
+			if(existingParent != null){
+				class_attribute = getAttribute(child.getName(), existingParent.getAttributes());
+			}
+			
+			//If attribute is in queue and the Parent-class already exists.
+			if(queue_attribute != null && existingParent != null) {
+				//If attribute is found already in the class-attributes, overwrite it.
+				if(class_attribute != null) {
+					int index = existingParent.getAttributes().indexOf(queue_attribute);
+					existingParent.getAttributes().set(index, queue_attribute);
+				//Add copy of attribute to existing class. Remove from queue.
+				} else {
+					Attribute queue_attribute_clone = null;
+					try {
+						queue_attribute_clone = (Attribute) queue_attribute.clone();
+					} catch (CloneNotSupportedException e) {
+						e.printStackTrace();
+					}
+					existingParent.addAttribute(queue_attribute_clone);
+					attributesToAssign.remove(queue_attribute);
+				}
+			}
+			//If attribute is in queue and the Parent-class does not exists. Add queue attribute to class and add class to classlist.
+			if(queue_attribute != null && existingParent == null) {
+				c.addAttribute(queue_attribute);
+				classes.add(c);
+			}
+			
+			//Parent and Child class don't exist yet, add both.
+			if(existingParent == null && existingChild == null) {
+				classes.add(c);
+			//Parent already exists, child doesn't. Add association to existing parent.
 			} else if(existingParent != null && existingChild == null) {
 				existingParent.getAssociations().add(association);
+			//Parent doesn't exist, child does. Remove child-class from classlist and add class with existing child as associationchild.
 			} else if(existingParent == null && existingChild != null) {
-				c.getAssociations().get(0).setChild(existingChild);				
+				c.getAssociations().get(0).setChild(existingChild);		
 				classes.remove(existingChild);
 				classes.add(c);
+			//Parent and Child exist, add association from existing classes.
 			} else {
 				association.setChild(existingChild);
 				existingParent.getAssociations().add(association);
@@ -110,7 +150,36 @@ public class TreeController implements ANTLRErrorListener{
 				}
 			}
 		}
-	}	
+		
+		addAttributeClass(c, existingParent);
+	}
+	
+	/**
+	 * Add a attribute class pair.
+	 * @param c Class with attribute(s)
+	 * @param existingClass Possible existing class
+	 */
+	private void addAttributeClass(Class c, Class existingClass) {
+		//Attributes
+		for(Attribute attribute : c.getAttributes()) {
+			//Class doesn't exist. Add new class with attribute.
+			if(existingClass == null) {
+				classes.add(c);
+			//Class exists.
+			}else if(existingClass != null){
+				Attribute found_attribute = getAttribute(attribute.getName(), existingClass.getAttributes());
+				//Overwrite attribute if it is already found in attributelist from class.
+				if(found_attribute != null){
+					int index = existingClass.getAttributes().indexOf(found_attribute);
+					existingClass.getAttributes().set(index, attribute);
+				//Attribute doesn't exist in class yet. Add it.
+				} else {
+					existingClass.addAttribute(attribute);
+				}
+			}
+		}
+	}
+	
 	/**
 	 * Finds the class in the classlist or in the attributes of a class.
 	 * @param c The classname to be compared.
@@ -131,6 +200,15 @@ public class TreeController implements ANTLRErrorListener{
 				if(result != null) {
 					return result;
 				}
+			}
+		}
+		return null;
+	}
+	
+	private Attribute getAttribute(String attributeName, ArrayList<Attribute> attributelist){
+		for(Attribute attribute : attributelist) {
+			if(attribute.getName().equals(attributeName)) {
+				return attribute;
 			}
 		}
 		return null;
