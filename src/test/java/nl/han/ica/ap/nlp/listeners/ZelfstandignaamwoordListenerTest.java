@@ -221,9 +221,11 @@ public class ZelfstandignaamwoordListenerTest {
 	}
 	
 	@Test
-	public void testAdvancedBijwoordSentence() {
+	public void testAttributeWithAdverbSentence() {
 		App app = App.getInstance();
 		app.start("Een passagier heeft als geboortedatum 17/09/1991.");
+		assertEquals(1, app.getController().classes.get(0).getAttributes().size());
+		assertEquals(1, app.getController().classes.get(0).getAssociations().size());
 		assertEquals(Date.class,app.getController().classes.get(0).getAttributes().get(0).getType());
 	}
 }
