@@ -90,67 +90,7 @@ public class TreeController implements ANTLRErrorListener{
 	public void addClass(Class c) {
 		Class existingParent = getClass(c.getName(), classes, null);
 		
-		//Associations
-		for(Association association : c.getAssociations()) {
-			Class child = association.getChildClass();
-			Class existingChild = getClass(child.getName(), classes, null);
-			Attribute queue_attribute = null;
-			Attribute class_attribute = null;
-			
-			if(child != null){
-				queue_attribute = getAttribute(child.getName(), attributesToAssign);
-			}
-			if(existingParent != null){
-				class_attribute = getAttribute(child.getName(), existingParent.getAttributes());
-			}
-			
-			//If attribute is in queue and the Parent-class already exists.
-			if(queue_attribute != null && existingParent != null) {
-				//If attribute is found already in the class-attributes, overwrite it.
-				if(class_attribute != null) {
-					int index = existingParent.getAttributes().indexOf(queue_attribute);
-					existingParent.getAttributes().set(index, queue_attribute);
-				//Add copy of attribute to existing class. Remove from queue.
-				} else {
-					Attribute queue_attribute_clone = null;
-					try {
-						queue_attribute_clone = (Attribute) queue_attribute.clone();
-					} catch (CloneNotSupportedException e) {
-						e.printStackTrace();
-					}
-					existingParent.addAttribute(queue_attribute_clone);
-					attributesToAssign.remove(queue_attribute);
-				}
-			}
-			//If attribute is in queue and the Parent-class does not exists. Add queue attribute to class and add class to classlist.
-			if(queue_attribute != null && existingParent == null) {
-				c.addAttribute(queue_attribute);
-				classes.add(c);
-			}
-			
-			//Parent and Child class don't exist yet, add both.
-			if(existingParent == null && existingChild == null) {
-				classes.add(c);
-			//Parent already exists, child doesn't. Add association to existing parent.
-			} else if(existingParent != null && existingChild == null) {
-				existingParent.getAssociations().add(association);
-			//Parent doesn't exist, child does. Remove child-class from classlist and add class with existing child as associationchild.
-			} else if(existingParent == null && existingChild != null) {
-				c.getAssociations().get(0).setChild(existingChild);		
-				classes.remove(existingChild);
-				classes.add(c);
-			//Parent and Child exist, add association from existing classes.
-			} else {
-				association.setChild(existingChild);
-				existingParent.getAssociations().add(association);
-				ArrayList<Class> _classes = new ArrayList<Class>(classes);
-				_classes.remove(existingChild);
-				if(getClass(existingChild.getName(), _classes, null) != null) {
-					classes.remove(existingChild);
-				}
-			}
-		}
-		
+		addAssociationClass(c, existingParent);
 		addAttributeClass(c, existingParent);
 	}
 	
@@ -184,6 +124,7 @@ public class TreeController implements ANTLRErrorListener{
 		//Associations
 		for(Association association : c.getAssociations()) {
 			Class child = association.getChildClass();
+			Class existingChild = getClass(child.getName(), classes, null);
 			Attribute queue_attribute = getAttribute(child.getName(), attributesToAssign);
 			
 			//Is there an attribute in the queue that has the same name?
@@ -240,16 +181,25 @@ public class TreeController implements ANTLRErrorListener{
 						attributesToAssign.remove(existing_attribute_from_classes);
 					}
 				} else {
-					Class existing_association_childclass = getClass(existingClass.getName(), classes, null);
 					
-					//Does association already exist?
-					if(existing_association_childclass == null) {
-						//Does class already exist? If true, add new association to existing class
-						if(existingClass != null) {
-							existingClass.addAssociation(child);
-						//Add new class with new association
-						} else {
-							classes.add(c);
+					//Parent and Child class don't exist yet, add both.
+					if(existingClass == null && existingChild == null) {
+						classes.add(c);
+					//Parent already exists, child doesn't. Add association to existing parent.
+					} else if(existingClass != null && existingChild == null) {
+						existingClass.getAssociations().add(association);
+					//Parent doesn't exist, child does. Remove child-class from classlist and add class with existing child as associationchild.
+					} else if(existingClass == null && existingChild != null) {
+						c.getAssociations().get(0).setChild(existingChild);		
+						classes.remove(existingChild);
+						classes.add(c);
+					} else {
+						association.setChild(existingChild);
+						existingClass.getAssociations().add(association);
+						ArrayList<Class> _classes = new ArrayList<Class>(classes);
+						_classes.remove(existingChild);
+						if(getClass(existingChild.getName(), _classes, null) != null) {
+							classes.remove(existingChild);
 						}
 					}
 				}
