@@ -37,12 +37,11 @@ import java.util.ArrayList;
  *
  */
 public class Class extends Entity{
-	private String name;
 	private ArrayList<Attribute> attributes;
 	private ArrayList<Association> associations;
 
 	public Class(String name) {
-		this.name = name;
+		super(name);
 		this.attributes = new ArrayList<Attribute>();
 		this.associations = new ArrayList<Association>();
 	}
@@ -75,7 +74,7 @@ public class Class extends Entity{
 		
 		Class other = (Class)obj;
 		
-		if (this.name != other.name) {
+		if (name != other.name) {
 			return false;
 		}
 		

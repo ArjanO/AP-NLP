@@ -39,13 +39,12 @@ import java.lang.Class;
 public class Attribute extends Entity implements Cloneable {
 
 	private IMultiplicity multiplicity;
-	private Class<?> type;
-	private String name;
+	private Class<?> type;	
 	
 	public Attribute(String name, Class<?> type) {
+		super(name);
 		multiplicity = new AttributeMultiplicity();
 		this.type = type;
-		this.name = name;
 	}
 	
 	public IMultiplicity getMultiplicity() {
