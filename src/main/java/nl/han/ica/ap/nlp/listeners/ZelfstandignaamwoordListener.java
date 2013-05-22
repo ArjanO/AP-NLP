@@ -32,6 +32,9 @@ package nl.han.ica.ap.nlp.listeners;
 import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.TreeSet;
+
+import org.antlr.v4.runtime.tree.ParseTree;
+
 import nl.han.ica.ap.nlp.controller.TreeController;
 import nl.han.ica.ap.nlp.controller.VerbDirectionController;
 import nl.han.ica.ap.nlp.model.Association;
@@ -77,14 +80,16 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 
 	@Override
 	public void enterZelfstandignaamwoord(ZelfstandignaamwoordContext ctx) {
-		if(start) {
-			if(!direction) {				
-				Class c = new Class(zelfstandignaamwoord1);
-				addAssociationToClass(ctx, c);
-			} else {
-				Class c = new Class(ctx.getText());
-				c.addAssociation(new Class(zelfstandignaamwoord1));	
-				controller.addClass(c);
+		if(start) {	
+			if(!isFollowedByLiteral(ctx)) {
+				if(!direction) {				
+					Class c = new Class(zelfstandignaamwoord1);
+					addAssociationToClass(ctx, c);
+				} else {
+					Class c = new Class(ctx.getText());
+					c.addAssociation(new Class(zelfstandignaamwoord1));	
+					controller.addClass(c);
+				}
 			}
 			zelfstandignaamwoord2 = ctx.getText();
 		} else {
@@ -92,6 +97,25 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 			start = true;
 			setParentMultiplicity(); 
 		}		
+	}
+	
+	/**
+	 * Checks if the next token is a literal.
+	 * @param ctx The noun to be checked.
+	 * @return True if followed by a literal. False if not followed.
+	 */
+	private boolean isFollowedByLiteral(ZelfstandignaamwoordContext ctx) {
+		boolean followed = false;
+		Integer id = null;
+		for(int i = 0;id == null && i < ctx.getParent().children.size();i++) {
+			if(ctx.getParent().children.get(i) == ctx) {
+				id = i;
+			}
+		}
+		if(id + 1 < ctx.getParent().children.size()) {
+			followed = ctx.getParent().children.get(id+1).getClass().getSimpleName().equals("LiteralContext");
+		}
+		return followed;
 	}
 
 	/**

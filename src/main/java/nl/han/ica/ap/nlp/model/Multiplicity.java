@@ -34,10 +34,29 @@ package nl.han.ica.ap.nlp.model;
  * @author Joell
  *
  */
-public class ParentMultiplicity extends Multiplicity {
-
-	public ParentMultiplicity() {
-		super("0","1");
+public abstract class Multiplicity implements IMultiplicity{
+	
+	private Bound lowerBound;
+	private Bound upperBound;
+	
+	public Multiplicity(String lowerBound, String upperBound) {
+		this.lowerBound = new Bound(lowerBound);
+		this.upperBound = new Bound(upperBound);
 	}
 	
+	public Bound getLowerBound() {
+		return lowerBound;
+	}
+
+	public Bound getUpperBound() {
+		return upperBound;
+	}
+
+	public void setLowerBound(String boundValue) {
+		this.lowerBound.setValue(boundValue);
+	}
+
+	public void setUpperBound(String boundValue) {
+		this.upperBound.setValue(boundValue);
+	}
 }
