@@ -42,6 +42,8 @@ public class AppTest {
 	public void testSimpleSenctence(){
 		App app = App.getInstance();
 		app.start("Een vliegtuig heeft een passagier.");
+		assertEquals("vliegtuig", app.getController().classes.get(0).getName());
+		assertEquals("passagier", app.getController().classes.get(0).getAssociations().get(0).getChildClass().getName());
 	}
 	
 		
