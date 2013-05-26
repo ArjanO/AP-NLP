@@ -71,10 +71,15 @@ public class TreeController implements ANTLRErrorListener{
 	public void walkTree(ParseTree tree, NlpParser parser, IExport exporter) {
 		ParseTreeWalker walker = new ParseTreeWalker();
 		ZelfstandignaamwoordListener listener = new ZelfstandignaamwoordListener(this);
-		walker.walk(listener, tree);
+		try {
+			walker.walk(listener, tree);
+		} catch (Exception e) {			
+			isWithoutGrammerError = false;
+		}
 		if(!isWithoutGrammerError) {
 			ErrorAlarm alarm = new ErrorAlarm();
-			alarm.soundAlarm();			
+			alarm.soundAlarm();		
+			classes.clear();
 		} else if(exporter != null) {
 			System.out.println(exporter.export(classes));
 		}
@@ -359,7 +364,7 @@ public class TreeController implements ANTLRErrorListener{
 	@Override
 	public void syntaxError(Recognizer<?, ?> arg0, @Nullable Object arg1,
 			int arg2, int arg3, String arg4, @Nullable RecognitionException arg5) {
-		isWithoutGrammerError = false;		
+		isWithoutGrammerError = false;	
 	}
 	
 }
