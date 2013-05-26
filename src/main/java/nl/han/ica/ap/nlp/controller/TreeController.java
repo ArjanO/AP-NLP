@@ -31,6 +31,7 @@ package nl.han.ica.ap.nlp.controller;
 
 import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.Iterator;
 
 import org.antlr.v4.runtime.ANTLRErrorListener;
 import org.antlr.v4.runtime.Parser;
@@ -56,7 +57,7 @@ import nl.han.ica.ap.nlp.util.ErrorAlarm;
  */
 public class TreeController implements ANTLRErrorListener{
 	public ArrayList<Class> classes = new ArrayList<Class>();
-	private ArrayList<Attribute> attributesToAssign = new ArrayList<Attribute>();
+	public ArrayList<Attribute> attributesToAssign = new ArrayList<Attribute>();
 	private boolean isWithoutGrammerError = true;
 	
 	public TreeController() {		
@@ -88,9 +89,11 @@ public class TreeController implements ANTLRErrorListener{
 	 * @param c The Class to be added.
 	 */
 	public void addClass(Class c) {
-		Class existingParent = getClass(c.getName(), classes, null);
 		
+		Class existingParent = getClass(c.getName(), classes, null);
 		addAssociationClass(c, existingParent);
+		
+		existingParent = getClass(c.getName(), classes, null); //Maybe it exists after adding association.
 		addAttributeClass(c, existingParent);
 	}
 	
@@ -122,7 +125,9 @@ public class TreeController implements ANTLRErrorListener{
 	
 	private void addAssociationClass(Class c, Class existingClass) {
 		//Associations
-		for(Association association : c.getAssociations()) {
+		for(Iterator<Association> it = c.getAssociations().iterator(); it.hasNext();){
+			Association association = it.next();
+			
 			Class child = association.getChildClass();
 			Class existingChild = getClass(child.getName(), classes, null);
 			Attribute queue_attribute = getAttribute(child.getName(), attributesToAssign);
@@ -145,10 +150,11 @@ public class TreeController implements ANTLRErrorListener{
 						
 						attributesToAssign.remove(queue_attribute);
 					}
-				//Add new class with copy of attribute. Remove from queue.
+				//Add new class with copy of attribute, remove Association. Remove from queue.
 				} else {
 					Attribute queue_attribute_clone = (Attribute) queue_attribute.clone();
 					c.addAttribute(queue_attribute_clone);
+					it.remove(); //Remove association
 					classes.add(c);
 					
 					attributesToAssign.remove(queue_attribute);
