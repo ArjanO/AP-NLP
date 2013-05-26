@@ -86,14 +86,14 @@ public class Class extends Entity{
 		return this.name;
 	}
 
-	public void removeAssociation(Class result) {
+	public boolean removeAssociation(Class result) {
 		boolean removed = false;
-		int i = 0;
-		while(i < associations.size() && !removed) {
-			if(associations.get(i).getChildClass() == result) {
-				associations.remove(i);
+		for(int i = 0; i < this.associations.size(); i++){
+			if(this.associations.get(i).getChildClass().equals(result)) {
+				this.associations.remove(i);
 				removed = true;
 			}
 		}
+		return removed;
 	}
 }
