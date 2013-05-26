@@ -177,6 +177,7 @@ public class TreeControllerTest {
 		assertEquals(passagier.getName(), controller.classes.get(0).getName());
 		assertEquals(naamAsAttribute.getName(), controller.classes.get(0).getAttributes().get(0).getName());
 	}
+	
 	@Test
 	public void testAddExistingAttributeWithExistingClass(){
 		TreeController controller = new TreeController();
@@ -192,5 +193,43 @@ public class TreeControllerTest {
 		assertEquals(1, controller.classes.get(0).getAttributes().size());
 		assertEquals(passagier.getName(), controller.classes.get(0).getName());
 		assertEquals(naamAsAttribute.getName(), controller.classes.get(0).getAttributes().get(0).getName());
+	}
+	
+	@Test
+	public void testClassWithAddAttributeWithDoubleAttributeInQueue(){
+		TreeController controller = new TreeController();
+		Attribute idIntegerAttribute = new Attribute("id", Integer.class);
+		controller.attributesToAssign.add(idIntegerAttribute);
+		Attribute idStringAttribute = new Attribute("id", String.class);
+		controller.attributesToAssign.add(idStringAttribute);
+		Class passagier = new Class("Passagier");
+		Class idAssociation = new Class("id");
+		passagier.addAssociation(idAssociation);
+		controller.addClass(passagier);
+		assertEquals(1, controller.classes.size());
+		assertEquals(1, controller.classes.get(0).getAttributes().size());
+		assertEquals(1, controller.attributesToAssign.size());
+	}
+	
+	@Test
+	public void testDoubleClassWithAddAttributeWithDoubleAttributeInQueue(){
+		TreeController controller = new TreeController();
+		Attribute idIntegerAttribute = new Attribute("id", Integer.class);
+		controller.attributesToAssign.add(idIntegerAttribute);
+		Attribute idStringAttribute = new Attribute("id", String.class);
+		controller.attributesToAssign.add(idStringAttribute);
+		Class passagier = new Class("Passagier");
+		Class idAssociationPassagier = new Class("id");
+		passagier.addAssociation(idAssociationPassagier);
+		controller.addClass(passagier);
+		Class vliegtuig = new Class("Vliegtuig");
+		Class idAssociationVliegtuig = new Class("id");
+		vliegtuig.addAssociation(idAssociationVliegtuig);
+		controller.addClass(vliegtuig);
+		assertEquals(2, controller.classes.size());
+		assertEquals(1, controller.classes.get(0).getAttributes().size());
+		assertEquals(1, controller.classes.get(1).getAttributes().size());
+		assertEquals(0, controller.attributesToAssign.size());
+		
 	}
 }
