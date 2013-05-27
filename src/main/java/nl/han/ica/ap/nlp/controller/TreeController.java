@@ -282,7 +282,7 @@ public class TreeController implements ANTLRErrorListener{
 	 */
 	private Attribute getAttribute(String attributeName, ArrayList<Attribute> attributelist){
 		for(Attribute attribute : attributelist) {
-			if(attribute.getName().equals(attributeName)) {
+			if(attribute.getName().equalsIgnoreCase(attributeName) || attribute.pluralExists(attributeName)) {
 				return attribute;
 			}
 		}

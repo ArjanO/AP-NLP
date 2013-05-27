@@ -251,4 +251,38 @@ public class TreeControllerTest {
 		assertEquals(1, controller.classes.get(1).getAttributes().size());
 		assertEquals(0, controller.attributesToAssign.size());
 	}
+	
+	//Een naam is "Michiel".
+	//Een persoon heeft namen.
+	@Test
+	public void testAttributeAndClassWithPlural() {
+		TreeController controller = new TreeController();
+		Attribute naamStringAttribute = new Attribute("naam", String.class);
+		controller.addAttribute(naamStringAttribute);
+		Class persoon = new Class("Persoon");
+		Class namenAssociationPersoon = new Class("namen");
+		persoon.addAssociation(namenAssociationPersoon);
+		controller.addClass(persoon);
+		assertEquals(1, controller.classes.size());
+		assertEquals(1, controller.classes.get(0).getAttributes().size());
+		assertEquals(naamStringAttribute.getName(), controller.classes.get(0).getAttributes().get(0).getName());
+		assertEquals(0, controller.attributesToAssign.size());
+	}
+	
+	//Een persoon heeft namen.
+	//Een naam is "Michiel".
+	@Test
+	public void testClassWithPluralAndAttribute() {
+		TreeController controller = new TreeController();
+		Class persoon = new Class("Persoon");
+		Class namenAssociationPersoon = new Class("namen");
+		persoon.addAssociation(namenAssociationPersoon);
+		controller.addClass(persoon);
+		Attribute naamStringAttribute = new Attribute("naam", String.class);
+		controller.addAttribute(naamStringAttribute);
+		assertEquals(1, controller.classes.size());
+		assertEquals(1, controller.classes.get(0).getAttributes().size());
+		assertEquals(naamStringAttribute.getName(), controller.classes.get(0).getAttributes().get(0).getName());
+		assertEquals(0, controller.attributesToAssign.size());
+	}
 }
