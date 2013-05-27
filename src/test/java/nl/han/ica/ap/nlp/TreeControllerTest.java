@@ -229,7 +229,26 @@ public class TreeControllerTest {
 		assertEquals(2, controller.classes.size());
 		assertEquals(1, controller.classes.get(0).getAttributes().size());
 		assertEquals(1, controller.classes.get(1).getAttributes().size());
+		assertEquals(0, controller.attributesToAssign.size());		
+	}
+	
+	//Een passagier heeft een id.
+	//Een piloot heeft als id "AB".
+	@Test
+	public void testClassAssociationClassAttribute() {
+		TreeController controller = new TreeController();
+		Class passagier = new Class("Passagier");
+		Class idAssociationPassagier = new Class("id");
+		passagier.addAssociation(idAssociationPassagier);
+		controller.addClass(passagier);
+		Class piloot = new Class("Piloot");
+		Attribute idStringAttribute = new Attribute("id", String.class);
+		piloot.addAttribute(idStringAttribute);
+		controller.addClass(piloot);
+		assertEquals(2, controller.classes.size());
+		assertEquals(1, controller.classes.get(0).getAttributes().size());
+		assertEquals(idStringAttribute.getName(), controller.classes.get(0).getAttributes().get(0).getName());
+		assertEquals(1, controller.classes.get(1).getAttributes().size());
 		assertEquals(0, controller.attributesToAssign.size());
-		
 	}
 }

@@ -110,6 +110,9 @@ public class TreeController implements ANTLRErrorListener{
 	private void addAttributeClass(Class c, Class existingClass) {
 		//Attributes
 		for(Attribute attribute : c.getAttributes()) {
+			//Are there any associations with the same name as this attribute? change them
+			changeAssociationToAttribute(attribute, classes, null);
+			
 			//Class doesn't exist. Add new class with attribute.
 			if(existingClass == null) {
 				classes.add(c);
@@ -244,7 +247,7 @@ public class TreeController implements ANTLRErrorListener{
 	}
 	
 	/**
-	 * Finds the class in the classlist or in the attributes of a class.
+	 * Finds the attribute in the classlist or in the attributes of a class.
 	 * @param c The classname to be compared.
 	 * @param classlist The classlist which the class will be compared to.
 	 * @param checkedClasses The (attribute)classes of the classlist which already are checked.
