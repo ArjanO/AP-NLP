@@ -46,6 +46,7 @@ import nl.han.ica.ap.nlp.NlpBaseListener;
 import nl.han.ica.ap.nlp.NlpParser;
 import nl.han.ica.ap.nlp.NlpParser.BijwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.EnumeratieContext;
+import nl.han.ica.ap.nlp.NlpParser.SamengesteldContext;
 import nl.han.ica.ap.nlp.NlpParser.StringContext;
 import nl.han.ica.ap.nlp.NlpParser.TelwoordContext;
 import nl.han.ica.ap.nlp.NlpParser.VerbaleconstituentContext;
@@ -64,6 +65,7 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	private boolean start = false;
 	private TreeSet<String> keywords = new TreeSet<String>();
 	private boolean literal = false;
+	boolean splitSentence = false;
 	
 	public ZelfstandignaamwoordListener(TreeController controller) {
 		this.controller = controller;
@@ -114,6 +116,25 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 		}
 		if(id + 1 < ctx.getParent().children.size()) {
 			followed = ctx.getParent().children.get(id+1).getClass().getSimpleName().equals("LiteralContext");
+		}
+		return followed;
+	}
+	
+	/**
+	 * Checks if the next token is a a verbale constituent.
+	 * @param ctx The samengestelde zin token to be checked.
+	 * @return True if followed by a verbale constituent. False if not followed.
+	 */
+	private boolean isFollowedByVerbaleconstituent(SamengesteldContext ctx) {
+		boolean followed = false;
+		Integer id = null;
+		for(int i = 0;id == null && i < ctx.getParent().children.size();i++) {
+			if(ctx.getParent().children.get(i) == ctx) {
+				id = i;
+			}
+		}
+		if(id + 1 < ctx.getParent().children.size()) {
+			followed = ctx.getParent().children.get(id+1).getClass().getSimpleName().equals("VerbaleconstituentContext");
 		}
 		return followed;
 	}
@@ -264,5 +285,12 @@ public class ZelfstandignaamwoordListener extends NlpBaseListener {
 	@Override
 	public void enterDecimaal(NlpParser.DecimaalContext ctx) {
 		addAttributeToController(Double.class);
+	}
+	
+	@Override
+	public void enterSamengesteld(SamengesteldContext ctx) {
+		if(isFollowedByVerbaleconstituent(ctx)) {
+			start = false;
+		}		
 	}
 }

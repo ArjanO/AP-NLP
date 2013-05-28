@@ -34,7 +34,11 @@ import static org.junit.Assert.*;
 import java.util.Date;
 
 import nl.han.ica.ap.nlp.App;
+import nl.han.ica.ap.nlp.controller.TreeController;
 import nl.han.ica.ap.nlp.model.Association;
+import nl.han.ica.ap.nlp.model.Attribute;
+import nl.han.ica.ap.nlp.model.Class;
+
 import org.junit.Test;
 
 /**
@@ -227,5 +231,13 @@ public class ZelfstandignaamwoordListenerTest {
 		assertEquals(1, app.getController().classes.get(0).getAttributes().size());
 		assertEquals(0, app.getController().classes.get(0).getAssociations().size());
 		assertEquals(Date.class,app.getController().classes.get(0).getAttributes().get(0).getType());
+	}
+	
+	@Test
+	public void testMultipleVerbsInSenctece() {
+		App app = App.getInstance();
+		app.start("Een vliegtuig heeft een passagier en een passagier heeft een paspoort en een vliegtuig heeft een piloot.");
+		assertEquals(1, app.getController().classes.size());
+		assertEquals(2, app.getController().classes.get(0).getAssociations().size());
 	}
 }
