@@ -86,24 +86,19 @@ public class TreeController implements ANTLRErrorListener{
 	}
 
 	/**
-	 * Adds a new class-attribute pair to the existing Classlist.
-	 * If the class of a class-attribute already exists the class-attribute pair will be added as a attribute.
-	 * If the attribute of a class-attribute already exists the class will be added to the classlist and the 
-	 * attribute will be replaced with the existing attribute.
-	 * If the class and the attribute of a class-attribute already exists, the existing attribute will be added to the existing class.
+	 * Adds a new class-attribute or class-association pair to the existing Classlist which represents the model.
 	 * @param c The Class to be added.
 	 */
-	public void addClass(Class c) {
-		
+	public void addClass(Class c) {		
 		Class existingParent = getClass(c.getName(), classes, null);
-		addAssociationClass(c, existingParent);
-		
+		addAssociationClass(c, existingParent);		
 		existingParent = getClass(c.getName(), classes, null); //Maybe it exists after adding association.
+		
 		addAttributeClass(c, existingParent);
 	}
 	
 	/**
-	 * Add a attribute class pair.
+	 * Add a attribute class pair to the classlist model.
 	 * @param c Class with attribute(s)
 	 * @param existingClass Possible existing class
 	 */
@@ -131,22 +126,24 @@ public class TreeController implements ANTLRErrorListener{
 		}
 	}
 	
+	/**
+	 * Adds an association-class pair to the classlist model.
+	 * @param c The class with an association.
+	 * @param existingClass Class which is already in the model with the same name.
+	 */
 	private void addAssociationClass(Class c, Class existingClass) {
 		//Associations
 		for(Iterator<Association> it = c.getAssociations().iterator(); it.hasNext();){
-			Association association = it.next();
-			
+			Association association = it.next();			
 			Class child = association.getChildClass();
 			Class existingChild = getClass(child.getName(), classes, null);
 			Attribute queue_attribute = getAttribute(child.getName(), attributesToAssign);
 			
 			//Is there an attribute in the queue that has the same name?
-			if(queue_attribute != null) {
-				
+			if(queue_attribute != null) {				
 				//Does the class already exist?
 				if(existingClass != null) {
-					Attribute existing_attribute = getAttribute(queue_attribute.getName(), c.getAttributes());
-					
+					Attribute existing_attribute = getAttribute(queue_attribute.getName(), c.getAttributes());					
 					//Does the class already have an attribute with the same name as the queue attribute, if so, overwrite it from queue.
 					if(existing_attribute != null) {
 						int index = existingClass.getAttributes().indexOf(existing_attribute);
@@ -154,8 +151,7 @@ public class TreeController implements ANTLRErrorListener{
 					//Add copy of queue attribute to the existing class, remove from queue.
 					} else {
 						Attribute queue_attribute_clone = (Attribute) queue_attribute.clone();
-						existingClass.addAttribute(queue_attribute_clone);
-						
+						existingClass.addAttribute(queue_attribute_clone);						
 						attributesToAssign.remove(queue_attribute);
 					}
 				//Add new class with copy of attribute, remove Association. Remove from queue.
@@ -163,8 +159,7 @@ public class TreeController implements ANTLRErrorListener{
 					Attribute queue_attribute_clone = (Attribute) queue_attribute.clone();
 					c.addAttribute(queue_attribute_clone);
 					it.remove(); //Remove association
-					classes.add(c);
-					
+					classes.add(c);					
 					attributesToAssign.remove(queue_attribute);
 				}
 			} else {
@@ -190,12 +185,10 @@ public class TreeController implements ANTLRErrorListener{
 					} else {
 						Attribute existing_attribute_from_classes_clone = (Attribute) existing_attribute_from_classes.clone();
 						c.addAttribute(existing_attribute_from_classes_clone);
-						classes.add(c);
-						
+						classes.add(c);						
 						attributesToAssign.remove(existing_attribute_from_classes);
 					}
-				} else {
-					
+				} else {					
 					//Parent and Child class don't exist yet, add both.
 					if(existingClass == null && existingChild == null) {
 						classes.add(c);
