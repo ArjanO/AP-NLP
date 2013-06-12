@@ -61,7 +61,7 @@ public class YUMLExport implements IExport{
 		    			//[classname]<multiplicity>-<multiplicity>[classname]
 		    			doc += "["+child.getName()+getAttributesFromClass(child)+"]";
 		    			doc += asso.getParentMultiplicity().getLowerBound().getValue()+".."+asso.getParentMultiplicity().getUpperBound().getValue();
-		    			doc += "-";
+		    			doc += "->";
 		    			doc += asso.getChildMultiplicity().getLowerBound().getValue()+".."+asso.getChildMultiplicity().getUpperBound().getValue();
 		    			doc += "["+asso.getChildClass().getName()+getAttributesFromClass(asso.getChildClass())+"]";
 		    			doc += ", ";

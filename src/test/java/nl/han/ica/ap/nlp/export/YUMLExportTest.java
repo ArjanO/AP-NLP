@@ -22,7 +22,7 @@ public class YUMLExportTest {
 		classes.add(vliegtuig);
 		
 		String yumlresult = exporter.exportSource(classes);
-		assertEquals(yumlresult, "[Vliegtuig]0..1-0..*[Passagier]");
+		assertEquals(yumlresult, "[Vliegtuig]0..1->0..*[Passagier]");
 	}
 	
 	@Test
@@ -41,7 +41,7 @@ public class YUMLExportTest {
 		classes.add(bus);
 		
 		String yumlresult = exporter.exportSource(classes);
-		assertEquals(yumlresult, "[Vliegtuig]0..1-0..*[Passagier], [Bus]0..1-0..*[Passagier]");
+		assertEquals(yumlresult, "[Vliegtuig]0..1->0..*[Passagier], [Bus]0..1->0..*[Passagier]");
 	}
 	
 	@Test
@@ -59,7 +59,7 @@ public class YUMLExportTest {
 		classes.add(vliegtuigmaatschappij);
 		
 		String yumlresult = exporter.exportSource(classes);
-		assertEquals(yumlresult, "[Vliegtuigmaatschappij]0..1-0..*[Vliegtuig], [Vliegtuig]0..1-0..*[Passagier]");
+		assertEquals(yumlresult, "[Vliegtuigmaatschappij]0..1->0..*[Vliegtuig], [Vliegtuig]0..1->0..*[Passagier]");
 	}
 	
 	@Test
@@ -77,7 +77,7 @@ public class YUMLExportTest {
 		classes.add(vliegtuig);
 		
 		String yumlresult = exporter.exportSource(classes);
-		assertEquals(yumlresult, "[Vliegtuig]0..1-0..*[Passagier], [Passagier]0..1-0..*[Passpoort]");
+		assertEquals(yumlresult, "[Vliegtuig]0..1->0..*[Passagier], [Passagier]0..1->0..*[Passpoort]");
 	}
 	
 	@Test
@@ -95,7 +95,7 @@ public class YUMLExportTest {
 		classes.add(vliegtuig);
 		
 		String yumlresult = exporter.exportSource(classes);
-		assertEquals(yumlresult, "[Vliegtuig]0..1-0..*[Passagier], [Vliegtuig]0..1-0..*[Piloot]");
+		assertEquals(yumlresult, "[Vliegtuig]0..1->0..*[Passagier], [Vliegtuig]0..1->0..*[Piloot]");
 	}
 	
 	@Test
@@ -115,7 +115,7 @@ public class YUMLExportTest {
 		classes.add(vliegtuigmaatschappij);
 		
 		String yumlresult = exporter.exportSource(classes);
-		assertEquals(yumlresult, "[Vliegtuigmaatschappij]0..1-0..*[Vliegtuig], [Vliegtuig]0..1-0..*[Passagier], [Passagier]0..1-0..*[Paspoort]");
+		assertEquals(yumlresult, "[Vliegtuigmaatschappij]0..1->0..*[Vliegtuig], [Vliegtuig]0..1->0..*[Passagier], [Passagier]0..1->0..*[Paspoort]");
 	}
 	
 	@Test
@@ -134,7 +134,7 @@ public class YUMLExportTest {
 		classes.add(vliegtuig);
 		
 		String yumlresult = exporter.exportSource(classes);
-		assertEquals(yumlresult, "[Vliegtuig]0..1-0..*[Passagier], [Passagier]0..1-0..*[Paspoort], [Paspoort]0..1-0..*[Vliegtuig]");
+		assertEquals(yumlresult, "[Vliegtuig]0..1->0..*[Passagier], [Passagier]0..1->0..*[Paspoort], [Paspoort]0..1->0..*[Vliegtuig]");
 	}
 	
 	@Test
@@ -156,8 +156,8 @@ public class YUMLExportTest {
 		String yumlresult1 = exporter.exportSource(classes1);
 		String yumlresult2 = exporter.exportSource(classes2);
 
-		assertEquals(yumlresult1, "[Vliegtuig]0..1-0..*[Passagier]");
-		assertEquals(yumlresult2, "[Vliegtuig]0..1-0..*[Passagier]");
+		assertEquals(yumlresult1, "[Vliegtuig]0..1->0..*[Passagier]");
+		assertEquals(yumlresult2, "[Vliegtuig]0..1->0..*[Passagier]");
 	}
 	
 	@Test
@@ -174,6 +174,6 @@ public class YUMLExportTest {
 		passagier.addAttribute(werknemer);
 		vliegtuig.addAssociation(passagier);
 		classes.add(vliegtuig);
-		assertEquals("[Vliegtuig|ID int;]0..1-0..*[Passagier|Naam String;isWerknemer boolean;]", export.exportSource(classes));
+		assertEquals("[Vliegtuig|ID int;]0..1->0..*[Passagier|Naam String;isWerknemer boolean;]", export.exportSource(classes));
 	}
 }
